@@ -1,0 +1,88 @@
+.home-child {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #eddfdf;
+  width: 1440px;
+  height: 118px;
+  display: none;
+}
+.image-hero-icon {
+  position: absolute;
+  top: 142px;
+  left: 728px;
+  width: 631.92px;
+  height: 685.78px;
+  object-fit: cover;
+}
+.title-hero-child {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  background-color: rgba(0, 153, 255, 0.12);
+  filter: blur(200px);
+  width: 752px;
+  height: 769px;
+}
+.btn-check-now {
+  position: absolute;
+  top: 534px;
+  left: 412px;
+}
+.check-now-your,
+.we-care-about {
+  position: absolute;
+  left: 412px;
+  letter-spacing: 0.05em;
+  text-transform: capitalize;
+  display: inline-block;
+  width: 632px;
+}
+.we-care-about {
+  margin: 0;
+  top: 288px;
+  font-size: inherit;
+  line-height: 61px;
+  font-weight: 700;
+  font-family: inherit;
+}
+.check-now-your {
+  top: 442px;
+  font-size: var(--text-hero-size);
+  line-height: 156%;
+  font-weight: 500;
+  color: var(--color-darkgray);
+}
+.title-hero-item {
+  position: absolute;
+  top: 58.81px;
+  left: 482.5px;
+  width: 159.91px;
+  height: 171.76px;
+}
+.title-hero,
+.title-hero-inner {
+  position: absolute;
+  top: 637.62px;
+  left: 760.63px;
+  width: 69.9px;
+  height: 75.08px;
+}
+.title-hero {
+  top: 101px;
+  left: -332px;
+  width: 1044px;
+  height: 769px;
+  text-align: left;
+  font-size: var(--h1-size);
+  color: var(--color-darkslategray);
+  font-family: var(--text-hero);
+}
+.home {
+  position: relative;
+  background-color: var(--basic);
+  width: 100%;
+  height: 5137px;
+  overflow: hidden;
+}

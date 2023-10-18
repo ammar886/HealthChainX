@@ -1,11 +1,11 @@
-import { useEffect } from "react";
+import { useEffect } from 'react'
 import {
   Routes,
   Route,
   useNavigationType,
   useLocation,
-} from "react-router-dom";
-import Home from "./pages/Home";
+} from 'react-router-dom'
+import Home from './pages/Home'
 
 function App() {
   const action = useNavigationType();

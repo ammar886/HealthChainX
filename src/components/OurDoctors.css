@@ -1,0 +1,234 @@
+.our-doctors-child {
+  position: absolute;
+  top: 0;
+  left: calc(50% - 720px);
+  background-color: var(--color-lightcyan);
+  width: 1440px;
+  height: 883px;
+}
+.our-doctors1,
+.visit-our-professional {
+  position: absolute;
+  letter-spacing: 0.05em;
+  line-height: 50px;
+  text-transform: capitalize;
+  font-weight: 600;
+  display: inline-block;
+}
+.visit-our-professional {
+  margin: 0;
+  top: 170px;
+  left: calc(50% - 316px);
+  font-size: var(--h3-size);
+  font-family: inherit;
+  width: 632px;
+}
+.our-doctors1 {
+  top: 100px;
+  left: calc(50% - 158px);
+  font-size: var(--text-hero-size);
+  width: 316px;
+}
+.mask-group-icon2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 308px;
+  height: 377px;
+  object-fit: cover;
+}
+.specialist-4-child {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: var(--br-8xs);
+  background-color: var(--basic);
+  width: 260px;
+  height: 139px;
+}
+.pinterest-icon,
+.facebook-icon {
+  position: absolute;
+  top: 14px;
+  left: 20px;
+  width: 16px;
+  height: 16px;
+  overflow: hidden;
+}
+.pinterest-icon {
+  left: 49.79px;
+}
+.dribbble-outlined-icon,
+.instagram-outlined-icon {
+  position: absolute;
+  top: 14px;
+  left: 79.58px;
+  width: 16px;
+  height: 16px;
+  overflow: hidden;
+}
+.instagram-outlined-icon {
+  left: 109.37px;
+}
+.dentist,
+.muhammad-ali-syahputra {
+  position: absolute;
+  top: 101px;
+  left: 20px;
+  letter-spacing: 0.05em;
+  line-height: 156%;
+  text-transform: capitalize;
+}
+.muhammad-ali-syahputra {
+  top: 39px;
+  left: 15px;
+  font-size: var(--text-hero-size);
+  line-height: 26.5px;
+  display: inline-block;
+  text-align: left;
+  width: 240px;
+}
+.doctor-4,
+.specialist-4 {
+  position: absolute;
+  top: 308px;
+  left: 24px;
+  width: 260px;
+  height: 139px;
+}
+.doctor-4 {
+  top: 352px;
+  left: 1052px;
+  width: 308px;
+  height: 447px;
+}
+.dr-nadya-navira {
+  position: absolute;
+  top: 43px;
+  left: 20px;
+  font-size: var(--text-hero-size);
+  letter-spacing: 0.05em;
+  line-height: 26.5px;
+  text-transform: capitalize;
+  display: inline-block;
+  text-align: left;
+  width: 240px;
+}
+.specialist-3 {
+  position: absolute;
+  top: 308px;
+  left: 30px;
+  width: 260px;
+  height: 139px;
+}
+.doctor-3,
+.mask-group-icon4 {
+  position: absolute;
+  width: 308px;
+}
+.doctor-3 {
+  top: 352px;
+  left: 728px;
+  height: 447px;
+}
+.mask-group-icon4 {
+  top: 0;
+  left: calc(50% - 154px);
+  height: 377px;
+  object-fit: cover;
+}
+.specialist-2-child {
+  position: absolute;
+  top: 0;
+  left: calc(50% - 130px);
+  border-radius: var(--br-8xs);
+  background-color: var(--basic);
+  width: 260px;
+  height: 139px;
+}
+.pinterest-icon2,
+.facebook-icon2 {
+  position: absolute;
+  top: 14px;
+  left: calc(50% - 110px);
+  width: 16px;
+  height: 16px;
+  overflow: hidden;
+}
+.pinterest-icon2 {
+  left: calc(50% - 80.21px);
+}
+.dribbble-outlined-icon2,
+.instagram-outlined-icon2 {
+  position: absolute;
+  top: 14px;
+  left: calc(50% - 50.42px);
+  width: 16px;
+  height: 16px;
+  overflow: hidden;
+}
+.instagram-outlined-icon2 {
+  left: calc(50% - 20.63px);
+}
+.antonius-jansen,
+.pediatric {
+  position: absolute;
+  top: 101px;
+  left: calc(50% - 114px);
+  letter-spacing: 0.05em;
+  line-height: 156%;
+  text-transform: capitalize;
+}
+.antonius-jansen {
+  top: 43px;
+  left: calc(50% - 110px);
+  font-size: var(--text-hero-size);
+  line-height: 26.5px;
+  display: inline-block;
+  text-align: left;
+  width: 240px;
+}
+.doctor-2,
+.specialist-2 {
+  position: absolute;
+  top: 307px;
+  left: calc(50% - 130px);
+  width: 260px;
+  height: 139px;
+}
+.doctor-2 {
+  top: 352px;
+  left: calc(50% - 316px);
+  width: 308px;
+  height: 446px;
+}
+.dr-moeharman-sp {
+  position: absolute;
+  top: 39px;
+  left: 20px;
+  font-size: var(--text-hero-size);
+  letter-spacing: 0.05em;
+  line-height: 26.5px;
+  text-transform: capitalize;
+  display: inline-block;
+  text-align: left;
+  width: 240px;
+}
+.doctor-1 {
+  position: absolute;
+  top: 352px;
+  left: 80px;
+  width: 308px;
+  height: 447px;
+}
+.our-doctors {
+  position: absolute;
+  top: 2460px;
+  left: calc(50% - 720px);
+  width: 1440px;
+  height: 883px;
+  text-align: center;
+  font-size: var(--font-size-base);
+  color: var(--color-darkslategray);
+  font-family: var(--text-hero);
+}

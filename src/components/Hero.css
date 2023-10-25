@@ -1,0 +1,90 @@
+.home {
+    position: relative;
+    background-color: var(--basic);
+    width: 100%;
+    height: 5137px;
+    overflow: hidden;
+  }
+.home-child {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #eddfdf;
+    width: 100%;
+    height: 8.194rem;
+    display: none;
+  }
+  .image-hero-icon {
+    position: absolute;
+    top: 9rem;
+    left: 50%;
+    width: 43.2rem;
+    height: 47.4rem;
+    object-fit: cover;
+  }
+  .title-hero-child {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    background-color: rgba(0, 153, 255, 0.12);
+    filter: blur(200px);
+    width: 52.6rem;
+    height: 53.3rem;
+  }
+  .btn-check-now {
+    position: absolute;
+    top: 33.3rem;
+    left: 25rem;
+  }
+  
+  .check-now-your,
+  .we-care-about {
+    position: absolute;
+    left: 25rem;
+    letter-spacing: 0.05em;
+    text-transform: capitalize;
+    display: inline-block;
+    width: 39.5rem;
+  }
+  .we-care-about {
+    margin: 0;
+    top: 15rem;
+    font-size: inherit;
+    line-height: 61px;
+    font-weight: 700;
+    font-family: inherit;
+  }
+  .check-now-your {
+    top: 25rem;
+    font-size: var(--text-hero-size);
+    line-height: 156%;
+    font-weight: 500;
+    color: var(--color-darkgray);
+  }
+  .title-hero-item {
+    position: absolute;
+    top: 3.889rem;
+    left: 33.681rem;
+    width: 9.996rem;
+    height: 10.814rem;
+  }
+  .title-hero,
+  .title-hero-inner {
+    position: absolute;
+    top: 39.444rem;
+    left: 53.125rem;
+    width: 2.188rem;
+    height: 2.344rem;
+  }
+  .title-hero {
+    top: 13.889rem;
+    left: -23.056rem;
+    width: 72.917rem;
+    height: 53.333rem;
+    text-align: left;
+    font-size: var(--h1-size);
+    color: var(--color-darkslategray);
+    font-family: var(--text-hero);
+  }
+  

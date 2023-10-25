@@ -1,3 +1,25 @@
+.navbar {
+  top: 15px;
+  left: 10px;
+  width: 98%;
+  height: 54px;
+  text-align: left;
+  font-size: var(--text-hero-size);
+  color: var(--color-dodgerblue-100);
+  font-family: var(--text-hero);
+  background-color: var(--basic);
+  border-radius: 7rem;
+  padding: 0 10px;
+}
+a {
+  text-decoration: none;
+  color: var(--color-black);
+
+}
+a:hover {
+  text-decoration: none;
+  color: var(--color-black);
+}
 .pital1 {
   color: var(--color-black);
 }
@@ -12,6 +34,7 @@
 }
 .logo1 {
   top: 12px;
+  left: 12px;
   width: 97px;
   height: 30px;
 }
@@ -52,25 +75,6 @@
 .btn-appointment,
 .navbar {
   position: absolute;
-  top: 0;
-  left: 1080px;
-}
-.navbar {
-  top: 35px;
-  left: 80px;
-  width: 1280px;
-  height: 54px;
-  text-align: left;
-  font-size: var(--text-hero-size);
-  color: var(--color-dodgerblue-100);
-  font-family: var(--text-hero);
-}
-a {
-  text-decoration: none;
-  color: var(--color-black);
-
-}
-a:hover {
-  text-decoration: none;
-  color: var(--color-black);
+  top: 0.5rem;
+  right: 1rem;
 }

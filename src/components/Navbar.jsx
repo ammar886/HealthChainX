@@ -1,7 +1,8 @@
+import React from "react";
 import { Button } from "@mui/material";
 import "./Navbar.css";
 
-const Navbar = () => {
+const Navbar = ({ onLoginClick }) => {
   return (
     <div className="navbar">
       <div className="logo1">
@@ -20,6 +21,7 @@ const Navbar = () => {
         sx={{ width: 200 }}
         color="primary"
         variant="outlined"
+        onClick={onLoginClick} // Trigger the parent component's state change
       >
         Login
       </Button>

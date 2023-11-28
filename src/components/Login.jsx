@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Add this import
 import Web3 from "web3"; // Install using: npm install web3
 import "./Login.css";
 
 const Login = () => {
+  const navigate = useNavigate(); // Use useNavigate instead of useHistory
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -39,7 +42,7 @@ const Login = () => {
             ethereumAddress
           );
           // If authentication is successful, navigate to the admin page
-          history.push("/admin");
+          navigate("/admin");
         } else {
           console.error("Authentication failed");
           alert("Authentication failed. Please try again.");

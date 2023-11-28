@@ -86,5 +86,6 @@
     font-size: var(--h1-size);
     color: var(--color-darkslategray);
     font-family: var(--text-hero);
+    background-color: transparent;
   }
   

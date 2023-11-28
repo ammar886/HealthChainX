@@ -1,24 +1,20 @@
-import { useLayoutEffect, useMemo } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import {
   Routes,
   Route,
-  useNavigationType,
   useLocation,
 } from 'react-router-dom'
 import Home from './pages/Home'
+import Navbar from './components/Navbar';
+import Login from './components/Login';
 
 function App() {
-  const [action, location] = useMemo(() => {
-    return [useNavigationType(), useLocation()];
-  }, []);
-  
+  const location = useLocation();
   const pathname = location.pathname;
 
   useLayoutEffect(() => {
-    if (action !== "POP") {
-      window.scrollTo(0, 0);
-    }
-  }, [action, pathname]);
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   useLayoutEffect(() => {
     let title = "";
@@ -45,10 +41,24 @@ function App() {
     }
   }, [pathname]);
 
+  const [showLogin, setShowLogin] = useState(false);
+
+  const handleLoginClick = () => {
+    setShowLogin(true);
+  };
+
+  const handleCloseLogin = () => {
+    setShowLogin(false);
+  };
+
   return (
-    <Routes>
-      <Route path="/" element={<Home />} exact />
-    </Routes>
+    <div>
+      <Navbar onLoginClick={handleLoginClick} />
+      <Routes>
+        <Route path="/" element={<Home />} exact />
+      </Routes>
+      {showLogin && <Login onClose={handleCloseLogin} />}
+    </div>
   );
 }
 

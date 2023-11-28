@@ -1,5 +1,4 @@
 .navbar {
-  top: 15px;
   left: 10px;
   width: 98%;
   height: 54px;
@@ -10,6 +9,7 @@
   background-color: var(--basic);
   border-radius: 7rem;
   padding: 0 10px;
+  z-index: 20;
 }
 a {
   text-decoration: none;

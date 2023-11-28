@@ -26,27 +26,30 @@ const Login = () => {
         });
         // Use the first account as the Ethereum address for simplicity
         const ethereumAddress = accounts[0];
+        alert("MetaMask Connection Succesfull! You're good to go");
+        console.log(ethereumAddress);
+
 
         // Send ethereumAddress to your server for authentication
-        const response = await fetch("/api/authenticate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ ethereumAddress }),
-        });
+        // const response = await fetch("/api/authenticate", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify({ ethereumAddress }),
+        // });
 
-        if (response.ok) {
-          console.log(
-            "Authenticated with MetaMask. Ethereum Address:",
-            ethereumAddress
-          );
-          // If authentication is successful, navigate to the admin page
-          navigate("/admin");
-        } else {
-          console.error("Authentication failed");
-          alert("Authentication failed. Please try again.");
-        }
+        // if (response.ok) {
+        //   console.log(
+        //     "Authenticated with MetaMask. Ethereum Address:",
+        //     ethereumAddress
+        //   );
+        //   // If authentication is successful, navigate to the admin page
+        //   navigate("/admin");
+        // } else {
+        //   console.error("Authentication failed");
+        //   alert("Authentication failed. Please try again.");
+        // }
       } catch (error) {
         console.error("Error connecting with MetaMask:", error);
         alert("Error connecting with MetaMask. Please try again.");

@@ -5,7 +5,6 @@ import "./Hero.css";
 const Hero = () => {
   return (
     <div className="hero-container">
-
       <div className="hero-child">
         <div className="hero-background" />
         <img className="hero-svg-1" alt="" src="/Assests/polygon-1.svg" />
@@ -26,13 +25,8 @@ const Hero = () => {
       </div>
 
       <div className="hero-child">
-        <img
-          className="hero-image"
-          alt=""
-          src="/Assests/image-hero@2x.png"
-        />
+        <img className="hero-image" alt="" src="/Assests/image-hero@2x.png" />
       </div>
-
     </div>
   );
 };

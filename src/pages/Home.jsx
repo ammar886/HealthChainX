@@ -16,7 +16,7 @@ const Home = () => {
           <Hero />
         </Suspense>
       </div>
-      {/* <div className="gridChild">
+      <div className="gridChild">
         <OurServices />
       </div>
       <div className="gridChild">
@@ -30,7 +30,7 @@ const Home = () => {
       </div>
       <div className="gridChild">
         <Footer />
-      </div> */}
+      </div>
     </div>
   );
 };

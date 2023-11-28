@@ -5,26 +5,30 @@ import "./Navbar.css";
 const Navbar = ({ onLoginClick }) => {
   return (
     <div className="navbar">
-      <div className="logo1">
-        <b className="hospital1">
-          <span>Health</span>
-          <span className="pital1">ChainX.</span>
+      <div className="lr-col">
+        <b className="navbar-logo">
+          Health
+          <span className="second-half">ChainX.</span>
         </b>
       </div>
-      <div className="nav">
-        <a href="#" className="home2">Home</a>
-        <a href="#" className="service1">Service</a>
-        <a href="#" className="about1">About</a>
+
+      <div className="middle-col">
+        <a href="#">Service</a>
+        <a href="#">Home</a>
+        <a href="#">About</a>
       </div>
-      <Button
-        className="btn-appointment"
-        sx={{ width: 200 }}
-        color="primary"
-        variant="outlined"
-        onClick={onLoginClick} // Trigger the parent component's state change
-      >
-        Login
-      </Button>
+
+      <div className="lr-col">
+        <Button
+          className="nav-btn"
+          sx={{ width: 200 }}
+          color="primary"
+          variant="outlined"
+          onClick={onLoginClick} // Trigger the parent component's state change
+        >
+          Login
+        </Button>
+      </div>
     </div>
   );
 };

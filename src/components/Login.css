@@ -2,7 +2,7 @@ section {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    height: 90vh;
     background-color: rgba(128, 128, 128, 0.329);
   }
   
@@ -10,7 +10,6 @@ section {
     position: relative;
     width: 25rem;
     height: 30rem;
-    margin-top: 10%;
     border-radius: 0.5rem;
     overflow: hidden;
   }

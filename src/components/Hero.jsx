@@ -4,31 +4,35 @@ import "./Hero.css";
 
 const Hero = () => {
   return (
-    <div className="home">
-      <div className="home-child" />
-      <img
-        className="image-hero-icon"
-        alt=""
-        src="/Assests/image-hero@2x.png"
-      />
-      <section className="title-hero">
-        <div className="title-hero-child" />
+    <div className="hero-container">
+
+      <div className="hero-child">
+        <div className="hero-background" />
+        <img className="hero-svg-1" alt="" src="/Assests/polygon-1.svg" />
+        <h1 className="hero-heading">we care about your health</h1>
+        <div className="hero-paragraph">
+          check now your healty with our profesional doctor, completed and
+          modern fasilities services
+        </div>
         <Button
-          className="btn-check-now"
+          className="hero-button"
           sx={{ width: 200 }}
           color="primary"
           variant="contained"
         >
           Check Now
         </Button>
-        <h1 className="we-care-about">we care about your health</h1>
-        <div className="check-now-your">
-          check now your healty with our profesional doctor, completed and
-          modern fasilities services
-        </div>
-        <img className="title-hero-item" alt="" src="/Assests/polygon-1.svg" />
-        <img className="title-hero-inner" alt="" src="/Assests/polygon-2.svg" />
-      </section>
+        <img className="hero-svg-2" alt="" src="/Assests/polygon-2.svg" />
+      </div>
+
+      <div className="hero-child">
+        <img
+          className="hero-image"
+          alt=""
+          src="/Assests/image-hero@2x.png"
+        />
+      </div>
+
     </div>
   );
 };

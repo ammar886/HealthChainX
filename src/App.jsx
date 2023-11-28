@@ -1,10 +1,6 @@
-import { useLayoutEffect, useState } from 'react'
-import {
-  Routes,
-  Route,
-  useLocation,
-} from 'react-router-dom'
-import Home from './pages/Home'
+import React, { useLayoutEffect, useState } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import Home from './pages/Home';
 import Navbar from './components/Navbar';
 import Login from './components/Login';
 
@@ -41,13 +37,16 @@ function App() {
     }
   }, [pathname]);
 
+  const [showHome, setShowHome] = useState(true);
   const [showLogin, setShowLogin] = useState(false);
 
   const handleLoginClick = () => {
+    setShowHome(false); // Hide the Home component
     setShowLogin(true);
   };
 
   const handleCloseLogin = () => {
+    setShowHome(true); // Show the Home component
     setShowLogin(false);
   };
 
@@ -55,7 +54,7 @@ function App() {
     <div>
       <Navbar onLoginClick={handleLoginClick} />
       <Routes>
-        <Route path="/" element={<Home />} exact />
+        <Route path="/" element={showHome ? <Home /> : null} exact />
       </Routes>
       {showLogin && <Login onClose={handleCloseLogin} />}
     </div>

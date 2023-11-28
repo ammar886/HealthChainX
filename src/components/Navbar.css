@@ -1,80 +1,48 @@
 .navbar {
-  left: 10px;
-  width: 98%;
-  height: 54px;
-  text-align: left;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 10vh;
+  padding: 0 2rem;
   font-size: var(--text-hero-size);
   color: var(--color-dodgerblue-100);
   font-family: var(--text-hero);
   background-color: var(--basic);
-  border-radius: 7rem;
-  padding: 0 10px;
-  z-index: 20;
 }
-a {
-  text-decoration: none;
-  color: var(--color-black);
 
+.lr-col {
+  width: 25%;
 }
-a:hover {
+
+.navbar-logo {
+  width: 10rem;
+  height: 1.8rem;
+  letter-spacing: 0.05em;
+}
+.second-half {
+  color: var(--color-black);
+}
+
+.middle-col {
+  width: 50%;
+  text-align: center;
+  font-size: var(--text-body-size);
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: 0.05625rem;
+  text-transform: capitalize;
+}
+.middle-col a {
+  padding: 0 2.5rem;
   text-decoration: none;
   color: var(--color-black);
 }
-.pital1 {
+.middle-col a:hover {
+  text-decoration: none;
   color: var(--color-black);
 }
-.hospital1,
-.logo1 {
-  position: absolute;
-  left: 0;
-}
-.hospital1 {
-  top: 0;
-  letter-spacing: 0.05em;
-}
-.logo1 {
-  top: 12px;
-  left: 12px;
-  width: 97px;
-  height: 30px;
-}
-.home2,
-.service1 {
-  top: 0;
-  letter-spacing: 0.05em;
-  text-transform: capitalize;
-  font-weight: 500;
-}
-.home2 {
-  position: absolute;
-  left: 100px;
-}
-.service1 {
-  left: 198px;
-}
-.about1,
-.nav,
-.service1 {
-  position: absolute;
-}
-.about1 {
-  top: 0;
-  left: 0;
-  letter-spacing: 0.05em;
-  text-transform: capitalize;
-  font-weight: 500;
-  text-align: center;
-}
-.nav {
-  top: 13px;
-  left: 505px;
-  width: 270px;
-  height: 27px;
-  font-size: var(--text-body-size);
-}
-.btn-appointment,
-.navbar {
-  position: absolute;
-  top: 0.5rem;
-  right: 1rem;
+
+.nav-btn {
+  display: block;
+  margin-left: auto;
 }

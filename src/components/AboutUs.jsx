@@ -3,32 +3,30 @@ import "./AboutUs.css";
 
 const AboutUs = () => {
   return (
-    <section className="about-us" id="aboutus">
-      <div className="about-us-child" />
-      <Button
-        className="btn-about-us2"
-        sx={{ width: 216 }}
-        color="primary"
-        variant="contained"
-      >
-        more about us
-      </Button>
-      <div className="about-us-item" />
-      <img
-        className="doctor-1-icon"
-        alt=""
-        src="/Assests/doctor-1@2x.png"
-      />
-      <div className="about-us1">About Us</div>
-      <div className="this-profile-describes">
-        This profile describes the activities of health services and medical
-        support as well as the facilities and conditions of the General Hospital
-        which is reflected in the general public served from all groups,
-        religions and beliefs, ethnicity and the level and frequency of bed
-        occupancy which continues to increase significantly.
+    <div className="about-us-container">
+      <div className="about-us-child">
+        <div className="about-us-shape" />
+        <img className="about-us-image" alt="" src="/Assests/doctor-1@2x.png" />
       </div>
-      <h1 className="we-help-your">we help your health</h1>
-    </section>
+      <div className="about-us-child">
+        <div className="about-us-title">About Us</div>
+        <h1 className="about-us-sub-title">we help your health</h1>
+        <div className="about-us-paragraph">
+          This profile describes the activities of health services and medical
+          support as well as the facilities and conditions of the General
+          Hospital which is reflected in the general public served from all
+          groups, religions and beliefs, ethnicity and the level and frequency
+          of bed occupancy which continues to increase significantly.
+        </div>
+        <Button
+          sx={{ width: 216 }}
+          color="primary"
+          variant="contained"
+        >
+          more about us
+        </Button>
+      </div>
+    </div>
   );
 };
 

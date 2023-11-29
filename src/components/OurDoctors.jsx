@@ -2,113 +2,144 @@ import "./OurDoctors.css";
 
 const OurDoctors = () => {
   return (
-    <section className="our-doctors" id="ourdoctors">
-      <div className="our-doctors-child" />
-      <h1 className="visit-our-professional">
+    <div className="our-doctors-container">
+      <div className="our-doctors-title">Our Doctors</div>
+      <div className="our-doctors-paragraph">
         visit our professional specialists
-      </h1>
-      <div className="our-doctors1">Our Doctors</div>
-      <div className="doctor-4">
-        <img className="mask-group-icon2" alt="" src="/Assests/mask-group2@2x.png" />
-        <div className="specialist-4">
-          <div className="specialist-4-child" />
-          <div className="specialist-4-child" />
-          <img className="facebook-icon" alt="" src="/Assests/facebook.svg" />
+      </div>
+
+      <div className="our-doctors-child">
+        <div className="specialist">
           <img
-            className="pinterest-icon"
+            className="specialist-image"
             alt=""
-            src="/Assests/pinterest.svg"
+            src="/Assests/mask-group2@2x.png"
           />
+          <div className="specialist-info">
+            <img
+              className="social-media-icon"
+              alt=""
+              src="/Assests/facebook.svg"
+            />
+            <img
+              className="social-media-icon"
+              alt=""
+              src="/Assests/pinterest.svg"
+            />
+            <img
+              className="social-media-icon"
+              alt=""
+              src="/Assests/dribbbleoutlined.svg"
+            />
+            <img
+              className="social-media-icon"
+              alt=""
+              src="/Assests/instagramoutlined.svg"
+            />
+            <div className="our-doctors-name">MUHAMMAD ALI SYAHPUTRA</div>
+            <div className="our-doctors-profession">{`Dentist `}</div>
+          </div>
+        </div>
+
+        <div className="specialist">
           <img
-            className="dribbble-outlined-icon"
+            className="specialist-image"
             alt=""
-            src="/Assests/dribbbleoutlined.svg"
+            src="Assests/mask-group3@2x.png"
           />
+          <div className="specialist-info">
+            <img
+              className="social-media-icon"
+              alt=""
+              src="/Assests/facebook.svg"
+            />
+            <img
+              className="social-media-icon"
+              alt=""
+              src="/Assests/pinterest.svg"
+            />
+            <img
+              className="social-media-icon"
+              alt=""
+              src="/Assests/dribbbleoutlined.svg"
+            />
+            <img
+              className="social-media-icon"
+              alt=""
+              src="/Assests/instagramoutlined.svg"
+            />
+            <div className="our-doctors-name">dr. NADYA NAVIRA</div>
+            <div className="our-doctors-profession">{`Dentist `}</div>
+          </div>
+        </div>
+
+        <div className="specialist">
           <img
-            className="instagram-outlined-icon"
+            className="specialist-image"
             alt=""
-            src="/Assests/instagramoutlined.svg"
+            src="/Assests/mask-group4@2x.png"
           />
-          <div className="dentist">{`Dentist `}</div>
-          <b className="muhammad-ali-syahputra">MUHAMMAD ALI SYAHPUTRA</b>
+          <div className="specialist-info">
+            <img
+              className="social-media-icon"
+              alt=""
+              src="/Assests/facebook.svg"
+            />
+            <img
+              className="social-media-icon"
+              alt=""
+              src="/Assests/pinterest.svg"
+            />
+            <img
+              className="social-media-icon"
+              alt=""
+              src="/Assests/dribbbleoutlined.svg"
+            />
+            <img
+              className="social-media-icon"
+              alt=""
+              src="/Assests/instagramoutlined.svg"
+            />
+            <div className="our-doctors-name">ANTONIUS JANSEN</div>
+            <div className="our-doctors-profession">{`Pediatric `}</div>
+          </div>
+        </div>
+
+        <div className="specialist">
+          <div className="social-media-icons-group">
+            <img
+              className="specialist-image"
+              alt=""
+              src="/Assests/mask-group5@2x.png"
+            />
+            <div className="specialist-info">
+              <img
+                className="social-media-icon"
+                alt=""
+                src="/Assests/facebook.svg"
+              />
+              <img
+                className="social-media-icon"
+                alt=""
+                src="/Assests/pinterest.svg"
+              />
+              <img
+                className="social-media-icon"
+                alt=""
+                src="/Assests/dribbbleoutlined.svg"
+              />
+              <img
+                className="social-media-icon"
+                alt=""
+                src="/Assests/instagramoutlined.svg"
+              />
+              <div className="our-doctors-name">dr. Moeharman, Sp. THT.KL</div>
+              <div className="our-doctors-profession">{`Orthodontist `}</div>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="doctor-3">
-        <img className="mask-group-icon2" alt="" src="Assests/mask-group3@2x.png" />
-        <div className="specialist-3">
-          <div className="specialist-4-child" />
-          <div className="specialist-4-child" />
-          <img className="facebook-icon" alt="" src="/Assests/facebook.svg" />
-          <img
-            className="pinterest-icon"
-            alt=""
-            src="/Assests/pinterest.svg"
-          />
-          <img
-            className="dribbble-outlined-icon"
-            alt=""
-            src="/Assests/dribbbleoutlined.svg"
-          />
-          <img
-            className="instagram-outlined-icon"
-            alt=""
-            src="/Assests/instagramoutlined.svg"
-          />
-          <div className="dentist">{`Dentist `}</div>
-          <b className="dr-nadya-navira">dr. NADYA NAVIRA</b>
-        </div>
-      </div>
-      <div className="doctor-2">
-        <img className="mask-group-icon4" alt="" src="/Assests/mask-group4@2x.png" />
-        <div className="specialist-2">
-          <div className="specialist-2-child" />
-          <div className="specialist-2-child" />
-          <img className="facebook-icon2" alt="" src="/Assests/facebook.svg" />
-          <img
-            className="pinterest-icon2"
-            alt=""
-            src="/Assests/pinterest.svg"
-          />
-          <img
-            className="dribbble-outlined-icon2"
-            alt=""
-            src="/Assests/dribbbleoutlined.svg"
-          />
-          <img
-            className="instagram-outlined-icon2"
-            alt=""
-            src="/Assests/instagramoutlined.svg"
-          />
-          <div className="pediatric">{`Pediatric `}</div>
-          <b className="antonius-jansen">ANTONIUS JANSEN</b>
-        </div>
-      </div>
-      <div className="doctor-1">
-        <img className="mask-group-icon2" alt="" src="/Assests/mask-group5@2x.png" />
-        <div className="specialist-4">
-          <div className="specialist-4-child" />
-          <div className="specialist-4-child" />
-          <img className="facebook-icon" alt="" src="/Assests/facebook.svg" />
-          <img
-            className="pinterest-icon"
-            alt=""
-            src="/Assests/pinterest.svg"
-          />
-          <img
-            className="dribbble-outlined-icon"
-            alt=""
-            src="/Assests/dribbbleoutlined.svg"
-          />
-          <img
-            className="instagram-outlined-icon"
-            alt=""
-            src="/Assests/instagramoutlined.svg"
-          />
-          <div className="dentist">{`Orthodontist `}</div>
-          <b className="dr-moeharman-sp">dr. Moeharman, Sp. THT.KL</b>
-        </div>
-      </div>
-    </section>
+    </div>
   );
 };
 

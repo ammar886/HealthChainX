@@ -11,24 +11,24 @@ const OurServices = lazy(() => import("../components/OurServices"));
 const Home = () => {
   return (
     <div className="grid">
-      <div className="gridChild">
+      <div className="grid-child">
         <Suspense fallback={<div>Loading...</div>}>
           <Hero />
         </Suspense>
       </div>
-      <div className="gridChild">
+      <div className="grid-child">
         <OurServices />
       </div>
-      <div className="gridChild">
+      <div className="grid-child">
         <AboutUs />
       </div>
-      <div className="gridChild">
+      <div className="grid-child">
         <OurDoctors />
       </div>
-      <div className="gridChild">
+      <div className="grid-child">
         <Testimonials />
       </div>
-      <div className="gridChild">
+      <div className="grid-child">
         <Footer />
       </div>
     </div>

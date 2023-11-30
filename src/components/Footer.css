@@ -1,192 +1,9 @@
-/* .footer-child {
-  position: absolute;
-  top: 0;
-  left: calc(50% - 720px);
-  background-color: var(--color-azure);
-  width: 1440px;
-  height: 425px;
-}
-.menus {
-  top: 88px;
-  left: 728px;
-  line-height: 50px;
-  font-weight: 600;
-  text-align: center;
-  width: 72px;
-  height: 48px;
-}
-.get-medical-checkup,
-.menus,
-.our-hospital-tries {
-  position: absolute;
-  letter-spacing: 0.05em;
-  text-transform: capitalize;
-  display: inline-block;
-}
-.get-medical-checkup {
-  top: 88px;
-  left: 944px;
-  line-height: 50px;
-  font-weight: 600;
-  width: 407px;
-  height: 37px;
-}
-.our-hospital-tries {
-  top: 155px;
-  left: 82px;
-  font-size: var(--text-body-size);
-  line-height: 191%;
-  color: var(--color-darkslategray);
-  width: 540px;
-  height: 98px;
-}
-.pital {
-  color: var(--color-black);
-}
-.hospital,
-.logo {
-  position: absolute;
-  height: 28.84px;
-}
-.hospital {
-  top: 0;
-  left: 0;
-  letter-spacing: 0.05em;
-  display: inline-block;
-  width: 93px;
-}
-.logo {
-  top: 98px;
-  left: 82px;
-  width: 97px;
-  color: var(--color-dodgerblue-100);
-}
-.about,
-.home1,
-.service {
-  position: absolute;
-  top: 224px;
-  left: 728px;
-  font-size: var(--text-body-size);
-  color: var(--color-black);
-  letter-spacing: 0.05em;
-  line-height: 156%;
-  text-transform: capitalize;
-  display: inline-block;
-  width: 57px;
-  height: 27px;
-}
-.about,
-.service {
-  top: 293px;
-  width: 71px;
-}
-.about {
-  top: 155px;
-  text-align: center;
-  width: 58px;
-}
-.group-child {
-  border-radius: var(--br-9xs);
-  background-color: var(--basic);
-}
-.group-child,
-.rectangle-wrapper {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-.footer-icons {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  width: 16px;
-  height: 16px;
-  overflow: hidden;
-}
-.group-container,
-.group-div {
-  position: relative;
-  width: 32px;
-  height: 32px;
-}
-.group-div {
-  box-shadow: var(--nav-shadow);
-}
-.vector-icon {
-  position: absolute;
-  height: 52.63%;
-  width: 52.63%;
-  top: 23.68%;
-  right: 23.68%;
-  bottom: 23.69%;
-  left: 23.69%;
-  max-width: 100%;
-  overflow: hidden;
-  max-height: 100%;
-}
-.group-parent {
-  position: absolute;
-  top: 289px;
-  left: 80px;
-  height: 31px;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: var(--gap-base);
-}
-.footer-item {
-  border: 0;
-  background-color: transparent;
-  position: absolute;
-  top: 162px;
-  left: 944px;
-}
-.enter-your-email {
-  position: absolute;
-  top: 174px;
-  left: 972px;
-  letter-spacing: 0.05em;
-  line-height: 50px;
-  text-transform: capitalize;
-  font-weight: 600;
-  color: var(--color-gray-200);
-}
-.btn-about-us {
-  position: absolute;
-  top: 257px;
-  left: 944px;
-}
-.footer {
-  position: absolute;
-  top: 4712px;
-  left: calc(50% - 720px);
-  width: 1440px;
-  height: 425px;
-  text-align: left;
-  font-size: var(--text-hero-size);
-  color: var(--color-black);
-  font-family: var(--text-hero);
-}
-a {
-  text-decoration: none;
-}
-a:hover {
-  text-decoration: none;
-} */
-
 .footer-container {
   display: flex;
   justify-content: space-around;
   align-items: center;
   width: 100%;
   padding: 4rem;
-  text-align: left;
   font-size: var(--text-hero-size);
   color: var(--color-black);
   font-family: var(--text-hero);
@@ -218,18 +35,14 @@ a:hover {
   color: var(--color-darkslategray);
 }
 .footer-child-1-icons {
-  height: 4rem;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   justify-content: flex-start;
   gap: var(--gap-base);
 }
-.vector-icons {
-  height: 100%;
-  width: 100%;
-  max-width: 100%;
-  max-height: 100%;
+.footer-icons {
+  transform: scale(1.4);
 }
 
 .footer-child-2 {

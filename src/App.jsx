@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Navbar from './components/Navbar';
 import Login from './components/Login';
 
+
 function App() {
   const location = useLocation();
   const pathname = location.pathname;
@@ -55,6 +56,7 @@ function App() {
       <Navbar onLoginClick={handleLoginClick} />
       <Routes>
         <Route path="/" element={showHome ? <Home /> : null} exact />
+     
       </Routes>
       {showLogin && <Login onClose={handleCloseLogin} />}
     </div>

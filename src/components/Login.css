@@ -1,15 +1,15 @@
-section {
+.login-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 90vh;
+    height: 120dvh;
     background-color: rgba(128, 128, 128, 0.329);
   }
   
   .container {
     position: relative;
     width: 25rem;
-    height: 30rem;
+    height: 43rem;
     border-radius: 0.5rem;
     overflow: hidden;
   }
@@ -20,7 +20,7 @@ section {
     top: -50%;
     left: -50%;
     width: 25rem;
-    height: 30rem;
+    height: 43rem;
     background: linear-gradient(0deg, transparent, var(--color-dodgerblue-100), var(--color-dodgerblue-100));
     transform-origin: bottom right;
     animation: animate 6s linear infinite;
@@ -33,7 +33,7 @@ section {
     top: -50%;
     left: -50%;
     width: 25rem;
-    height: 30rem;
+    height: 43rem;
     background: linear-gradient(0deg, transparent, var(--color-dodgerblue-100), var(--color-dodgerblue-100));
     transform-origin: bottom right;
     animation: animate 6s linear infinite;
@@ -131,7 +131,7 @@ section {
   }
   
   form .alt .text {
-    margin: 3.5rem auto 0;
+    margin: 2rem auto 0;
     color: #8f8f8f;
     font-size: 1rem;
     margin-bottom: -1.6rem;

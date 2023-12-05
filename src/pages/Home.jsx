@@ -16,19 +16,19 @@ const Home = () => {
           <Hero />
         </Suspense>
       </div>
-      <div className="grid-child">
+      <div>
         <OurServices />
       </div>
-      <div className="grid-child">
+      <div>
         <AboutUs />
       </div>
-      <div className="grid-child">
+      <div>
         <OurDoctors />
       </div>
-      <div className="grid-child">
+      <div>
         <Testimonials />
       </div>
-      <div className="grid-child">
+      <div>
         <Footer />
       </div>
     </div>

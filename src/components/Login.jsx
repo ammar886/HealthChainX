@@ -7,8 +7,11 @@ import "./Login.css";
 
 const Login = ({ onClose }) => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [number, setNumber] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmpassword, setConfirmPassword] = useState("");
 
   const [accounts, setAccounts] = React.useState(null);
   const [auth, setAuth] = React.useState(null);
@@ -96,21 +99,39 @@ const Login = ({ onClose }) => {
   };
 
   return (
-    <section>
+    <div className="login-container">
       <div className="container">
         <form onSubmit={handleLogin}>
           <div className="close-icon" onClick={onClose}>
             <FaTimes />
           </div>
-          <h2>Login</h2>
+          <h2>Sign Up</h2>
 
           <div className="inputfield">
             <input
               type="text"
               required
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
             />
-            <span>Username</span>
+            <span>Name</span>
+            <i></i>
+          </div>
+          <div className="inputfield">
+            <input
+              type="text"
+              required
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <span>E-Mail</span>
+            <i></i>
+          </div>
+          <div className="inputfield">
+            <input
+              type="text"
+              required
+              onChange={(e) => setNumber(e.target.value)}
+            />
+            <span>Number</span>
             <i></i>
           </div>
           <div className="inputfield">
@@ -122,18 +143,27 @@ const Login = ({ onClose }) => {
             <span>Password</span>
             <i></i>
           </div>
+          <div className="inputfield">
+            <input
+              type="password"
+              required
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            <span>Confirm Password</span>
+            <i></i>
+          </div>
 
-          <button type="submit">Log in</button>
+          <button type="submit">Sign Up</button>
 
           <div className="alt">
-            <div className="text">Or Sign in with:</div>
+            <div className="text">Alredy have an Account:</div>
             <button type="button" onClick={handleMetaMaskLogin}>
-              MetaMask
+              Login
             </button>
           </div>
         </form>
       </div>
-    </section>
+    </div>
   );
 };
 

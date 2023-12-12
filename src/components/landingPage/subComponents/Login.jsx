@@ -4,13 +4,17 @@ import { FaTimes } from "react-icons/fa"; // Import the close icon
 import Web3 from "web3";
 import "./Login.css";
 
-const Login = ({ onClose }) => {
+const Login = ({ onClose, onLogin }) => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [number, setNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmPassword] = useState("");
+
+  const adminName = "Muhammad Anis";
+  const adminPassword = "admin123";
+
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -27,6 +31,7 @@ const Login = ({ onClose }) => {
         });
         const ethereumAddress = accounts[0];
         alert("MetaMask Connection Successful! You're good to go");
+        onLogin();
         console.log(ethereumAddress);
       } catch (error) {
         console.error("Error connecting with MetaMask:", error);
@@ -38,10 +43,22 @@ const Login = ({ onClose }) => {
     }
   };
 
+  const checkCredentials = () => {
+    if (name && password) {
+      if (name === adminName && password === adminPassword) {
+        onLogin();
+      } else {
+        alert("Incorrect Username and Password");
+      }
+    } else {
+      handleMetaMaskLogin();
+    }
+  };
+
   return (
     <div className="login-container">
       <div className="container">
-        <form onSubmit={handleLogin}>
+        <form className="form-container" onSubmit={handleLogin}>
           <div className="close-icon" onClick={onClose}>
             <FaTimes />
           </div>
@@ -97,7 +114,7 @@ const Login = ({ onClose }) => {
 
           <div className="alt">
             <div className="text">Alredy have an Account:</div>
-            <button type="button" onClick={handleMetaMaskLogin}>
+            <button type="button" onClick={checkCredentials}>
               Login
             </button>
           </div>

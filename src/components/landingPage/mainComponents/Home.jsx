@@ -1,12 +1,12 @@
 import React, { lazy, Suspense } from "react";
-import Hero from "../components/Hero";
+import Hero from "../subComponents/Hero";
 import "./Home.css";
 
-const Footer = lazy(() => import("../components/Footer"));
-const Testimonials = lazy(() => import("../components/Testimonials"));
-const OurDoctors = lazy(() => import("../components/OurDoctors"));
-const AboutUs = lazy(() => import("../components/AboutUs"));
-const OurServices = lazy(() => import("../components/OurServices"));
+const Footer = lazy(() => import("../subComponents/Footer"));
+const Testimonials = lazy(() => import("../subComponents/Testimonials"));
+const OurDoctors = lazy(() => import("../subComponents/OurDoctors"));
+const AboutUs = lazy(() => import("../subComponents/AboutUs"));
+const OurServices = lazy(() => import("../subComponents/OurServices"));
 
 const Home = () => {
   return (

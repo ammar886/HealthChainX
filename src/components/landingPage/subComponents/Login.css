@@ -48,7 +48,7 @@
     }
   }
 
-  form {
+  .form-container {
     position: absolute;
     inset: 2px;
     border-radius: 8px;
@@ -59,7 +59,7 @@
     flex-direction: column;
   }
   
-  form h2 {
+  .form-container h2 {
     color: var(--color-dodgerblue-100);
     font-size: 2rem;
     font-weight: 600;
@@ -68,13 +68,13 @@
     margin-bottom: 0.6rem;
   }
   
-  form .inputfield {
+  .form-container .inputfield {
     position: relative;
     width: 315px;
     margin-top: 25px;
   }
   
-  form .inputfield input {
+  .form-container .inputfield input {
     position: relative;
     width: 100%;
     padding: 20px 10px 10px;
@@ -87,7 +87,7 @@
     z-index: 10;
   }
   
-  form .inputfield span {
+  .form-container .inputfield span {
     position: absolute;
     left: 0;
     padding: 20px 10px 10px;
@@ -98,14 +98,14 @@
     transition: 0.5s;
   }
   
-  form .inputfield input:valid ~ span,
-  form .inputfield input:focus ~ span {
+  .form-container .inputfield input:valid ~ span,
+  .form-container .inputfield input:focus ~ span {
     color: var(--color-dodgerblue-100);
     transform: translateX(-10px) translateY(-34px);
     font-size: 0.75rem;
   }
   
-  form .inputfield i {
+  .form-container .inputfield i {
     position: absolute;
     left: 0;
     bottom: 0;
@@ -117,27 +117,27 @@
     transition: 0.5s;
   }
   
-  form .inputfield input:valid ~ i,
-  form .inputfield input:focus ~ i {
+  .form-container .inputfield input:valid ~ i,
+  .form-container .inputfield input:focus ~ i {
     height: 44px;
     background: rgba(0, 153, 255, 0.278);
   }
   
-  form .alt {
+  .form-container .alt {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
   }
   
-  form .alt .text {
+  .form-container .alt .text {
     margin: 2rem auto 0;
     color: #8f8f8f;
     font-size: 1rem;
     margin-bottom: -1.6rem;
   }
 
-  form button {
+  .form-container button {
     border: none;
     outline: none;
     padding: 11px 25px;

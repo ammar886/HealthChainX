@@ -2,7 +2,7 @@
   "name": "healthchainx",
   "private": true,
   "version": "0.0.0",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -12,11 +12,6 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-<<<<<<< HEAD
-    "@mui/icons-material": "^5.14.14",
-    "@mui/material": "^5.14.14",
-    "@truffle/hdwallet-provider": "^2.1.15",
-=======
     "@mui/icons-material": "^5.14.19",
     "@mui/material": "^5.14.20",
     "@mui/x-data-grid": "^6.18.4",
@@ -27,7 +22,6 @@
     "@nivo/pie": "^0.84.0",
     "formik": "^2.4.5",
     "i": "^0.3.7",
->>>>>>> anis-beta
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.12.0",

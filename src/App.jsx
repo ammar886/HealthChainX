@@ -1,26 +1,31 @@
-import React, { useLayoutEffect, useState } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
-import Home from './pages/Home';
-import Navbar from './components/Navbar';
-import Login from './components/Login';
+import React, { useEffect, useState } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import LandingPage from "./pages/landingPage";
+import Admin from "./pages/adminPage";
 
 
 function App() {
   const location = useLocation();
   const pathname = location.pathname;
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     let title = "";
     let metaDescription = "";
 
     switch (pathname) {
       case "/":
-        title = "";
-        metaDescription = "";
+        title = "HealthChainX";
+        metaDescription = "Electronic Health Care System.";
+        break;
+      case "/admin":
+        title = "Admin Dashboard";
+        metaDescription = "Electronic Health Care System's Admin Dashboard.";
+        break;
+      default:
         break;
     }
 
@@ -38,27 +43,36 @@ function App() {
     }
   }, [pathname]);
 
-  const [showHome, setShowHome] = useState(true);
-  const [showLogin, setShowLogin] = useState(false);
+  const [showLandingPage, setShowLandingPage] = useState(true);
 
-  const handleLoginClick = () => {
-    setShowHome(false); // Hide the Home component
-    setShowLogin(true);
+  const handleShowAdminPageClick = () => {
+    setShowLandingPage(false); // Hide the Home component
   };
 
-  const handleCloseLogin = () => {
-    setShowHome(true); // Show the Home component
-    setShowLogin(false);
+  const handleBackToLandingPageClick = () => {
+    setShowLandingPage(true); // Show the LandingPage component
   };
 
   return (
     <div>
-      <Navbar onLoginClick={handleLoginClick} />
       <Routes>
+<<<<<<< HEAD
         <Route path="/" element={showHome ? <Home /> : null} exact />
      
+=======
+        <Route path="/admin" element={<Admin />} />
+        <Route
+          path="*"
+          element={
+            showLandingPage ? (
+              <LandingPage onShowAdminPageClick={handleShowAdminPageClick} />
+            ) : (
+              <Admin onBackToLandingPageClick={handleBackToLandingPageClick} />
+            )
+          }
+        />
+>>>>>>> anis-beta
       </Routes>
-      {showLogin && <Login onClose={handleCloseLogin} />}
     </div>
   );
 }

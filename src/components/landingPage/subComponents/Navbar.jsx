@@ -26,7 +26,7 @@ const Navbar = ({ onLoginClick }) => {
           variant="outlined"
           onClick={onLoginClick} // Trigger the parent component's state change
         >
-          Login
+          Sign Up
         </Button>
       </div>
     </div>

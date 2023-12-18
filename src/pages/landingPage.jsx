@@ -9,20 +9,30 @@ import {
 import Home from "../components/landingPage/mainComponents/Home";
 import Navbar from "../components/landingPage/subComponents/Navbar";
 import Login from "../components/landingPage/subComponents/Login";
+import Signup from "../components/landingPage/subComponents/Signup";
 
 const muiTheme = createTheme();
 
 function landingPage({ onShowAdminPageClick }) {
   const [showHome, setShowHome] = useState(true);
   const [showLogin, setShowLogin] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
 
   const handleLoginClick = () => {
-    setShowHome(false); // Hide the Home component
+    setShowHome(false); // Show the Login component and Hide other Component
     setShowLogin(true);
+    setShowSignup(false);
   };
 
-  const handleCloseLogin = () => {
-    setShowHome(true); // Show the Home component
+  const handleCloseForm = () => {
+    setShowHome(true); // Show the Home component and Hide other Component
+    setShowLogin(false);
+    setShowSignup(false);
+  };
+
+  const handleSignupClick = () => {
+    setShowHome(false); // Show the Signup component and Hide other Component
+    setShowSignup(true);
     setShowLogin(false);
   };
 
@@ -35,7 +45,8 @@ function landingPage({ onShowAdminPageClick }) {
           <Routes>
             <Route path="/" element={showHome ? <Home /> : null} exact />
           </Routes>
-          {showLogin && <Login onClose={handleCloseLogin} onLogin={onShowAdminPageClick} />}
+          {showLogin && <Login onClose={handleCloseForm} onLogin={onShowAdminPageClick} onSignup={handleSignupClick} />}
+          {showSignup && <Signup onClose={handleCloseForm} onLogin={handleLoginClick} />}
         </div>
       </ThemeProvider>
     </StyledEngineProvider>

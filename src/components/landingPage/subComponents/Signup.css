@@ -1,39 +1,39 @@
-.login-form-main-container {
+.signup-form-main-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 90dvh;
+    height: 120dvh;
     background-color: rgba(128, 128, 128, 0.329);
   }
   
-  .login-container {
+  .signup-container {
     position: relative;
     width: 25rem;
-    height: 30rem;
+    height: 43rem;
     border-radius: 0.5rem;
     overflow: hidden;
   }
   
-  .login-container::after {
+  .signup-container::after {
     content: "";
     position: absolute;
     top: -50%;
     left: -50%;
     width: 25rem;
-    height: 30rem;
+    height: 43rem;
     background: linear-gradient(0deg, transparent, var(--color-dodgerblue-100), var(--color-dodgerblue-100));
     transform-origin: bottom right;
     animation: animate 6s linear infinite;
     animation-delay: -3s;
   }
   
-  .login-container::before {
+  .signup-container::before {
     content: "";
     position: absolute;
     top: -50%;
     left: -50%;
     width: 25rem;
-    height: 30rem;
+    height: 43rem;
     background: linear-gradient(0deg, transparent, var(--color-dodgerblue-100), var(--color-dodgerblue-100));
     transform-origin: bottom right;
     animation: animate 6s linear infinite;
@@ -48,7 +48,7 @@
     }
   }
 
-  .login-form-container {
+  .signup-form-container {
     position: absolute;
     inset: 2px;
     border-radius: 8px;
@@ -59,7 +59,7 @@
     flex-direction: column;
   }
   
-  .login-form-container h2 {
+  .signup-form-container h2 {
     color: var(--color-dodgerblue-100);
     font-size: 2rem;
     font-weight: 600;
@@ -68,13 +68,13 @@
     margin-bottom: 0.6rem;
   }
   
-  .login-form-container .login-inputfield {
+  .signup-form-container .signup-inputfield {
     position: relative;
     width: 315px;
     margin-top: 25px;
   }
   
-  .login-form-container .login-inputfield input {
+  .signup-form-container .signup-inputfield input {
     position: relative;
     width: 100%;
     padding: 20px 10px 10px;
@@ -87,7 +87,7 @@
     z-index: 10;
   }
   
-  .login-form-container .login-inputfield span {
+  .signup-form-container .signup-inputfield span {
     position: absolute;
     left: 0;
     padding: 20px 10px 10px;
@@ -98,14 +98,14 @@
     transition: 0.5s;
   }
   
-  .login-form-container .login-inputfield input:valid ~ span,
-  .login-form-container .login-inputfield input:focus ~ span {
+  .signup-form-container .signup-inputfield input:valid ~ span,
+  .signup-form-container .signup-inputfield input:focus ~ span {
     color: var(--color-dodgerblue-100);
     transform: translateX(-10px) translateY(-34px);
     font-size: 0.75rem;
   }
   
-  .login-form-container .login-inputfield i {
+  .signup-form-container .signup-inputfield i {
     position: absolute;
     left: 0;
     bottom: 0;
@@ -117,27 +117,27 @@
     transition: 0.5s;
   }
   
-  .login-form-container .login-inputfield input:valid ~ i,
-  .login-form-container .login-inputfield input:focus ~ i {
+  .signup-form-container .signup-inputfield input:valid ~ i,
+  .signup-form-container .signup-inputfield input:focus ~ i {
     height: 44px;
     background: rgba(0, 153, 255, 0.278);
   }
   
-  .login-form-container .login-alt {
+  .signup-form-container .signup-alt {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
   }
   
-  .login-form-container .login-alt .login-text {
+  .signup-form-container .signup-alt .signup-text {
     margin: 2rem auto 0;
     color: #8f8f8f;
     font-size: 1rem;
     margin-bottom: -1.6rem;
   }
 
-  .login-form-container button {
+  .signup-form-container button {
     border: none;
     outline: none;
     padding: 11px 25px;
@@ -150,7 +150,7 @@
     cursor: pointer;
   }
 
-  .login-close-icon {
+  .signup-close-icon {
     position: absolute;
     right: 1rem;
     width: 1.5rem;

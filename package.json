@@ -2,7 +2,7 @@
   "name": "healthchainx",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -12,23 +12,24 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.14.19",
-    "@mui/material": "^5.14.20",
-    "@mui/x-data-grid": "^6.18.4",
+    "@mui/icons-material": "^5.15.0",
+    "@mui/material": "^5.15.0",
+    "@mui/x-data-grid": "^6.18.5",
     "@nivo/bar": "^0.84.0",
     "@nivo/core": "^0.84.0",
     "@nivo/geo": "^0.84.0",
     "@nivo/line": "^0.84.0",
     "@nivo/pie": "^0.84.0",
+    "@truffle/hdwallet-provider": "^2.1.15",
     "formik": "^2.4.5",
     "i": "^0.3.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.12.0",
     "react-pro-sidebar": "^0.7.1",
-    "react-router-dom": "^6.20.1",
+    "react-router-dom": "^6.21.0",
     "web3": "^4.2.2",
-    "yup": "^1.3.2"
+    "yup": "^1.3.3"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

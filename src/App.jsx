@@ -56,10 +56,6 @@ function App() {
   return (
     <div>
       <Routes>
-<<<<<<< HEAD
-        <Route path="/" element={showHome ? <Home /> : null} exact />
-     
-=======
         <Route path="/admin" element={<Admin />} />
         <Route
           path="*"
@@ -71,7 +67,6 @@ function App() {
             )
           }
         />
->>>>>>> anis-beta
       </Routes>
     </div>
   );

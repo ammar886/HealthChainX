@@ -124,9 +124,9 @@ const Dashboard = () => {
           />
         </Box>
 
-        {/* ROW 2 */}
+        {/* ROW 2
         <Box
-          gridColumn="span 8"
+          gridColumn="span 12"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
         >
@@ -164,10 +164,10 @@ const Dashboard = () => {
           <Box height="250px" m="-20px 0 0 0">
             <LineChart isDashboard={true} />
           </Box>
-        </Box>
+          </Box> */}
         <Box
-          gridColumn="span 4"
-          gridRow="span 2"
+          gridColumn="span 12"
+          gridRow="span 3"
           backgroundColor={colors.primary[400]}
           overflow="auto"
         >
@@ -217,7 +217,7 @@ const Dashboard = () => {
         </Box>
 
         {/* ROW 3 */}
-        <Box
+        {/* <Box
           gridColumn="span 4"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
@@ -275,7 +275,7 @@ const Dashboard = () => {
           <Box height="200px">
             <GeographyChart isDashboard={true} />
           </Box>
-        </Box>
+        </Box> */}
       </Box>
     </Box>
   );

@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaTimes } from "react-icons/fa"; // Import the close icon
-import { loadBlockchainData, loadWeb3 } from "../../../Web3helpers";
-import Web3 from "web3";
+import { FaTimes } from "react-icons/fa";
+import { loadWeb3 } from "../../../Web3helpers";
 import "./Signup.css";
 
-const Login = ({ onClose, onLogin }) => {
+const Signup = ({ onCloseIcon, onLoginButton }) => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -59,7 +58,7 @@ const Login = ({ onClose, onLogin }) => {
     <div className="signup-form-main-container">
       <div className="signup-container">
         <form className="signup-form-container" onSubmit={handleSignup}>
-          <div className="signup-close-icon" onClick={onClose}>
+          <div className="signup-close-icon" onClick={onCloseIcon}>
             <FaTimes />
           </div>
           <h2>Sign Up</h2>
@@ -114,7 +113,7 @@ const Login = ({ onClose, onLogin }) => {
 
           <div className="signup-alt">
             <div className="signup-text">Alredy have an Account:</div>
-            <button type="button" onClick={onLogin}>
+            <button type="button" onClick={onLoginButton}>
               Login
             </button>
           </div>
@@ -124,4 +123,4 @@ const Login = ({ onClose, onLogin }) => {
   );
 };
 
-export default Login;
+export default Signup;

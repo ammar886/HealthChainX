@@ -45,8 +45,8 @@ function landingPage({ onShowAdminPageClick }) {
           <Routes>
             <Route path="/" element={showHome ? <Home /> : null} exact />
           </Routes>
-          {showLogin && <Login onClose={handleCloseForm} onLogin={onShowAdminPageClick} onSignup={handleSignupClick} />}
-          {showSignup && <Signup onClose={handleCloseForm} onLogin={handleLoginClick} />}
+          {showLogin && <Login onCloseIcon={handleCloseForm} onLoginSuccess={onShowAdminPageClick} onSignupButton={handleSignupClick} />}
+          {showSignup && <Signup onCloseIcon={handleCloseForm} onLoginButton={handleLoginClick} />}
         </div>
       </ThemeProvider>
     </StyledEngineProvider>

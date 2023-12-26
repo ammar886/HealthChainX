@@ -8,7 +8,7 @@ const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
   const handleFormSubmit = (values) => {
-    console.log(values);
+    console.log(values.lastName);
   };
 
   return (
@@ -131,9 +131,9 @@ const Form = () => {
                 sx={{ gridColumn: "span 4" }}
               >
                 <MenuItem value="">Select User Role</MenuItem>
-                <MenuItem value="admin">Admin</MenuItem>
-                <MenuItem value="editor">Doctor</MenuItem>
-                <MenuItem value="viewer">Receptionist</MenuItem>
+                <MenuItem value="doctor">Doctor</MenuItem>
+                <MenuItem value="receptionist">Receptionist</MenuItem>
+                <MenuItem value="patient">Patient</MenuItem>
               </TextField>
             </Box>
 
@@ -161,7 +161,7 @@ const checkoutSchema = yup.object().shape({
     .matches(phoneRegExp, "Phone number is not valid")
     .required("required"),
   address1: yup.string().required("required"),
-  address2: yup.string().required("required"),
+  // address2: yup.string().required("required"),
   userRole: yup.string().required("Please select a user role"),
 });
 

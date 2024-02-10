@@ -37,33 +37,82 @@ const Login = ({ onCloseIcon, onLoginSuccess, onSignupButton }) => {
     }
   }, [isAuthentic, onLoginSuccess]);
 
-  const handleSubmission = async () => {
+  // const handleSubmission = async () => {
+  //   try {
+  //     const accounts = await window.ethereum.request({
+  //       method: "eth_requestAccounts",
+  //     });
+
+  //     const account = accounts[0];
+  //     console.log(account);
+  //     const authentic = await auth.methods
+  //       .authenticateLogin(name, password)
+  //       .call({ from: account });
+
+  //     setIsAuthentic(authentic);
+
+  //     const isWhat = await auth.methods
+  //       .getUserData(name)
+  //       .call({ from: account });
+
+  //     if (authentic) {
+  //       alert("Login Successful!");
+  //     } else {
+  //       alert("Login unsuccessful!");
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  //latest handleSubmission Function
+  const handleSubmission = async (e) => {
     try {
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
+      e.preventDefault();
 
-      const account = accounts[0];
-      console.log(account);
-      const authentic = await auth.methods
-        .authenticateLogin(name, password)
-        .call({ from: account });
+      if (name && password) {
+        if (name === adminName && password === adminPassword) {
+          alert("Admin Hardcore.");
+          onLoginSuccess();
+        } else {
+          const accounts = await window.ethereum.request({
+            method: "eth_requestAccounts",
+          });
+    
+          const account = accounts[0];
+          console.log(account);
+          const isauthentic = await auth.methods
+            .authenticateLogin(name, password)
+            .call({ from: account });
+          
+            // setIsAuthentic(isauthentic);
+          
+    
+          const isWhat = await auth.methods
+            .getUserData(name)
+            .call({ from: account });
 
-      setIsAuthentic(authentic);
+            console.log(isauthentic);
+            console.log(isWhat);
 
-      const isWhat = await auth.methods
-        .getUserData(name)
-        .call({ from: account });
-
-      if (authentic) {
-        alert("Login Successful!");
+            console.log("Name:" , name);
+            console.log("Password: ", password);
+    
+          if (isauthentic) {
+            alert("Login Successful!");
+          } else {
+            alert("Login unsuccessful!");
+          }
+          alert("User Login.");
+        }
       } else {
-        alert("Login unsuccessful!");
+        await handleMetaMaskLogin();
+        alert("Metamask Login.");
       }
     } catch (error) {
       console.error(error);
-    }
-  };
+    }
+  };
 
   // const handleSubmission = async (e) => {
   //   try {
@@ -116,30 +165,30 @@ const Login = ({ onCloseIcon, onLoginSuccess, onSignupButton }) => {
     }
   };
 
-  const checkCredentials = async (e) => {
-    try {
-      e.preventDefault();
-      if (name && password) {
-        if (name === adminName && password === adminPassword) {
-          alert("Admin Hardcore.");
-          onLoginSuccess();
-        } else {
-          await handleSubmission();
-          alert("User Login.");
-        }
-      } else {
-        await handleMetaMaskLogin();
-        alert("Metamask Login.");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const checkCredentials = async (e) => {
+  //   try {
+  //     e.preventDefault();
+  //     if (name && password) {
+  //       if (name === adminName && password === adminPassword) {
+  //         alert("Admin Hardcore.");
+  //         onLoginSuccess();
+  //       } else {
+  //         await handleSubmission();
+  //         alert("User Login.");
+  //       }
+  //     } else {
+  //       await handleMetaMaskLogin();
+  //       alert("Metamask Login.");
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   return (
     <div className="login-form-main-container">
       <div className="login-container">
-        <form className="login-form-container" onSubmit={checkCredentials}>
+        <form className="login-form-container" onSubmit={handleSubmission}>
           <div className="login-close-icon" onClick={onCloseIcon}>
             <FaTimes />
           </div>

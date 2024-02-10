@@ -1,15 +1,72 @@
+import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, MenuItem } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../subComponents/Header";
+import { loadBlockchainData, loadWeb3 } from "../../../Web3helpers";
+import Web3 from "web3";
 
 const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  const [accounts, setAccounts] = React.useState(null);
+  const [auth, setAuth] = React.useState(null);
+  const loadAccounts = async () => {
+    let { auth, accounts } = await loadBlockchainData();
+  
+    setAccounts(accounts);
+    setAuth(auth);
+  };
+  
+  React.useEffect(() => {
+    loadWeb3();
+  }, []);
+  
+  React.useEffect(() => {
+    loadAccounts();
+  }, []);
 
   const handleFormSubmit = (values) => {
     console.log(values.lastName);
-  };
+    localStorage.setItem("firstname",values.firstName);
+    localStorage.setItem("lastname",values.lastName);
+    localStorage.setItem("email",values.email);
+    localStorage.setItem("contact",values.contact);
+    localStorage.setItem("address-1",values.address1);
+    localStorage.setItem("address-2",values.address2);
+    localStorage.setItem("role",values.userRole);
+
+
+    employeeCreation(values);
+  
+
+};
+
+
+
+
+const employeeCreation = async(values) => {
+  try{
+
+    console.log(auth); // Check the value of auth
+    console.log(auth.methods); 
+
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const account = accounts[0]; // The first account is the user's primary account
+
+  // Send the transaction to the blockchain
+  await auth.methods
+    .createEmployee(values.firstName, values.lastName, values.email, values.contact, values.address1, values.address2, values.userRole)
+    .send({ from: account });
+
+    alert("Employee Created Succesfully!");
+  }catch(e){
+    console.error(e.message);
+    alert("Something went wrong!");
+  }
+
+  
+};
 
   return (
     <Box m="20px">

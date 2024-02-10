@@ -10,11 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.1",
+    "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.15.0",
-    "@mui/material": "^5.15.0",
-    "@mui/x-data-grid": "^6.18.5",
+    "@mui/icons-material": "^5.15.2",
+    "@mui/material": "^5.15.2",
+    "@mui/x-data-grid": "^6.18.6",
     "@nivo/bar": "^0.84.0",
     "@nivo/core": "^0.84.0",
     "@nivo/geo": "^0.84.0",
@@ -27,7 +27,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.12.0",
     "react-pro-sidebar": "^0.7.1",
-    "react-router-dom": "^6.21.0",
+    "react-router-dom": "^6.21.1",
     "web3": "^4.2.2",
     "yup": "^1.3.3"
   },

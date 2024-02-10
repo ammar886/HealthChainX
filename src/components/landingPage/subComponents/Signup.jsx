@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaTimes } from "react-icons/fa";
-import { loadWeb3 } from "../../../Web3helpers";
+import { FaTimes } from "react-icons/fa"; // Import the close icon
+import { loadBlockchainData, loadWeb3 } from "../../../Web3helpers";
+import Web3 from "web3";
 import "./Signup.css";
 
 const Signup = ({ onCloseIcon, onLoginButton }) => {
@@ -11,9 +12,22 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
   const [number, setNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmPassword] = useState("");
+  const [accounts, setAccounts] = React.useState(null);
+  const [auth, setAuth] = React.useState(null);
+
+  const loadAccounts = async () => {
+    let { auth, accounts } = await loadBlockchainData();
+
+    setAccounts(accounts);
+    setAuth(auth);
+  };
 
   React.useEffect(() => {
     loadWeb3();
+  }, []);
+
+  React.useEffect(() => {
+    loadAccounts();
   }, []);
   
   const handleSignup = async (e) => {

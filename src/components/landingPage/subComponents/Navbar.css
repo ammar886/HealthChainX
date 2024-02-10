@@ -19,6 +19,10 @@
   height: 1.8rem;
   letter-spacing: 0.05em;
 }
+
+.navbar-logo:hover{
+  cursor: pointer;
+}
 .second-half {
   color: var(--color-black);
 }

@@ -29,8 +29,17 @@ export const AuthProvider = ({ children }) => {
     setUserRoleState(value);
   };
 
+  const logout = () => {
+    React.startTransition(() => {
+      setIsAuthenticated(false);
+      setUserRole(null);
+    });
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userRole');
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, userRole, setUserRole }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, userRole, setUserRole, logout }}>
       {children}
     </AuthContext.Provider>
   );

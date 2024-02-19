@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../../context/AuthContext';
 import { Box, IconButton, useTheme } from "@mui/material";
 import { useContext } from "react";
 import { ColorModeContext, tokens } from "../../../theme";
@@ -9,10 +11,17 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 
-const Topbar = ({ logOut }) => {
+const Topbar = () => {
+  const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
@@ -43,8 +52,8 @@ const Topbar = ({ logOut }) => {
         <IconButton>
           <SettingsOutlinedIcon />
         </IconButton>
-        <IconButton>
-          <PersonOutlinedIcon onClick={logOut} />
+        <IconButton onClick={handleLogout}>
+          <PersonOutlinedIcon />
         </IconButton>
       </Box>
     </Box>

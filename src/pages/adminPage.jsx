@@ -17,7 +17,7 @@ import { ColorModeContext, useMode } from "../theme";
 import { AuthContext } from '../context/AuthContext';
 
 
-function AdminPage({ onBackToLandingPageClick }) {
+function AdminPage() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const { isAuthenticated } = useContext(AuthContext);
@@ -36,7 +36,7 @@ function AdminPage({ onBackToLandingPageClick }) {
         <div className="app">
           <Sidebar isSidebar={isSidebar} />
           <main className="content">
-            <Topbar setIsSidebar={setIsSidebar} logOut={onBackToLandingPageClick} />
+            <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="team" element={<Team />} />

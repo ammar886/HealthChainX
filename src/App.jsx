@@ -17,6 +17,17 @@ function App() {
     window.scrollTo(0, 0);
   }, [pathname]);
 
+  useEffect(() => {
+    // Retrieve the authentication data from localStorage when the component mounts
+    const storedIsAuthenticated = localStorage.getItem('isAuthenticated');
+    const storedUserRole = localStorage.getItem('userRole');
+
+    // If the user is authenticated and the user role is valid, navigate to the appropriate page
+    if (storedIsAuthenticated === 'true' && ['Admin', 'Doctor', 'Receptionist', 'Patient'].includes(storedUserRole)) {
+      navigate(`/${storedUserRole.toLowerCase()}`);
+    }
+  }, []);
+
   return (
     <div>
       <Routes>

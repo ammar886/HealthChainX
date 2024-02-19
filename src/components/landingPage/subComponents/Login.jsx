@@ -1,11 +1,28 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useContext } from "react";
 import { FaTimes } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 import { loadBlockchainData, loadWeb3 } from "../../../Web3helpers";
+import { AuthContext } from "../../../context/AuthContext";
 import "./Login.css";
 
-const Login = ({ onCloseIcon, onLoginSuccess, onSignupButton }) => {
+const Login = ({ onCloseIcon, onSignupButton }) => {
+
   const navigate = useNavigate();
+  const handleSignupClick = () => {
+    onSignupButton();
+    navigate('/signup');
+  };
+
+  const handleClose = () => {
+    onCloseIcon();
+    navigate('/');
+  };
+
+  const { isAuthenticated, userRole, setIsAuthenticated, setUserRole } = useContext(AuthContext);
+
+  const adminName = "Muhammad Anis";
+  const adminPassword = "admin123";
+
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
@@ -20,9 +37,6 @@ const Login = ({ onCloseIcon, onLoginSuccess, onSignupButton }) => {
     setAuth(auth);
   };
 
-  const adminName = "Muhammad Anis";
-  const adminPassword = "admin123";
-
   React.useEffect(() => {
     loadWeb3();
   }, []);
@@ -32,40 +46,16 @@ const Login = ({ onCloseIcon, onLoginSuccess, onSignupButton }) => {
   }, []);
 
   React.useEffect(() => {
-    if (isAuthentic) {
-      onLoginSuccess();
-    }
-  }, [isAuthentic, onLoginSuccess]);
+    console.log('Is authenticated:', isAuthenticated);
+    console.log('User role:', userRole);
+  }, [isAuthenticated, userRole]);
 
-  // const handleSubmission = async () => {
-  //   try {
-  //     const accounts = await window.ethereum.request({
-  //       method: "eth_requestAccounts",
-  //     });
-
-  //     const account = accounts[0];
-  //     console.log(account);
-  //     const authentic = await auth.methods
-  //       .authenticateLogin(name, password)
-  //       .call({ from: account });
-
-  //     setIsAuthentic(authentic);
-
-  //     const isWhat = await auth.methods
-  //       .getUserData(name)
-  //       .call({ from: account });
-
-  //     if (authentic) {
-  //       alert("Login Successful!");
-  //     } else {
-  //       alert("Login unsuccessful!");
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
+  // React.useEffect(() => {
+  //   if (isAuthentic) {
+  //     onLogin();
   //   }
-  // };
+  // }, [isAuthentic, onLogin]);
 
-  //latest handleSubmission Function
   const handleSubmission = async (e) => {
     try {
       e.preventDefault();
@@ -73,7 +63,9 @@ const Login = ({ onCloseIcon, onLoginSuccess, onSignupButton }) => {
       if (name && password) {
         if (name === adminName && password === adminPassword) {
           alert("Admin Hardcore.");
-          onLoginSuccess();
+          setIsAuthenticated(true);
+          setUserRole("Admin");
+          navigate("/admin");
         } else {
           const accounts = await window.ethereum.request({
             method: "eth_requestAccounts",
@@ -84,26 +76,51 @@ const Login = ({ onCloseIcon, onLoginSuccess, onSignupButton }) => {
           const isauthentic = await auth.methods
             .authenticateLogin(name, password)
             .call({ from: account });
-          
-            // setIsAuthentic(isauthentic);
-          
-    
-          const isWhat = await auth.methods
+
+          const isUser = await auth.methods
             .getUserData(name)
             .call({ from: account });
 
             console.log(isauthentic);
-            console.log(isWhat);
+            console.log(isUser);
 
             console.log("Name:" , name);
             console.log("Password: ", password);
     
           if (isauthentic) {
-            alert("Login Successful!");
+            if (isUser && isUser.userRole) {
+              const userRole = isUser.userRole;
+
+              switch (userRole) {
+                case "Patient":
+                  setIsAuthenticated(true);
+                  setUserRole(userRole);
+                  navigate("/patient");
+                  alert("Patient Account.");
+                  break;
+                case "Doctor":
+                  setIsAuthenticated(true);
+                  setUserRole(userRole);
+                  navigate("/Doctor");
+                  alert("Patient Account.");
+                  break;
+                case "Receptionist":
+                  setIsAuthenticated(true);
+                  setUserRole(userRole);
+                  navigate("/receptionist");
+                  alert("Receptionist Account.");
+                  break;
+                default:
+                  console.error("Unknown user role:", userRole);
+                  alert("Invalid or unknown user role");
+              }        
+            } else {
+              console.error("User data missing role field");
+              alert("User data missing role information");
+            }
           } else {
-            alert("Login unsuccessful!");
+            alert("Account not found. Please sign up.");
           }
-          alert("User Login.");
         }
       } else {
         await handleMetaMaskLogin();
@@ -114,37 +131,6 @@ const Login = ({ onCloseIcon, onLoginSuccess, onSignupButton }) => {
     }
   };
 
-  // const handleSubmission = async (e) => {
-  //   try {
-  //     e.preventDefault();
-
-  //     const accounts = await window.ethereum.request({
-  //       method: "eth_requestAccounts",
-  //     });
-  //     const account = accounts[0];
-  //     console.log(account);
-  //     const isAuthentic = await auth.methods
-  //       .authenticateLogin(name, password)
-  //       .call({ from: account });
-
-  //     const isWhat = await auth.methods
-  //       .getUserData(name)
-  //       .call({ from: account });
-
-  //     if (isAuthentic) {
-  //       alert("Login Succesfull!");
-  //       console.log(isAuthentic);
-  //     } else {
-  //       console.log(isAuthentic);
-  //       console.log("isWhat below:");
-  //       console.log(isWhat);
-  //       alert("Login unsuccesfull!");
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
   const handleMetaMaskLogin = async () => {
     if (window.ethereum) {
       try {
@@ -153,7 +139,9 @@ const Login = ({ onCloseIcon, onLoginSuccess, onSignupButton }) => {
         });
         const ethereumAddress = accounts[0];
         alert("MetaMask Connection Successful! You're good to go");
-        onLoginSuccess();
+        setIsAuthenticated(true);
+        setUserRole("Patient");
+        navigate("/patient");
         console.log(ethereumAddress);
       } catch (error) {
         console.error("Error connecting with MetaMask:", error);
@@ -165,31 +153,11 @@ const Login = ({ onCloseIcon, onLoginSuccess, onSignupButton }) => {
     }
   };
 
-  // const checkCredentials = async (e) => {
-  //   try {
-  //     e.preventDefault();
-  //     if (name && password) {
-  //       if (name === adminName && password === adminPassword) {
-  //         alert("Admin Hardcore.");
-  //         onLoginSuccess();
-  //       } else {
-  //         await handleSubmission();
-  //         alert("User Login.");
-  //       }
-  //     } else {
-  //       await handleMetaMaskLogin();
-  //       alert("Metamask Login.");
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
   return (
     <div className="login-form-main-container">
       <div className="login-container">
         <form className="login-form-container" onSubmit={handleSubmission}>
-          <div className="login-close-icon" onClick={onCloseIcon}>
+          <div className="login-close-icon" onClick={handleClose}>
             <FaTimes />
           </div>
           <h2>Login</h2>
@@ -212,7 +180,7 @@ const Login = ({ onCloseIcon, onLoginSuccess, onSignupButton }) => {
 
           <div className="login-alt">
             <div className="login-text">Alredy have an Account:</div>
-            <button type="button" onClick={onSignupButton}>
+            <button type="button" onClick={handleSignupClick}>
               Sign Up
             </button>
           </div>

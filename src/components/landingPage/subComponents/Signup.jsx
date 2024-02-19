@@ -6,11 +6,23 @@ import Web3 from "web3";
 import "./Signup.css";
 
 const Signup = ({ onCloseIcon, onLoginButton }) => {
+  
   const navigate = useNavigate();
+  const handleLoginClick = () => {
+    onLoginButton();
+    navigate('/login');
+  };
+
+  const handleClose = () => {
+    onCloseIcon();
+    navigate('/');
+  };
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [number, setNumber] = useState("");
   const [password, setPassword] = useState("");
+  const [userRole, setUserRole] = useState("Patient");
   const [confirmpassword, setConfirmPassword] = useState("");
   const [accounts, setAccounts] = React.useState(null);
   const [auth, setAuth] = React.useState(null);
@@ -41,7 +53,7 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
   
       // Send the transaction to the blockchain
       await auth.methods
-        .createUser(name, password, email, number)
+        .createUser(name, password, email, number, userRole)
         .send({ from: account });
   
       // Store the username, password, and wallet address in local storage
@@ -49,6 +61,7 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
       localStorage.setItem("email", email);
       localStorage.setItem("username", number);
       localStorage.setItem("password", password);
+      localStorage.setItem("userRole", userRole);
       localStorage.setItem("walletAddress", account);
       
 
@@ -56,6 +69,7 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
       console.log(password);
       console.log(email);
       console.log(number);
+      console.log(userRole);
       console.log(account);
 
       
@@ -72,7 +86,7 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
     <div className="signup-form-main-container">
       <div className="signup-container">
         <form className="signup-form-container" onSubmit={handleSignup}>
-          <div className="signup-close-icon" onClick={onCloseIcon}>
+          <div className="signup-close-icon" onClick={handleClose}>
             <FaTimes />
           </div>
           <h2>Sign Up</h2>
@@ -127,7 +141,7 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
 
           <div className="signup-alt">
             <div className="signup-text">Alredy have an Account:</div>
-            <button type="button" onClick={onLoginButton}>
+            <button type="button" onClick={handleLoginClick}>
               Login
             </button>
           </div>

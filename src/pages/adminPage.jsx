@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { useState, useContext, useEffect } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Topbar from "../components/admin/mainComponents/Topbar";
 import Sidebar from "../components/admin/mainComponents/Sidebar";
 import Dashboard from "../components/admin/mainComponents/Dashboard";
@@ -14,11 +14,20 @@ import FAQ from "../components/admin/mainComponents/Faq";
 import Geography from "../components/admin/mainComponents/Geography";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "../theme";
+import { AuthContext } from '../context/AuthContext';
 
 
-function App({ onBackToLandingPageClick }) {
+function AdminPage({ onBackToLandingPageClick }) {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
+  const { isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -30,15 +39,15 @@ function App({ onBackToLandingPageClick }) {
             <Topbar setIsSidebar={setIsSidebar} logOut={onBackToLandingPageClick} />
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/team" element={<Team />} />
-              <Route path="/contacts" element={<Contacts />} />
-              <Route path="/invoices" element={<Invoices />} />
-              <Route path="/form" element={<Form />} />
-              <Route path="/bar" element={<Bar />} />
-              <Route path="/pie" element={<Pie />} />
-              <Route path="/line" element={<Line />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/geography" element={<Geography />} />
+              <Route path="team" element={<Team />} />
+              <Route path="contacts" element={<Contacts />} />
+              <Route path="invoices" element={<Invoices />} />
+              <Route path="form" element={<Form />} />
+              <Route path="bar" element={<Bar />} />
+              <Route path="pie" element={<Pie />} />
+              <Route path="line" element={<Line />} />
+              <Route path="faq" element={<FAQ />} />
+              <Route path="geography" element={<Geography />} />
             </Routes>
           </main>
         </div>
@@ -47,4 +56,4 @@ function App({ onBackToLandingPageClick }) {
   );
 }
 
-export default App;
+export default AdminPage;

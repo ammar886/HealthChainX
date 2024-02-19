@@ -1,72 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
-import LandingPage from "./pages/landingPage";
-import Admin from "./pages/adminPage";
-
+import React, { useEffect, useContext } from "react";
+import { Routes, Route, useLocation, Navigate, useNavigate } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
+import AdminPage from "./pages/AdminPage";
+import DoctorPage from "./pages/DoctorPage";
+import PatientPage from "./pages/PatientPage";
+import ReceptionistPage from "./pages/ReceptionistPage";
+import { AuthContext } from './context/AuthContext';
 
 function App() {
+  const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
+  const { isAuthenticated, userRole } = useContext(AuthContext);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  useEffect(() => {
-    let title = "";
-    let metaDescription = "";
-
-    switch (pathname) {
-      case "/":
-        title = "HealthChainX";
-        metaDescription = "Electronic Health Care System.";
-        break;
-      case "/admin":
-        title = "Admin Dashboard";
-        metaDescription = "Electronic Health Care System's Admin Dashboard.";
-        break;
-      default:
-        break;
-    }
-
-    if (title) {
-      document.title = title;
-    }
-
-    if (metaDescription) {
-      const metaDescriptionTag = document.querySelector(
-        'head > meta[name="description"]'
-      );
-      if (metaDescriptionTag) {
-        metaDescriptionTag.content = metaDescription;
-      }
-    }
-  }, [pathname]);
-
-  const [showLandingPage, setShowLandingPage] = useState(true);
-
-  const handleShowAdminPageClick = () => {
-    setShowLandingPage(false); // Hide the Home component
-  };
-
-  const handleBackToLandingPageClick = () => {
-    setShowLandingPage(true); // Show the LandingPage component
-  };
-
   return (
     <div>
       <Routes>
-        <Route path="/admin" element={<Admin />} />
-        <Route
-          path="*"
-          element={
-            showLandingPage ? (
-              <LandingPage onShowAdminPageClick={handleShowAdminPageClick} />
-            ) : (
-              <Admin onBackToLandingPageClick={handleBackToLandingPageClick} />
-            )
-          }
-        />
+        <Route path="/*" element={<LandingPage />} />
+        <Route path="/admin/*" element={isAuthenticated && userRole === 'Admin' ? <AdminPage /> : <Navigate to="/" />} />
+        <Route path="/doctor/*" element={isAuthenticated && userRole === 'Doctor' ? <DoctorPage /> : <Navigate to="/" />} />
+        <Route path="/receptionist/*" element={isAuthenticated && userRole === 'Receptionist' ? <ReceptionistPage /> : <Navigate to="/" />} />
+        <Route path="/patient/*" element={isAuthenticated && userRole === 'Patient' ? <PatientPage /> : <Navigate to="/" />} />
       </Routes>
     </div>
   );

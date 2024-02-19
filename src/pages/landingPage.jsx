@@ -1,39 +1,35 @@
-import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
-import {
-    CssBaseline,
-    ThemeProvider,
-    createTheme,
-    StyledEngineProvider,
-  } from "@mui/material";
-import Home from "../components/landingPage/mainComponents/Home";
+import React, { useState } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import { CssBaseline, ThemeProvider, createTheme, StyledEngineProvider } from "@mui/material";
 import Navbar from "../components/landingPage/subComponents/Navbar";
+import Home from "../components/landingPage/mainComponents/Home";
 import Login from "../components/landingPage/subComponents/Login";
 import Signup from "../components/landingPage/subComponents/Signup";
 
 const muiTheme = createTheme();
 
-function landingPage({ onShowAdminPageClick }) {
+function LandingPage() {
+  const [isNavBar, setIsNavBar] = useState(true);
   const [showHome, setShowHome] = useState(true);
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
 
   const handleLoginClick = () => {
-    setShowHome(false); // Show the Login component and Hide other Component
+    setShowHome(false);
     setShowLogin(true);
     setShowSignup(false);
   };
 
-  const handleCloseForm = () => {
-    setShowHome(true); // Show the Home component and Hide other Component
-    setShowLogin(false);
-    setShowSignup(false);
-  };
-
   const handleSignupClick = () => {
-    setShowHome(false); // Show the Signup component and Hide other Component
+    setShowHome(false);
     setShowSignup(true);
     setShowLogin(false);
+  };
+
+  const handleCloseForm = () => {
+    setShowHome(true);
+    setShowLogin(false);
+    setShowSignup(false);
   };
 
   return (
@@ -41,16 +37,16 @@ function landingPage({ onShowAdminPageClick }) {
       <ThemeProvider theme={muiTheme}>
         <CssBaseline />
         <div>
-          <Navbar onLoginClick={handleLoginClick} />
+          <Navbar isNavBar={isNavBar} setIsNavBar={setIsNavBar} onLoginClick={handleLoginClick} />
+          {showHome && <Home />}
           <Routes>
-            <Route path="/" element={showHome ? <Home /> : null} exact />
+            <Route path="login" element={showLogin ? <Login onCloseIcon={handleCloseForm} onSignupButton={handleSignupClick} /> : null} />
+            <Route path="signup" element={showSignup && <Signup onCloseIcon={handleCloseForm} onLoginButton={handleLoginClick} />} />
           </Routes>
-          {showLogin && <Login onCloseIcon={handleCloseForm} onLoginSuccess={onShowAdminPageClick} onSignupButton={handleSignupClick} />}
-          {showSignup && <Signup onCloseIcon={handleCloseForm} onLoginButton={handleLoginClick} />}
         </div>
       </ThemeProvider>
     </StyledEngineProvider>
   );
 }
 
-export default landingPage;
+export default LandingPage;

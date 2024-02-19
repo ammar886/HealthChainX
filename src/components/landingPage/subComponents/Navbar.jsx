@@ -1,8 +1,16 @@
 import React from "react";
 import { Button } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
 const Navbar = ({ onLoginClick }) => {
+
+  const navigate = useNavigate();
+  const handleLoginClick = () => {
+    onLoginClick();
+    navigate('/login');
+  };
+
   return (
     <div className="navbar">
       <div className="lr-col">
@@ -13,9 +21,9 @@ const Navbar = ({ onLoginClick }) => {
       </div>
 
       <div className="middle-col">
-        <a href="#">Service</a>
-        <a href="#">Home</a>
-        <a href="#">About</a>
+        <Link to="#">Home</Link>
+        <Link to="#">Service</Link>
+        <Link to="#">About</Link>
       </div>
 
       <div className="lr-col">
@@ -24,7 +32,7 @@ const Navbar = ({ onLoginClick }) => {
           sx={{ width: 200 }}
           color="primary"
           variant="outlined"
-          onClick={onLoginClick} // Trigger the parent component's state change
+          onClick={handleLoginClick}
         >
           Login
         </Button>

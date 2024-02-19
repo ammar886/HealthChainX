@@ -28,26 +28,19 @@ const Form = () => {
 
   const handleFormSubmit = (values) => {
     console.log(values.lastName);
-    localStorage.setItem("firstname",values.firstName);
-    localStorage.setItem("lastname",values.lastName);
-    localStorage.setItem("email",values.email);
-    localStorage.setItem("contact",values.contact);
-    localStorage.setItem("address-1",values.address1);
-    localStorage.setItem("address-2",values.address2);
-    localStorage.setItem("role",values.userRole);
-
-
+    // localStorage.setItem("firstname",values.firstName);
+    // localStorage.setItem("lastname",values.lastName);
+    // localStorage.setItem("email",values.email);
+    // localStorage.setItem("contact",values.contact);
+    // localStorage.setItem("address-1",values.address1);
+    // localStorage.setItem("address-2",values.address2);
+    // localStorage.setItem("role",values.userRole);
     employeeCreation(values);
-  
-
-};
-
-
+  };
 
 
 const employeeCreation = async(values) => {
   try{
-
     console.log(auth); // Check the value of auth
     console.log(auth.methods); 
 
@@ -56,7 +49,7 @@ const employeeCreation = async(values) => {
 
   // Send the transaction to the blockchain
   await auth.methods
-    .createEmployee(values.firstName, values.lastName, values.email, values.contact, values.address1, values.address2, values.userRole)
+    .createEmployee(values.firstName, values.lastName, values.email, values.contact, values.address, values.password, values.userRole)
     .send({ from: account });
 
     alert("Employee Created Succesfully!");
@@ -64,8 +57,6 @@ const employeeCreation = async(values) => {
     console.error(e.message);
     alert("Something went wrong!");
   }
-
-  
 };
 
   return (
@@ -150,16 +141,16 @@ const employeeCreation = async(values) => {
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Address 1"
+                label="Address"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.address1}
-                name="address1"
-                error={!!touched.address1 && !!errors.address1}
-                helperText={touched.address1 && errors.address1}
+                value={values.address}
+                name="address"
+                error={!!touched.address && !!errors.address}
+                helperText={touched.address && errors.address}
                 sx={{ gridColumn: "span 4" }}
               />
-              <TextField
+              {/* <TextField
                 fullWidth
                 variant="filled"
                 type="text"
@@ -171,7 +162,7 @@ const employeeCreation = async(values) => {
                 error={!!touched.address2 && !!errors.address2}
                 helperText={touched.address2 && errors.address2}
                 sx={{ gridColumn: "span 4" }}
-              />
+              /> */}
 
               {/* User Role Dropdown */}
               <TextField
@@ -217,8 +208,8 @@ const checkoutSchema = yup.object().shape({
     .string()
     .matches(phoneRegExp, "Phone number is not valid")
     .required("required"),
-  address1: yup.string().required("required"),
-  // address2: yup.string().required("required"),
+  address: yup.string().required("required"),
+  password: yup.string().required("required"),
   userRole: yup.string().required("Please select a user role"),
 });
 
@@ -227,8 +218,8 @@ const initialValues = {
   lastName: "",
   email: "",
   contact: "",
-  address1: "",
-  address2: "",
+  address: "",
+  password: "12345678",
   userRole: "",
 };
 

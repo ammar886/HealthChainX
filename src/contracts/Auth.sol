@@ -5,9 +5,11 @@ contract Auth
 { 
 	uint public userCount = 0;
 	uint public employeeCount = 0;
+	uint public totalAppointmets = 0;
 
 	mapping(string => user) users;
 	mapping(string => employee) employees;
+	mapping(string => appointment) appointments;
 
 	struct user
 	{
@@ -29,6 +31,17 @@ contract Auth
         string userRole;
 	}
 
+	struct appointment
+	{
+		string firstName;
+		string lastName;
+		string email;
+		string number;
+		string adr;
+		string timeSlot;
+		string doctor;
+	}
+
 // events
 
 	event userCreated(
@@ -47,6 +60,16 @@ contract Auth
 			string adr,
 			string password,
 			string userRole
+	);
+
+	event appointmentCreated(
+		string firstName,
+		string lastName,
+		string email,
+		string number,
+		string adr,
+		string timeSlot,
+		string doctor
 	);
 
 	//user account creation and authenication logic below
@@ -80,6 +103,19 @@ contract Auth
         employees[_firstName] = employee(_firstName, _lastName, _email, _number, _adr, _password, _userRole);
         emit employeeCreated(_firstName, _lastName, _email, _number, _adr, _password, _userRole);
 	}
+
+	function bookAppointment(string memory _firstName, string memory _lastName, string memory _email, string memory _number, string memory _adr, string memory _timeSlot, string memory _doctor) public{
+		totalAppointmets++;
+		appointments[_email] = appointment(_firstName, _lastName, _email, _number,_adr, _timeSlot, _doctor);
+		emit appointmentCreated(_firstName,_lastName,_email,_number,_adr,_timeSlot,_doctor);
+
+	}
+
+	function getAppointmentCount() public view returns (uint){
+		return totalAppointmets;
+	}
 }
+
+
 
 

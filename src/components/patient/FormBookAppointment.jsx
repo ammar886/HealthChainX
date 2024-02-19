@@ -27,33 +27,72 @@ const Form = () => {
   }, []);
 
   const handleFormSubmit = (values) => {
-    employeeCreation(values);
+    console.log("Form submitted!");
+    console.log(values.lastName);
+     localStorage.setItem("firstname",values.firstName);
+     localStorage.setItem("lastname",values.lastName);
+     localStorage.setItem("email",values.email);
+    appointmentCreation(values);
   };
 
-  const employeeCreation = async (values) => {
-    try {
-      console.log(auth); // Check the value of auth
-      console.log(auth.methods);
+  // const appointmentCreation = async (values) => {
+  //   try {
+  //     console.log(auth); // Check the value of auth
+  //     console.log(auth.methods);
 
+  //     const accounts = await window.ethereum.request({
+  //       method: "eth_requestAccounts",
+  //     });
+  //     const account = accounts[0]; // The first account is the user's primary account
+
+  //     // Send the transaction to the blockchain
+  //     await auth.methods
+  //       .bookAppointment(
+  //         values.firstName,
+  //         values.lastName,
+  //         values.email,
+  //         values.contact,
+  //         values.address,
+  //         values.timeslot,
+  //         values.doctorname
+  //       )
+  //       .send({ from: account });
+
+  //     alert("Appointment Booked Succesfully!");
+  //   } catch (e) {
+  //     console.error(e.message);
+  //     alert("Something went wrong!");
+  //   }
+  // };
+
+  const appointmentCreation = async (values) => {
+    try {
+      if (!auth || !auth.methods) {
+        alert("Auth object is not initialized yet. Please try again.");
+        return;
+      }
+  
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
       const account = accounts[0]; // The first account is the user's primary account
+  
+      localStorage.setItem("firstname",values.firstName);
 
       // Send the transaction to the blockchain
       await auth.methods
-        .createEmployee(
+        .bookAppointment(
           values.firstName,
           values.lastName,
           values.email,
           values.contact,
           values.address1,
-          values.address2,
-          values.userRole
+          values.timeslot,
+          values.doctorname
         )
         .send({ from: account });
-
-      alert("Employee Created Succesfully!");
+  
+      alert("Appointment Booked Succesfully!");
     } catch (e) {
       console.error(e.message);
       alert("Something went wrong!");
@@ -67,7 +106,7 @@ const Form = () => {
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={{ ...initialValues, userRole: "" }}
-        validationSchema={checkoutSchema}
+        // validationSchema={checkoutSchema}
       >
         {({
           values,

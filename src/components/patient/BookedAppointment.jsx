@@ -2,9 +2,21 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataInvoices } from "../data/mockData";
+import { useEffect, useState } from "react";
 import Header from "./HeaderPatient";
 
 const Invoices = () => {
+  const [appointmets, setAppointments] = useState(0);
+
+  
+
+  useEffect(() => {
+    async function fetchData(){
+       const count = await getAppointmentCount();
+       setAppointments(count.toNumber());
+    }
+    fetchData();
+  },[]);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const columns = [
@@ -44,7 +56,8 @@ const Invoices = () => {
 
   return (
     <Box m="20px">
-      <Header title="APPOINTMENTS" subtitle="List of Appointment History" />
+      <Header title="APPOINTMENTS" subtitle="List of Appointment History" /> {appointmets}
+
       <Box
         m="40px 0 0 0"
         height="75vh"

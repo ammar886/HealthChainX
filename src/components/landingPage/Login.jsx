@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
 import { FaTimes } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { loadBlockchainData, loadWeb3 } from "../../../Web3helpers";
-import { AuthContext } from "../../../context/AuthContext";
+import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
+import { AuthContext } from "../../context/AuthContext";
 import "./Login.css";
 
 const Login = ({ onCloseIcon, onSignupButton }) => {

@@ -75,6 +75,81 @@ export const mockDataTeam = [
   },
 ];
 
+export const mockDataPatient = [
+  {
+    id: 1,
+    DoctorName: "Ali",
+    email: "jonsnow@gmail.com",
+    datetime: "26Nov 2023 1:30 PM",
+    doctorPrescription: "(665)121-5454",
+    access: "admin",
+  },
+  {
+    id: 2,
+    DoctorName: "M.Hamza",
+    email: "cerseilannister@gmail.com",
+    datetime: "25Sep 2023 10:00 AM",
+    doctorPrescription: "(421)314-2288",
+    access: "manager",
+  },
+  {
+    id: 3,
+    DoctorName: "Dr Anees",
+    email: "jaimelannister@gmail.com",
+    datetime: "1Aug 2023 3:30 PM",
+    doctorPrescription: "(422)982-6739",
+    access: "user",
+  },
+  {
+    id: 4,
+    DoctorName: "Ammar Khalid",
+    email: "anyastark@gmail.com",
+    datetime: "20Jun 2023 1:30 PM",
+    doctorPrescription: "(921)425-6742",
+    access: "admin",
+  },
+  {
+    id: 5,
+    DoctorName: "Ahsan",
+    email: "daenerystargaryen@gmail.com",
+    datetime: "25Fev 2023 11:00 AM",
+    doctorPrescription: "(421)445-1189",
+    access: "user",
+  },
+  {
+    id: 6,
+    DoctorName: "Haider Ali Shehzad",
+    email: "evermelisandre@gmail.com",
+    datetime: "6Nov 2022 5:30 PM",
+    doctorPrescription: "(232)545-6483",
+    access: "manager",
+  },
+  {
+    id: 7,
+    DoctorName: "Usama Arshad",
+    email: "ferraraclifford@gmail.com",
+    datetime: "2Sep 2022 9:00 AM",
+    doctorPrescription: "(543)124-0123",
+    access: "user",
+  },
+  {
+    id: 8,
+    DoctorName: "Syed Ali Hamza",
+    email: "rossinifrances@gmail.com",
+    datetime: "10July 2022 2:00 PM",
+    doctorPrescription: "(222)444-5555",
+    access: "user",
+  },
+  {
+    id: 9,
+    DoctorName: "Ali Talha",
+    email: "harveyroxie@gmail.com",
+    datetime: "31Mar 2022 12:15 PM",
+    doctorPrescription: "(444)555-6239",
+    access: "admin",
+  },
+];
+
 export const mockDataContacts = [
   {
     id: 1,

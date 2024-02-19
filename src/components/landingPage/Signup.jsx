@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaTimes } from "react-icons/fa"; // Import the close icon
-import { loadBlockchainData, loadWeb3 } from "../../../Web3helpers";
+import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import Web3 from "web3";
 import "./Signup.css";
 

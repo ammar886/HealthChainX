@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { CssBaseline, ThemeProvider, createTheme, StyledEngineProvider } from "@mui/material";
-import Navbar from "../components/landingPage/subComponents/Navbar";
-import Home from "../components/landingPage/mainComponents/Home";
-import Login from "../components/landingPage/subComponents/Login";
-import Signup from "../components/landingPage/subComponents/Signup";
+import Navbar from "../components/landingPage/Navbar";
+import Home from "../components/landingPage/Home";
+import Login from "../components/landingPage/Login";
+import Signup from "../components/landingPage/Signup";
 
 const muiTheme = createTheme();
 

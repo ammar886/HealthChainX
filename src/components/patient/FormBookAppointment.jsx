@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { Box, Button, TextField, MenuItem } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Header from "../subComponents/Header";
-import { loadBlockchainData, loadWeb3 } from "../../../Web3helpers";
+import Header from "./HeaderPatient";
+import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import Web3 from "web3";
 
 const Form = () => {
@@ -13,55 +13,56 @@ const Form = () => {
   const [auth, setAuth] = React.useState(null);
   const loadAccounts = async () => {
     let { auth, accounts } = await loadBlockchainData();
-  
+
     setAccounts(accounts);
     setAuth(auth);
   };
-  
+
   React.useEffect(() => {
     loadWeb3();
   }, []);
-  
+
   React.useEffect(() => {
     loadAccounts();
   }, []);
 
   const handleFormSubmit = (values) => {
-    console.log(values.lastName);
-    // localStorage.setItem("firstname",values.firstName);
-    // localStorage.setItem("lastname",values.lastName);
-    // localStorage.setItem("email",values.email);
-    // localStorage.setItem("contact",values.contact);
-    // localStorage.setItem("address-1",values.address1);
-    // localStorage.setItem("address-2",values.address2);
-    // localStorage.setItem("role",values.userRole);
     employeeCreation(values);
   };
 
+  const employeeCreation = async (values) => {
+    try {
+      console.log(auth); // Check the value of auth
+      console.log(auth.methods);
 
-const employeeCreation = async(values) => {
-  try{
-    console.log(auth); // Check the value of auth
-    console.log(auth.methods); 
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      const account = accounts[0]; // The first account is the user's primary account
 
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0]; // The first account is the user's primary account
+      // Send the transaction to the blockchain
+      await auth.methods
+        .createEmployee(
+          values.firstName,
+          values.lastName,
+          values.email,
+          values.contact,
+          values.address1,
+          values.address2,
+          values.userRole
+        )
+        .send({ from: account });
 
-  // Send the transaction to the blockchain
-  await auth.methods
-    .createEmployee(values.firstName, values.lastName, values.email, values.contact, values.address, values.password, values.userRole)
-    .send({ from: account });
-
-    alert("Employee Created Succesfully!");
-  }catch(e){
-    console.error(e.message);
-    alert("Something went wrong!");
-  }
-};
+      alert("Employee Created Succesfully!");
+    } catch (e) {
+      console.error(e.message);
+      alert("Something went wrong!");
+    }
+  };
 
   return (
     <Box m="20px">
-      <Header title="CREATE USER" subtitle="Create a New User Profile" />
+      <Header title="BOOK APPOINTMNET" subtitle="" />
 
       <Formik
         onSubmit={handleFormSubmit}
@@ -144,50 +145,56 @@ const employeeCreation = async(values) => {
                 label="Address"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.address}
-                name="address"
-                error={!!touched.address && !!errors.address}
-                helperText={touched.address && errors.address}
+                value={values.address1}
+                name="address1"
+                error={!!touched.address1 && !!errors.address1}
+                helperText={touched.address1 && errors.address1}
                 sx={{ gridColumn: "span 4" }}
               />
-              {/* <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Address 2"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.address2}
-                name="address2"
-                error={!!touched.address2 && !!errors.address2}
-                helperText={touched.address2 && errors.address2}
-                sx={{ gridColumn: "span 4" }}
-              /> */}
 
               {/* User Role Dropdown */}
               <TextField
                 select
                 fullWidth
                 variant="filled"
-                label="User Role"
+                label="Time Slot"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.userRole}
-                name="userRole"
-                error={!!touched.userRole && !!errors.userRole}
-                helperText={touched.userRole && errors.userRole}
+                value={values.timeslot}
+                name="timeslot"
+                error={!!touched.timeslot && !!errors.timeslot}
+                helperText={touched.timeslot && errors.timeslot}
                 sx={{ gridColumn: "span 4" }}
               >
-                <MenuItem value="">Select User Role</MenuItem>
-                <MenuItem value="doctor">Doctor</MenuItem>
-                <MenuItem value="receptionist">Receptionist</MenuItem>
-                <MenuItem value="patient">Patient</MenuItem>
+                <MenuItem value="">Select Time Slot</MenuItem>
+                <MenuItem value="11:30">11:30</MenuItem>
+                <MenuItem value="12:30">12:30</MenuItem>
+                <MenuItem value="01:30">01:30</MenuItem>
+              </TextField>
+
+              <TextField
+                select
+                fullWidth
+                variant="filled"
+                label="Select Doctor"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.doctorname}
+                name="doctorname"
+                error={!!touched.doctorname && !!errors.doctorname}
+                helperText={touched.doctorname && errors.doctorname}
+                sx={{ gridColumn: "span 4" }}
+              >
+                <MenuItem value="">Select Doctor</MenuItem>
+                <MenuItem value="026">Muhammad Anis (Viki Malotra)</MenuItem>
+                <MenuItem value="039">Ammar Khalid (K.K Shangania)</MenuItem>
+                <MenuItem value="051">Muhammad Ahsan (Charles Xavier)</MenuItem>
               </TextField>
             </Box>
 
             <Box display="flex" justifyContent="end" mt="20px">
               <Button type="submit" color="secondary" variant="contained">
-                Create New User
+                Book Appointment
               </Button>
             </Box>
           </form>
@@ -209,8 +216,8 @@ const checkoutSchema = yup.object().shape({
     .matches(phoneRegExp, "Phone number is not valid")
     .required("required"),
   address: yup.string().required("required"),
-  password: yup.string().required("required"),
-  userRole: yup.string().required("Please select a user role"),
+  timeslot: yup.string().required("Please select a user role"),
+  doctorname: yup.string().required("Please select a user role"),
 });
 
 const initialValues = {
@@ -219,8 +226,8 @@ const initialValues = {
   email: "",
   contact: "",
   address: "",
-  password: "12345678",
-  userRole: "",
+  timeslot: "",
+  doctorname: "",
 };
 
 export default Form;

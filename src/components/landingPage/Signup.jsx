@@ -22,7 +22,7 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
   const [email, setEmail] = useState("");
   const [number, setNumber] = useState("");
   const [password, setPassword] = useState("");
-  const [userRole, setUserRole] = useState("Patient");
+  const [userRole, setUserRole] = useState("patient");
   const [confirmpassword, setConfirmPassword] = useState("");
   const [accounts, setAccounts] = React.useState(null);
   const [auth, setAuth] = React.useState(null);

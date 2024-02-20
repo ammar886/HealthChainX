@@ -23,7 +23,7 @@ function App() {
     const storedUserRole = localStorage.getItem('userRole');
 
     // If the user is authenticated and the user role is valid, navigate to the appropriate page
-    if (storedIsAuthenticated === 'true' && ['Admin', 'Doctor', 'Receptionist', 'Patient'].includes(storedUserRole)) {
+    if (storedIsAuthenticated === 'true' && ['admin', 'doctor', 'receptionist', 'patient'].includes(storedUserRole)) {
       navigate(`/${storedUserRole.toLowerCase()}`);
     }
   }, []);
@@ -32,10 +32,10 @@ function App() {
     <div>
       <Routes>
         <Route path="/*" element={<LandingPage />} />
-        <Route path="/admin/*" element={isAuthenticated && userRole === 'Admin' ? <AdminPage /> : <Navigate to="/" />} />
-        <Route path="/doctor/*" element={isAuthenticated && userRole === 'Doctor' ? <DoctorPage /> : <Navigate to="/" />} />
-        <Route path="/receptionist/*" element={isAuthenticated && userRole === 'Receptionist' ? <ReceptionistPage /> : <Navigate to="/" />} />
-        <Route path="/patient/*" element={isAuthenticated && userRole === 'Patient' ? <PatientPage /> : <Navigate to="/" />} />
+        <Route path="/admin/*" element={isAuthenticated && userRole === 'admin' ? <AdminPage /> : <Navigate to="/" />} />
+        <Route path="/doctor/*" element={isAuthenticated && userRole === 'doctor' ? <DoctorPage /> : <Navigate to="/" />} />
+        <Route path="/receptionist/*" element={isAuthenticated && userRole === 'receptionist' ? <ReceptionistPage /> : <Navigate to="/" />} />
+        <Route path="/patient/*" element={isAuthenticated && userRole === 'patient' ? <PatientPage /> : <Navigate to="/" />} />
       </Routes>
     </div>
   );

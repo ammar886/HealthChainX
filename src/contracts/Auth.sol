@@ -84,19 +84,45 @@ contract Auth
 		users[_username] = user(_username, _password, _email, _number, _userRole);
 		emit userCreated(_username,
 						_password, _email, _number, _userRole);
+	}
+
+//	function getUserData(string memory _username) public view returns (user memory){
+//		return users[_username];
+//	}
+
+	function getUserOrEmployeeRole(string memory _username) public view returns (string memory) {
+		if (keccak256(abi.encodePacked(users[_username].userRole)) != keccak256(abi.encodePacked(""))) {
+			return users[_username].userRole;
+		} else if (keccak256(abi.encodePacked(employees[_username].userRole)) != keccak256(abi.encodePacked(""))) {
+			return employees[_username].userRole;
 		}
-
-		function getUserData(string memory _username) public view returns (user memory){
-		return users[_username];
+		revert("User or employee not found");
 	}
 
-	function authenticateLogin(string memory _username, string memory _password) public view returns (bool){
-		user memory userInstance = getUserData(_username);
-		
-		return keccak256(abi.encodePacked(userInstance.password)) == keccak256(abi.encodePacked(_password));
-	}
+//	function authenticateLogin(string memory _username, string memory _password) public view returns (bool){
+//		user memory userInstance = getUserData(_username);
+//		
+//		return keccak256(abi.encodePacked(userInstance.password)) == keccak256(abi.encodePacked(_password));
+//	}
 
-	//admin creates users here
+	function authenticateLogin(string memory _username, string memory _password) public view returns (bool) {
+        user memory userInstance = users[_username];
+
+        if (bytes(userInstance.username).length == 0) {
+            // Username doesn't exist in users mapping, check employees mapping
+            employee memory employeeUser = employees[_username];
+            if (bytes(employeeUser.firstName).length == 0) {
+                // Username doesn't exist in either mapping
+                return false;
+            } else {
+                // Username exists in employees mapping, check password
+                return keccak256(abi.encodePacked(employeeUser.password)) == keccak256(abi.encodePacked(_password));
+            }
+        } else {
+            // Username exists in users mapping, check password
+            return keccak256(abi.encodePacked(userInstance.password)) == keccak256(abi.encodePacked(_password));
+        }
+    }
 	
 	function createEmployee(string memory _firstName, string memory _lastName, string memory _email, string memory _number, string memory _adr, string memory _password, string memory _userRole) public{
         employeeCount++;

@@ -64,7 +64,7 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
         if (name === adminName && password === adminPassword) {
           alert("Admin Hardcore.");
           setIsAuthenticated(true);
-          setUserRole("Admin");
+          setUserRole("admin");
           navigate("/admin");
         } else {
           const accounts = await window.ethereum.request({
@@ -77,34 +77,34 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
             .authenticateLogin(name, password)
             .call({ from: account });
 
-          const isUser = await auth.methods
-            .getUserData(name)
+          const userRole = await auth.methods
+            .getUserOrEmployeeRole(name)
             .call({ from: account });
 
             console.log(isauthentic);
-            console.log(isUser);
+            console.log(userRole);
 
             console.log("Name:" , name);
             console.log("Password: ", password);
     
           if (isauthentic) {
-            if (isUser && isUser.userRole) {
-              const userRole = isUser.userRole;
+            // if (isUser && isUser.userRole) {
+            //   const userRole = isUser.userRole;
 
               switch (userRole) {
-                case "Patient":
+                case "patient":
                   setIsAuthenticated(true);
                   setUserRole(userRole);
                   navigate("/patient");
                   alert("Patient Account.");
                   break;
-                case "Doctor":
+                case "doctor":
                   setIsAuthenticated(true);
                   setUserRole(userRole);
                   navigate("/doctor");
                   alert("Doctor Account.");
                   break;
-                case "Receptionist":
+                case "receptionist":
                   setIsAuthenticated(true);
                   setUserRole(userRole);
                   navigate("/receptionist");
@@ -114,10 +114,10 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
                   console.error("Unknown user role:", userRole);
                   alert("Invalid or unknown user role");
               }        
-            } else {
-              console.error("User data missing role field");
-              alert("User data missing role information");
-            }
+            // } else {
+            //   console.error("User data missing role field");
+            //   alert("User data missing role information");
+            // }
           } else {
             alert("Account not found. Please sign up.");
           }
@@ -140,7 +140,7 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
         const ethereumAddress = accounts[0];
         alert("MetaMask Connection Successful! You're good to go");
         setIsAuthenticated(true);
-        setUserRole("Patient");
+        setUserRole("patient");
         navigate("/patient");
         console.log(ethereumAddress);
       } catch (error) {

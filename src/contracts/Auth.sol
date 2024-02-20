@@ -42,8 +42,6 @@ contract Auth
 		string doctor;
 	}
 
-// events
-
 	event userCreated(
 		string username,
 		string email,
@@ -72,8 +70,6 @@ contract Auth
 		string doctor
 	);
 
-	//user account creation and authenication logic below
-
 	function createUser(string memory _username,
 						string memory _password,
 						string memory _email,
@@ -86,10 +82,6 @@ contract Auth
 						_password, _email, _number, _userRole);
 	}
 
-//	function getUserData(string memory _username) public view returns (user memory){
-//		return users[_username];
-//	}
-
 	function getUserOrEmployeeRole(string memory _username) public view returns (string memory) {
 		if (keccak256(abi.encodePacked(users[_username].userRole)) != keccak256(abi.encodePacked(""))) {
 			return users[_username].userRole;
@@ -99,27 +91,17 @@ contract Auth
 		revert("User or employee not found");
 	}
 
-//	function authenticateLogin(string memory _username, string memory _password) public view returns (bool){
-//		user memory userInstance = getUserData(_username);
-//		
-//		return keccak256(abi.encodePacked(userInstance.password)) == keccak256(abi.encodePacked(_password));
-//	}
-
 	function authenticateLogin(string memory _username, string memory _password) public view returns (bool) {
         user memory userInstance = users[_username];
 
         if (bytes(userInstance.username).length == 0) {
-            // Username doesn't exist in users mapping, check employees mapping
             employee memory employeeUser = employees[_username];
             if (bytes(employeeUser.firstName).length == 0) {
-                // Username doesn't exist in either mapping
                 return false;
             } else {
-                // Username exists in employees mapping, check password
                 return keccak256(abi.encodePacked(employeeUser.password)) == keccak256(abi.encodePacked(_password));
             }
         } else {
-            // Username exists in users mapping, check password
             return keccak256(abi.encodePacked(userInstance.password)) == keccak256(abi.encodePacked(_password));
         }
     }

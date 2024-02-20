@@ -101,8 +101,8 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
                 case "Doctor":
                   setIsAuthenticated(true);
                   setUserRole(userRole);
-                  navigate("/Doctor");
-                  alert("Patient Account.");
+                  navigate("/doctor");
+                  alert("Doctor Account.");
                   break;
                 case "Receptionist":
                   setIsAuthenticated(true);

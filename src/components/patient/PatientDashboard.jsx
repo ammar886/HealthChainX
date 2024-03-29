@@ -8,16 +8,57 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Person4Icon from '@mui/icons-material/Person4';
 import Header from "./HeaderPatient";
 import StatBox from "./StatBox";
+import React, { useState } from 'react';
+import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 
 const PatientDashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [naam, setNaam] = useState(null);
+  const [accounts, setAccounts] = React.useState(null);
+  const [auth, setAuth] = React.useState(null);
 
+  const loadAccounts = async () => {
+    let { auth, accounts } = await loadBlockchainData();
+
+    setAccounts(accounts);
+    setAuth(auth);
+    let { contract } = await loadBlockchainData();
+    console.log({ contract, accounts }); // Add this line
+  };
+
+  
+  React.useEffect(() => {
+    loadWeb3();
+  }, []);
+
+  React.useEffect(() => {
+    loadAccounts();
+  }, []);
+
+  React.useEffect(() => {
+    fetchAppointments();
+  }, []);
+  
+
+  async function fetchAppointments() {
+    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+    const account = accounts[0];
+    
+  
+    // Replace with your contract's method
+    const naam = await auth.methods.getUsername("Jimmy").call({ from: account });
+    setNaam(naam);
+    console.log(naam);
+    
+    
+  }
+  
   return (
     <Box m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Header title="DASHBOARD" subtitle=" HOSPITAL STATS: "/>
+        <Header title={naam} subtitle=" PATIENT STATS: "/>
 
         <Box>
           <Button

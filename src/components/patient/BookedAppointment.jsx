@@ -4,42 +4,66 @@ import { tokens } from "../../theme";
 import { mockDataInvoices } from "../data/mockData";
 import { useEffect, useState } from "react";
 import Header from "./HeaderPatient";
+import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 
 const Invoices = () => {
-  const [appointmets, setAppointments] = useState(0);
-
   
+  const loadAccounts = async () => {
+    let { auth, accounts } = await loadBlockchainData();
+
+    setAccounts(accounts);
+    setAuth(auth);
+    let { contract } = await loadBlockchainData();
+    console.log({ contract, accounts }); // Add this line
+  };
 
   useEffect(() => {
-    async function fetchData(){
-       const count = await getAppointmentCount();
-       setAppointments(count.toNumber());
-    }
-    fetchData();
-  },[]);
+    loadAccounts();
+  }, []);
+
+
+  const [appointment, setAppointment] = useState(null);
+  const [accounts, setAccounts] = useState(null);
+  const [auth, setAuth] = useState(null);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  useEffect(() => {
+    const getAppointment = async () => {
+      if(!auth) return;
+      const accounts = await web3.eth.getAccounts();
+      const account = accounts[0];
+     
+      const appointment = await auth.methods.getAppointment().call({ from: account });
+      setAppointment(appointment);
+      console.log("new appointment:", appointment)
+      localStorage.setItem('appoitnemtn', appointment);
+    };
+
+    getAppointment();
+  }, [auth]); //added auth as a dependency
+  
   const columns = [
-    { field: "id", headerName: "ID" },
+    { field: "firstname", headerName: "First Name" },
     {
-      field: "name",
-      headerName: "Name",
+      field: "lastname",
+      headerName: "Last Name",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "phone",
-      headerName: "Phone Number",
-      flex: 1,
-    },
-    {
       field: "email",
-      headerName: "Email",
+      headerName: "email",
       flex: 1,
     },
     {
-      field: "cost",
-      headerName: "Cost",
+      field: "phone",
+      headerName: "phone",
+      flex: 1,
+    },
+    {
+      field: "address",
+      headerName: "address",
       flex: 1,
       renderCell: (params) => (
         <Typography color={colors.greenAccent[500]}>
@@ -48,15 +72,24 @@ const Invoices = () => {
       ),
     },
     {
-      field: "date",
-      headerName: "Date",
+      field: "time slot",
+      headerName: "time slot",
       flex: 1,
     },
+    {
+      field: "misc-1",
+      headerName: "misc 1"
+    },
+    {
+      field: "misc-2",
+      headerName: "misc 2"
+    }
+
   ];
 
   return (
     <Box m="20px">
-      <Header title="APPOINTMENTS" subtitle="List of Appointment History" /> {appointmets}
+      <Header title="APPOINTMENTS" subtitle="List of Appointment History" /> 
 
       <Box
         m="40px 0 0 0"
@@ -87,7 +120,9 @@ const Invoices = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataInvoices} columns={columns} />
+        {/* { <DataGrid checkboxSelection rows={mockDataInvoices} columns={appointment} />} */}
+        <pre>{JSON.stringify(appointment, null, 2)}</pre>
+        
       </Box>
     </Box>
   );

@@ -31,6 +31,12 @@ export const loadBlockchainData = async () => {
       Auth.abi,
       Auth.networks[networkId].address
     );
-    return { auth, accounts: accounts[0] };
+
+    const contract = new web3.eth.Contract(
+      Auth.abi,
+      Auth.networks[networkId].address
+    );
+
+    return { auth, accounts: accounts[0], contract };
   }
 };

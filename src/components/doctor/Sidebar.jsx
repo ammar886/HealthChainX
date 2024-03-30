@@ -121,42 +121,42 @@ const Sidebar = () => {
             </Typography>
             <Item
               title="Dashboard"
-              to="/admin"
+              to="/doctor"
               icon={<HomeOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Manage Patient"
-              to="/admin/managepatient"
+              to="/doctor/managepatient"
               icon={<PeopleOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Manage Appointments"
-              to="/admin/manageappointments"
+              to="/doctor/manageappointments"
               icon={<ContactsOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Invoices Balances"
-              to="/admin/invoices"
+              to="/doctor/invoices"
               icon={<ReceiptOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Profile Form"
-              to="/admin/form"
+              to="/doctor/form"
               icon={<PersonOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="FAQ Page"
-              to="/admin/faq"
+              to="/doctor/faq"
               icon={<HelpOutlineOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

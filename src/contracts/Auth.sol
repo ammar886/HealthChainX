@@ -8,7 +8,7 @@ contract Auth {
 
     mapping(string => user) users;
     mapping(string => employee) employees;
-    mapping(address => appointment) appointments;
+    mapping(address => appointment[]) appointments;
 
     struct user {
         string username;
@@ -181,7 +181,7 @@ contract Auth {
         string memory _doctor
     ) public {
         totalAppointmets++;
-        appointments[msg.sender] = appointment(
+        appointment memory newAppointment = appointment(
             msg.sender,
             _firstName,
             _lastName,
@@ -191,6 +191,7 @@ contract Auth {
             _timeSlot,
             _doctor
         );
+        appointments[msg.sender].push(newAppointment);
         emit appointmentCreated(
             msg.sender,
             _firstName,
@@ -207,28 +208,42 @@ contract Auth {
         return totalAppointmets;
     }
 
-    function getAppointment()
-        public
-        view
-        returns (
-            string memory,
-            string memory,
-            string memory,
-            string memory,
-            string memory,
-            string memory,
-            string memory
-        )
-    {
-        appointment memory app = appointments[msg.sender];
-        return (
-            app.firstName,
-            app.lastName,
-            app.email,
-            app.number,
-            app.adr,
-            app.timeSlot,
-            app.doctor
-        );
+    function getAppointments()
+    public
+    view
+    returns (
+        string[] memory firstNames,
+        string[] memory lastNames,
+        string[] memory emails,
+        string[] memory numbers,
+        string[] memory adrs,
+        string[] memory timeSlots,
+        string[] memory doctors
+    )
+{
+    appointment[] memory userAppointments = appointments[msg.sender];
+    firstNames = new string[](userAppointments.length);
+    lastNames = new string[](userAppointments.length);
+    emails = new string[](userAppointments.length);
+    numbers = new string[](userAppointments.length);
+    adrs = new string[](userAppointments.length);
+    timeSlots = new string[](userAppointments.length);
+    doctors = new string[](userAppointments.length);
+
+    for (uint256 i = 0; i < userAppointments.length; i++) {
+        firstNames[i] = userAppointments[i].firstName;
+        lastNames[i] = userAppointments[i].lastName;
+        emails[i] = userAppointments[i].email;
+        numbers[i] = userAppointments[i].number;
+        adrs[i] = userAppointments[i].adr;
+        timeSlots[i] = userAppointments[i].timeSlot;
+        doctors[i] = userAppointments[i].doctor;
     }
+
+    return (firstNames, lastNames, emails, numbers, adrs, timeSlots, doctors);
+}
+
+
+   
+    
 }

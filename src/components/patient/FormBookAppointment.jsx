@@ -33,6 +33,7 @@ const Form = () => {
      localStorage.setItem("lastname",values.lastName);
      localStorage.setItem("email",values.email);
     appointmentCreation(values);
+    console.log("handleForm function called!");
   };
 
   // const appointmentCreation = async (values) => {
@@ -93,6 +94,7 @@ const Form = () => {
         .send({ from: account });
   
       alert("Appointment Booked Succesfully!");
+      console.log("AppointmentCreation function called!");
     } catch (e) {
       console.error(e.message);
       alert("Something went wrong!");

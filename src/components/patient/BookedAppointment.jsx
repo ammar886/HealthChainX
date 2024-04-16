@@ -5,7 +5,33 @@ import { mockDataInvoices } from "../data/mockData";
 import { useEffect, useState } from "react";
 import Header from "./HeaderPatient";
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
+import { Margin } from "@mui/icons-material";
+import { withTheme } from "@emotion/react";
 
+const styles = {
+  appointmentsContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'left',
+    justifyContent: 'left',
+  },
+  appointmentDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    color: 'white',
+    alignItems: 'left',
+    justifyContent: 'center',
+
+    
+     // Adjust this value as needed
+  },
+  p:{
+    marginRight: '30px',
+    width: '100px',
+  },
+
+
+};
 const Invoices = () => {
   
   const loadAccounts = async () => {
@@ -28,21 +54,43 @@ const Invoices = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
+  // useEffect(() => {
+  //   const getAppointment = async () => {
+  //     if(!auth) return;
+  //     const accounts = await web3.eth.getAccounts();
+  //     const account = accounts[0];
+      
+     
+  //     const appointment = await auth.methods.getAppointments().call({ from: account });
+  //     setAppointment(appointment);
+  //     console.log("new appointment:", appointment)
+  //     localStorage.setItem('appointment', JSON.stringify(appointment));
+  //   };
+
+  //   getAppointment();
+  // }, [auth]); //added auth as a dependency
+  
   useEffect(() => {
     const getAppointment = async () => {
       if(!auth) return;
       const accounts = await web3.eth.getAccounts();
       const account = accounts[0];
-     
-      const appointment = await auth.methods.getAppointment().call({ from: account });
-      setAppointment(appointment);
-      console.log("new appointment:", appointment)
-      localStorage.setItem('appoitnemtn', appointment);
+  
+      const appointmentCount = await auth.methods.getAppointmentCount().call({ from: account });
+      console.log(appointmentCount);
+      const appointments = [];
+      for(let i=0; i<1; i++){
+        const appointment = await auth.methods.getAppointments(i).call({ from: account });
+        appointments.push(appointment);
+      }
+      setAppointment(appointments);
+      console.log("new appointments:", appointments)
+      localStorage.setItem('appointments', JSON.stringify(appointments));
     };
-
+  
     getAppointment();
   }, [auth]); //added auth as a dependency
-  
+
   const columns = [
     { field: "firstname", headerName: "First Name" },
     {
@@ -88,9 +136,18 @@ const Invoices = () => {
   ];
 
   return (
+    <>
     <Box m="20px">
       <Header title="APPOINTMENTS" subtitle="List of Appointment History" /> 
-
+      <div style={styles.appointmentDiv}>
+        <p style = {styles.p}>FirstName</p>
+        <p style = {styles.p}>LastName</p>
+        <p style = {styles.p}>Email</p>
+        <p style = {styles.p}>Phone</p>
+        <p style = {styles.p}>Address</p>
+        <p style = {styles.p}>Slot</p>
+        <p style = {styles.p}>Doc-ID</p>
+      </div>
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -121,10 +178,29 @@ const Invoices = () => {
         }}
       >
         {/* { <DataGrid checkboxSelection rows={mockDataInvoices} columns={appointment} />} */}
-        <pre>{JSON.stringify(appointment, null, 2)}</pre>
+        
+        {/* <pre>{JSON.stringify(appointment, null, 2)}</pre> */}
+        
+        {appointment && appointment.map((appt, index) => (
+  appt.firstNames.map((firstName, i) => (
+    <div style={styles.appointmentDiv} className="appointmentDiv" key={i}> 
+   
+      <p style={styles.p}>{firstName}</p>
+      <p style={styles.p}>{appt.lastNames[i]}</p>
+      <p style={styles.p}>{appt.emails[i]}</p>
+      <p style={styles.p}>{appt.numbers[i]}</p>
+      <p style={styles.p}>{appt.adrs[i]}</p>
+      <p style={styles.p}>{appt.timeSlots[i]}</p>
+      <p style={styles.p}>{appt.doctors[i]}</p>
+      <br />
+    </div>
+   
+  ))
+))}
         
       </Box>
     </Box>
+    </>
   );
 };
 

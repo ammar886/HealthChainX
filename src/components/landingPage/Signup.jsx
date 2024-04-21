@@ -43,17 +43,32 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
   }, []);
   
   const handleSignup = async (e) => {
-
     try {
       e.preventDefault();
 
       // Request account access with MetaMask
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       const account = accounts[0]; // The first account is the user's primary account
+
+      const blockChainAdd = accounts[0];
+      console.log(blockChainAdd);
+
+      const isEmailUsed = await auth.methods.isEmailUsed(email).call({ from: account });
+      const isBlockchainAddUsed = await auth.methods.isBlockchainAddressUsed(blockChainAdd).call({ from: account });
+  
+      if (isEmailUsed) {
+        alert("Email is already used. Please, use another email.");
+        return;
+      }
+  
+      if (isBlockchainAddUsed) {
+        alert("Blockchain address is already used. Please, use another blockchain address.");
+        return;
+      }
   
       // Send the transaction to the blockchain
       await auth.methods
-        .createUser(name, password, email, number, userRole)
+        .createUser(name, password, email, number, userRole, blockChainAdd)
         .send({ from: account });
   
       // Store the username, password, and wallet address in local storage

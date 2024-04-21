@@ -26,18 +26,30 @@ const Form = () => {
     loadAccounts();
   }, []);
 
-  const handleFormSubmit = (values) => {
-    console.log(values.lastName);
-    // localStorage.setItem("firstname",values.firstName);
-    // localStorage.setItem("lastname",values.lastName);
-    // localStorage.setItem("email",values.email);
-    // localStorage.setItem("contact",values.contact);
-    // localStorage.setItem("address-1",values.address1);
-    // localStorage.setItem("address-2",values.address2);
-    // localStorage.setItem("role",values.userRole);
-    employeeCreation(values);
-  };
+  const handleFormSubmit = async (values) => {
+    try {
+      values.blockChainAdd = values.blockChainAdd.toLowerCase();
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
 
+      const isEmailUsed = await auth.methods.isEmailUsed(values.email).call({ from: accounts[0] });
+      const isBlockchainAddUsed = await auth.methods.isBlockchainAddressUsed(values.blockChainAdd).call({ from: accounts[0] });
+  
+      if (isEmailUsed) {
+        alert("Email is already used. Please, use another email.");
+        return;
+      }
+  
+      if (isBlockchainAddUsed) {
+        alert("Blockchain address is already used. Please, use another blockchain address.");
+        return;
+      }
+  
+      employeeCreation(values);
+    } catch (e) {
+      console.error(e.message);
+      alert("Something went wrong!");
+    }
+  };
 
 const employeeCreation = async(values) => {
   try{
@@ -49,7 +61,7 @@ const employeeCreation = async(values) => {
 
   // Send the transaction to the blockchain
   await auth.methods
-    .createEmployee(values.firstName, values.lastName, values.email, values.contact, values.address, values.password, values.userRole)
+    .createEmployee(values.firstName, values.lastName, values.email, values.contact, values.address, values.password, values.userRole, values.blockChainAdd)
     .send({ from: account });
 
     alert("Employee Created Succesfully!");
@@ -150,19 +162,19 @@ const employeeCreation = async(values) => {
                 helperText={touched.address && errors.address}
                 sx={{ gridColumn: "span 4" }}
               />
-              {/* <TextField
+              <TextField
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Address 2"
+                label="BlockChain Address"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.address2}
-                name="address2"
-                error={!!touched.address2 && !!errors.address2}
-                helperText={touched.address2 && errors.address2}
+                value={values.blockChainAdd}
+                name="blockChainAdd"
+                error={!!touched.blockChainAdd && !!errors.blockChainAdd}
+                helperText={touched.blockChainAdd && errors.blockChainAdd}
                 sx={{ gridColumn: "span 4" }}
-              /> */}
+              />
 
               {/* User Role Dropdown */}
               <TextField
@@ -210,6 +222,7 @@ const checkoutSchema = yup.object().shape({
     .required("required"),
   address: yup.string().required("required"),
   password: yup.string().required("required"),
+  blockChainAdd: yup.string().required("required"),
   userRole: yup.string().required("Please select a user role"),
 });
 
@@ -221,6 +234,7 @@ const initialValues = {
   address: "",
   password: "12345678",
   userRole: "",
+  blockChainAdd: "",
 };
 
 export default Form;

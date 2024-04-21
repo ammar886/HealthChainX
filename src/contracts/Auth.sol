@@ -10,12 +10,16 @@ contract Auth {
     mapping(string => employee) employees;
     mapping(address => appointment[]) appointments;
 
+    mapping(string => bool) private usedEmails;
+    mapping(string => bool) private usedBlockchainAddresses;
+
     struct user {
         string username;
         string password;
         string email;
         string number;
         string userRole;
+        string blockChainAdd;
     }
 
     struct employee {
@@ -26,6 +30,7 @@ contract Auth {
         string adr;
         string password;
         string userRole;
+        string blockChainAdd;
     }
 
     struct appointment {
@@ -44,7 +49,8 @@ contract Auth {
         string email,
         string number,
         string password,
-        string userRole
+        string userRole,
+        string blockChainAdd
     );
 
     event employeeCreated(
@@ -54,7 +60,8 @@ contract Auth {
         string number,
         string adr,
         string password,
-        string userRole
+        string userRole,
+        string blockChainAdd
     );
 
     event appointmentCreated(
@@ -68,29 +75,40 @@ contract Auth {
         string doctor
     );
 
+    function isEmailUsed(string memory email) public view returns (bool) {
+        return usedEmails[email];
+    }
+
+    function isBlockchainAddressUsed(string memory blockchainAddress) public view returns (bool) {
+        return usedBlockchainAddresses[blockchainAddress];
+    }
+
     function createUser(
         string memory _username,
         string memory _password,
         string memory _email,
         string memory _number,
-        string memory _userRole
+        string memory _userRole,
+        string memory _blockChainAdd
     ) public {
+        require(!isEmailUsed(_email), "Email is already used. Please, use another email.");
+        require(!isBlockchainAddressUsed(_blockChainAdd), "Blockchain address is already used. Please, use another blockchain address.");
+        
         userCount++;
         users[_username] = user(
             _username,
             _password,
             _email,
             _number,
-            _userRole
+            _userRole,
+            _blockChainAdd
         );
-        emit userCreated(_username, _password, _email, _number, _userRole);
+        emit userCreated(_username, _password, _email, _number, _userRole, _blockChainAdd);
+
+        usedEmails[_email] = true;
+        usedBlockchainAddresses[_blockChainAdd] = true;
     }
 
-    string naam = "Ammar";
-
-    // function getUsername() public view returns (string memory) {
-    //     return naam;
-    // }
 
     function getUsername(
         string memory _username
@@ -148,8 +166,12 @@ contract Auth {
         string memory _number,
         string memory _adr,
         string memory _password,
-        string memory _userRole
+        string memory _userRole,
+        string memory _blockChainAdd
     ) public {
+        require(!isEmailUsed(_email), "Email is already used. Please, use another email.");
+        require(!isBlockchainAddressUsed(_blockChainAdd), "Blockchain address is already used. Please, use another blockchain address.");
+        
         employeeCount++;
         employees[_firstName] = employee(
             _firstName,
@@ -158,7 +180,8 @@ contract Auth {
             _number,
             _adr,
             _password,
-            _userRole
+            _userRole,
+            _blockChainAdd
         );
         emit employeeCreated(
             _firstName,
@@ -167,8 +190,12 @@ contract Auth {
             _number,
             _adr,
             _password,
-            _userRole
+            _userRole,
+            _blockChainAdd
         );
+
+        usedEmails[_email] = true;
+        usedBlockchainAddresses[_blockChainAdd] = true;
     }
 
     function bookAppointment(
@@ -220,30 +247,27 @@ contract Auth {
         string[] memory timeSlots,
         string[] memory doctors
     )
-{
-    appointment[] memory userAppointments = appointments[msg.sender];
-    firstNames = new string[](userAppointments.length);
-    lastNames = new string[](userAppointments.length);
-    emails = new string[](userAppointments.length);
-    numbers = new string[](userAppointments.length);
-    adrs = new string[](userAppointments.length);
-    timeSlots = new string[](userAppointments.length);
-    doctors = new string[](userAppointments.length);
+    {
+        appointment[] memory userAppointments = appointments[msg.sender];
+        firstNames = new string[](userAppointments.length);
+        lastNames = new string[](userAppointments.length);
+        emails = new string[](userAppointments.length);
+        numbers = new string[](userAppointments.length);
+        adrs = new string[](userAppointments.length);
+        timeSlots = new string[](userAppointments.length);
+        doctors = new string[](userAppointments.length);
 
-    for (uint256 i = 0; i < userAppointments.length; i++) {
-        firstNames[i] = userAppointments[i].firstName;
-        lastNames[i] = userAppointments[i].lastName;
-        emails[i] = userAppointments[i].email;
-        numbers[i] = userAppointments[i].number;
-        adrs[i] = userAppointments[i].adr;
-        timeSlots[i] = userAppointments[i].timeSlot;
-        doctors[i] = userAppointments[i].doctor;
+        for (uint256 i = 0; i < userAppointments.length; i++) {
+            firstNames[i] = userAppointments[i].firstName;
+            lastNames[i] = userAppointments[i].lastName;
+            emails[i] = userAppointments[i].email;
+            numbers[i] = userAppointments[i].number;
+            adrs[i] = userAppointments[i].adr;
+            timeSlots[i] = userAppointments[i].timeSlot;
+            doctors[i] = userAppointments[i].doctor;
+        }
+
+        return (firstNames, lastNames, emails, numbers, adrs, timeSlots, doctors);
     }
-
-    return (firstNames, lastNames, emails, numbers, adrs, timeSlots, doctors);
-}
-
-
-   
     
 }

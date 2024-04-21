@@ -6,6 +6,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "./HeaderPatient";
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import Web3 from "web3";
+import { Pending } from "@mui/icons-material";
 
 const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
@@ -79,7 +80,7 @@ const Form = () => {
       const account = accounts[0]; // The first account is the user's primary account
   
       localStorage.setItem("firstname",values.firstName);
-
+      let status = "pending";
       // Send the transaction to the blockchain
       await auth.methods
         .bookAppointment(
@@ -89,7 +90,8 @@ const Form = () => {
           values.contact,
           values.address1,
           values.timeslot,
-          values.doctorname
+          values.doctorname,
+          values.status
         )
         .send({ from: account });
   
@@ -269,6 +271,7 @@ const initialValues = {
   address: "",
   timeslot: "",
   doctorname: "",
+  status: "pending"
 };
 
 export default Form;

@@ -5,10 +5,15 @@ contract Auth {
     uint public userCount = 0;
     uint public employeeCount = 0;
     uint public totalAppointmets = 0;
-
+    address public adminAddress; //fix this
     mapping(string => user) users;
     mapping(string => employee) employees;
     mapping(address => appointment[]) appointments;
+    appointment[] public allAppointments;
+
+    constructor() {
+        adminAddress = 0x5b13955ab787Bb94D98EBc84ff4Af43dA605Ab84;
+    }
 
     struct user {
         string username;
@@ -37,6 +42,7 @@ contract Auth {
         string adr;
         string timeSlot;
         string doctor;
+        string status;
     }
 
     event userCreated(
@@ -65,7 +71,8 @@ contract Auth {
         string number,
         string adr,
         string timeSlot,
-        string doctor
+        string doctor,
+        string status
     );
 
     function createUser(
@@ -178,7 +185,8 @@ contract Auth {
         string memory _number,
         string memory _adr,
         string memory _timeSlot,
-        string memory _doctor
+        string memory _doctor,
+        string memory _status
     ) public {
         totalAppointmets++;
         appointment memory newAppointment = appointment(
@@ -189,9 +197,12 @@ contract Auth {
             _number,
             _adr,
             _timeSlot,
-            _doctor
+            _doctor,
+            _status
         );
         appointments[msg.sender].push(newAppointment);
+        allAppointments.push(newAppointment);
+
         emit appointmentCreated(
             msg.sender,
             _firstName,
@@ -200,7 +211,8 @@ contract Auth {
             _number,
             _adr,
             _timeSlot,
-            _doctor
+            _doctor,
+            _status
         );
     }
 
@@ -209,41 +221,107 @@ contract Auth {
     }
 
     function getAppointments()
-    public
-    view
-    returns (
-        string[] memory firstNames,
-        string[] memory lastNames,
-        string[] memory emails,
-        string[] memory numbers,
-        string[] memory adrs,
-        string[] memory timeSlots,
-        string[] memory doctors
-    )
-{
-    appointment[] memory userAppointments = appointments[msg.sender];
-    firstNames = new string[](userAppointments.length);
-    lastNames = new string[](userAppointments.length);
-    emails = new string[](userAppointments.length);
-    numbers = new string[](userAppointments.length);
-    adrs = new string[](userAppointments.length);
-    timeSlots = new string[](userAppointments.length);
-    doctors = new string[](userAppointments.length);
+        public
+        view
+        returns (
+            string[] memory firstNames,
+            string[] memory lastNames,
+            string[] memory emails,
+            string[] memory numbers,
+            string[] memory adrs,
+            string[] memory timeSlots,
+            string[] memory doctors,
+            string[] memory status
+        )
+    {
+        appointment[] memory userAppointments = appointments[msg.sender]; //msgsender
+        firstNames = new string[](userAppointments.length);
+        lastNames = new string[](userAppointments.length);
+        emails = new string[](userAppointments.length);
+        numbers = new string[](userAppointments.length);
+        adrs = new string[](userAppointments.length);
+        timeSlots = new string[](userAppointments.length);
+        doctors = new string[](userAppointments.length);
+        status = new string[](userAppointments.length);
 
-    for (uint256 i = 0; i < userAppointments.length; i++) {
-        firstNames[i] = userAppointments[i].firstName;
-        lastNames[i] = userAppointments[i].lastName;
-        emails[i] = userAppointments[i].email;
-        numbers[i] = userAppointments[i].number;
-        adrs[i] = userAppointments[i].adr;
-        timeSlots[i] = userAppointments[i].timeSlot;
-        doctors[i] = userAppointments[i].doctor;
+        for (uint256 i = 0; i < userAppointments.length; i++) {
+            firstNames[i] = userAppointments[i].firstName;
+            lastNames[i] = userAppointments[i].lastName;
+            emails[i] = userAppointments[i].email;
+            numbers[i] = userAppointments[i].number;
+            adrs[i] = userAppointments[i].adr;
+            timeSlots[i] = userAppointments[i].timeSlot;
+            doctors[i] = userAppointments[i].doctor;
+            status[i] = userAppointments[i].status;
+        }
+
+        return (
+            firstNames,
+            lastNames,
+            emails,
+            numbers,
+            adrs,
+            timeSlots,
+            doctors,
+            status
+        );
     }
 
-    return (firstNames, lastNames, emails, numbers, adrs, timeSlots, doctors);
-}
+    function getAppointmentsAdmin(
+        address userAddress
+    )
+        public
+        view
+        returns (
+            string[] memory firstNames,
+            string[] memory lastNames,
+            string[] memory emails,
+            string[] memory numbers,
+            string[] memory adrs,
+            string[] memory timeSlots,
+            string[] memory doctors,
+            string[] memory status
+        )
+    {
+        require(msg.sender == adminAddress, "only admin can call this func");
+        appointment[] memory userAppointments = appointments[userAddress]; // Use the provided userAddress
+        firstNames = new string[](userAppointments.length);
+        lastNames = new string[](userAppointments.length);
+        emails = new string[](userAppointments.length);
+        numbers = new string[](userAppointments.length);
+        adrs = new string[](userAppointments.length);
+        timeSlots = new string[](userAppointments.length);
+        doctors = new string[](userAppointments.length);
+        status = new string[](userAppointments.length);
 
+        for (uint256 i = 0; i < userAppointments.length; i++) {
+            firstNames[i] = userAppointments[i].firstName;
+            lastNames[i] = userAppointments[i].lastName;
+            emails[i] = userAppointments[i].email;
+            numbers[i] = userAppointments[i].number;
+            adrs[i] = userAppointments[i].adr;
+            timeSlots[i] = userAppointments[i].timeSlot;
+            doctors[i] = userAppointments[i].doctor;
+            status[i] = userAppointments[i].status;
+        }
 
-   
-    
+        return (
+            firstNames,
+            lastNames,
+            emails,
+            numbers,
+            adrs,
+            timeSlots,
+            doctors,
+            status
+        );
+    }
+
+    function getAllAppointments() public view returns (appointment[] memory) {
+        return allAppointments;
+    }
+
+    function getAllAppointmentsLength() public view returns (uint) {
+        return allAppointments.length;
+    }
 }

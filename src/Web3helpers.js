@@ -15,28 +15,41 @@ export const loadWeb3 = async () => {
   }
 };
 
+// export const loadBlockchainData = async () => {
+//   const web3 = new window.web3;
+//   // Load account
+//   const accounts = await web3.eth.getAccounts();
+
+//   // Network ID
+
+//   const networkId = await web3.eth.net.getId();
+
+//   // Network data
+
+//   if (networkId) {
+//     const auth = new web3.eth.Contract(
+//       Auth.abi,
+//       Auth.networks[networkId].address
+//     );
+
+//     const contract = new web3.eth.Contract(
+//       Auth.abi,
+//       Auth.networks[networkId].address
+//     );
+
+//     return { auth, accounts: accounts[0], contract };
+//   }
+// };
+
 export const loadBlockchainData = async () => {
-  const web3 = window.web3;
-  // Load account
-  const accounts = await web3.eth.getAccounts();
-
-  // Network ID
-
+  const web3 = new Web3(window.ethereum);
   const networkId = await web3.eth.net.getId();
-
-  // Network data
-
-  if (networkId) {
-    const auth = new web3.eth.Contract(
-      Auth.abi,
-      Auth.networks[networkId].address
-    );
-
-    const contract = new web3.eth.Contract(
-      Auth.abi,
-      Auth.networks[networkId].address
-    );
-
-    return { auth, accounts: accounts[0], contract };
+  const networkData = Auth.networks[networkId];
+  if (networkData) {
+    const auth = new web3.eth.Contract(Auth.abi, networkData.address);
+    const accounts = await web3.eth.getAccounts();
+    return { auth, accounts };
+  } else {
+    window.alert("Auth contract not deployed to detected network.");
   }
 };

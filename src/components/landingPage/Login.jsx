@@ -26,6 +26,8 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
+
+  localStorage.setItem('name', name);
   const [accounts, setAccounts] = useState(null);
   const [auth, setAuth] = useState(null);
   const [isAuthentic, setIsAuthentic] = useState(false);

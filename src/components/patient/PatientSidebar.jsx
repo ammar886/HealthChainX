@@ -17,6 +17,7 @@ import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  
 
   return (
     <MenuItem
@@ -38,6 +39,7 @@ const Sidebar = () => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
+  const name = localStorage.getItem('name');
 
   return (
     <Box
@@ -106,7 +108,7 @@ const Sidebar = () => {
                   sx={{ m: "10px 0 0 0" }}
                 >
                   
-                  <h1>Anees</h1>
+                  <h5>Welcome, {name}</h5>
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
                   HealthChainX Inc.

@@ -147,6 +147,7 @@ const Invoices = () => {
         <p style = {styles.p}>Address</p>
         <p style = {styles.p}>Slot</p>
         <p style = {styles.p}>Doc-ID</p>
+        <p style = {styles.p}>Status</p>
       </div>
       <Box
         m="40px 0 0 0"
@@ -182,19 +183,18 @@ const Invoices = () => {
         {/* <pre>{JSON.stringify(appointment, null, 2)}</pre> */}
         
         {appointment && appointment.map((appt, index) => (
-  appt.firstNames.map((firstName, i) => (
+  appt.firstNames && appt.firstNames.map((firstName, i) => (
     <div style={styles.appointmentDiv} className="appointmentDiv" key={i}> 
-   
       <p style={styles.p}>{firstName}</p>
-      <p style={styles.p}>{appt.lastNames[i]}</p>
-      <p style={styles.p}>{appt.emails[i]}</p>
-      <p style={styles.p}>{appt.numbers[i]}</p>
-      <p style={styles.p}>{appt.adrs[i]}</p>
-      <p style={styles.p}>{appt.timeSlots[i]}</p>
-      <p style={styles.p}>{appt.doctors[i]}</p>
+      <p style={styles.p}>{appt.lastNames && appt.lastNames[i]}</p>
+      <p style={styles.p}>{appt.emails && appt.emails[i]}</p>
+      <p style={styles.p}>{appt.numbers && appt.numbers[i]}</p>
+      <p style={styles.p}>{appt.adrs && appt.adrs[i]}</p>
+      <p style={styles.p}>{appt.timeSlots && appt.timeSlots[i]}</p>
+      <p style={styles.p}>{appt.doctors && appt.doctors[i]}</p>
+      <p style={styles.p}>{appt.status && appt.status[i]}</p>
       <br />
     </div>
-   
   ))
 ))}
         

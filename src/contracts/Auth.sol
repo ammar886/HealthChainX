@@ -133,6 +133,11 @@ contract Auth {
         usedBlockchainAddresses[_blockChainAdd] = true;
     }
 
+    function getUserDetails(string memory username) public view returns (string memory, string memory, string memory, string memory, string memory) {
+        user memory userInstance = users[username];
+        return (userInstance.username, userInstance.email, userInstance.number, userInstance.userRole, userInstance.blockChainAdd);
+    }
+
     function getUsername(
         string memory _username
     ) public view returns (string memory) {

@@ -272,7 +272,12 @@ const ManageAppointments = () => {
       {console.log(appt)}
       {console.log("Index:", index)}
       {console.log("Owner:", appt.owner)}
-      <button onClick={() => updateAppointmentStatus(appt.owner[i], index, "Approved")}>Approve</button>
+      {/* <button onClick={() => updateAppointmentStatus(appt.owner[i], index, "Approved")}>Approve</button> */}
+      <select onChange={(e) => updateAppointmentStatus(appt.owner[i], index, e.target.value)}>
+        <option value="">Select</option>
+        <option value="Approved">Approve</option>
+        <option value="Rejected">Reject</option>
+      </select>
     </div>
   ))
 ))}

@@ -22,7 +22,7 @@ const useStyles = makeStyles({
     padding: 20,
     boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
     borderRadius: 8,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: 'black',
   },
   section: {
     marginBottom: 20,

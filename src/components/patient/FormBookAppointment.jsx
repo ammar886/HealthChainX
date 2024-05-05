@@ -11,18 +11,37 @@ import { Pending } from "@mui/icons-material";
 const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [accounts, setAccounts] = React.useState(null);
+  const [doctors, setDoctors] = useState([]);
   const [auth, setAuth] = React.useState(null);
+
   const loadAccounts = async () => {
     let { auth, accounts } = await loadBlockchainData();
-
+  
     setAccounts(accounts);
     setAuth(auth);
+  
+    // Call loadDoctors here after auth has been set
+    loadDoctors(auth);
+  };
+  
+  const loadDoctors = async (auth) => {
+    if (!auth) {
+      console.log('Auth object is not initialized yet. Please try again.');
+      return;
+    }
+  
+    const [firstNames, lastNames, blockChainAdds] = await auth.methods.getDoctors().call();
+    const doctors = firstNames.map((firstName, index) => ({
+      firstName,
+      lastName: lastNames[index],
+      blockChainAdd: blockChainAdds[index]
+    }));
+    setDoctors(doctors);
   };
 
   React.useEffect(() => {
     loadWeb3();
   }, []);
-
   React.useEffect(() => {
     loadAccounts();
   }, []);
@@ -229,9 +248,11 @@ const Form = () => {
                 sx={{ gridColumn: "span 4" }}
               >
                 <MenuItem value="">Select Doctor</MenuItem>
-                <MenuItem value="026">Muhammad Anis (Viki Malotra)</MenuItem>
-                <MenuItem value="039">Ammar Khalid (K.K Shangania)</MenuItem>
-                <MenuItem value="051">Muhammad Ahsan (Charles Xavier)</MenuItem>
+                {doctors.map((doctor, index) => (
+                    <MenuItem key={index} value={doctor.blockChainAdd}>
+                        {doctor.firstName} {doctor.lastName}
+                    </MenuItem>
+                ))}
               </TextField>
             </Box>
 

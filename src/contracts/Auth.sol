@@ -15,9 +15,17 @@ contract Auth {
     mapping(string => bool) private usedBlockchainAddresses;
 
     appointment[] public allAppointments;
+    docEmployee[] public docemployees;
 
     constructor() {
         adminAddress = 0x5b13955ab787Bb94D98EBc84ff4Af43dA605Ab84;
+    }
+
+    struct docEmployee {
+        string firstName;
+        string lastName;
+        string blockChainAdd;
+        string userRole;
     }
 
     struct user {
@@ -454,5 +462,30 @@ contract Auth {
             appointments[userAddress][appointmentIndex].status,
             newStatus
         );
+    }
+
+    function getDoctors() public view returns (string[] memory, string[] memory, string[] memory) {
+        uint256 doctorCount = 0;
+        for (uint256 i = 0; i < docemployees.length; i++) {
+            if (keccak256(abi.encodePacked(docemployees[i].userRole)) == keccak256(abi.encodePacked("doctor"))) {
+                doctorCount++;
+            }
+        }
+
+        string[] memory firstNames = new string[](doctorCount);
+        string[] memory lastNames = new string[](doctorCount);
+        string[] memory blockChainAdds = new string[](doctorCount);
+
+        uint256 doctorIndex = 0;
+        for (uint256 i = 0; i < docemployees.length; i++) {
+            if (keccak256(abi.encodePacked(docemployees[i].userRole)) == keccak256(abi.encodePacked("doctor"))) {
+                firstNames[doctorIndex] = docemployees[i].firstName;
+                lastNames[doctorIndex] = docemployees[i].lastName;
+                blockChainAdds[doctorIndex] = docemployees[i].blockChainAdd;
+                doctorIndex++;
+            }
+        }
+
+        return (firstNames, lastNames, blockChainAdds);
     }
 }

@@ -29,14 +29,27 @@ const Form = () => {
       console.log('Auth object is not initialized yet. Please try again.');
       return;
     }
+
+    const accounts = await web3.eth.getAccounts();
+    const account = accounts[0];
   
-    const [firstNames, lastNames, blockChainAdds] = await auth.methods.getDoctors().call();
-    const doctors = firstNames.map((firstName, index) => ({
-      firstName,
-      lastName: lastNames[index],
-      blockChainAdd: blockChainAdds[index]
-    }));
-    setDoctors(doctors);
+    const result = await auth.methods.getDoctors().call({ from: account });
+    console.log(result);
+    
+    if (result[0].length > 0 && result[1].length > 0 && result[2].length > 0) {
+      const [firstNames, lastNames, blockChainAdds] = result;
+      
+      const doctors = firstNames.map((firstName, index) => ({
+        firstName,
+        lastName: lastNames[index],
+        blockChainAdd: blockChainAdds[index]
+      }));
+  
+      console.log(doctors);
+      setDoctors(doctors);
+    } else {
+      console.log('No doctors found.');
+    }
   };
 
   React.useEffect(() => {

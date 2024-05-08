@@ -213,7 +213,7 @@ contract Auth {
             !isBlockchainAddressUsed(_blockChainAdd),
             "Blockchain address is already used. Please, use another blockchain address."
         );
-
+        
         employeeCount++;
         employees[_firstName] = employee(
             _firstName,
@@ -465,23 +465,24 @@ contract Auth {
     }
 
     function getDoctors() public view returns (string[] memory, string[] memory, string[] memory) {
+
         uint256 doctorCount = 0;
         for (uint256 i = 0; i < docemployees.length; i++) {
             if (keccak256(abi.encodePacked(docemployees[i].userRole)) == keccak256(abi.encodePacked("doctor"))) {
                 doctorCount++;
             }
         }
-
+        
         string[] memory firstNames = new string[](doctorCount);
         string[] memory lastNames = new string[](doctorCount);
         string[] memory blockChainAdds = new string[](doctorCount);
 
         uint256 doctorIndex = 0;
-        for (uint256 i = 0; i < docemployees.length; i++) {
-            if (keccak256(abi.encodePacked(docemployees[i].userRole)) == keccak256(abi.encodePacked("doctor"))) {
-                firstNames[doctorIndex] = docemployees[i].firstName;
-                lastNames[doctorIndex] = docemployees[i].lastName;
-                blockChainAdds[doctorIndex] = docemployees[i].blockChainAdd;
+        for (uint256 i = 0; i < userCount; i++) {
+            if (keccak256(abi.encodePacked(employees[i].userRole)) == keccak256(abi.encodePacked("doctor"))) {
+                firstNames[doctorIndex] = employees[i].firstName;
+                lastNames[doctorIndex] = employees[i].lastName;
+                blockChainAdds[doctorIndex] = employees[i].blockChainAdd;
                 doctorIndex++;
             }
         }

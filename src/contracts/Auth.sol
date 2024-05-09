@@ -8,20 +8,22 @@ contract Auth {
     address public adminAddress; //fix this
 
     mapping(string => user) users;
+    mapping(string => authMemory) authUsers;
     mapping(string => employee[]) employees;
     mapping(address => appointment[]) appointments;
 
     mapping(string => bool) private usedEmails;
     mapping(string => bool) private usedBlockchainAddresses;
+    
     appointment[] public allAppointments;
-    employee[] public docemployees;
+    employee[] public allEmployees;
     
 
-    struct docEmployee {
-        string firstName;
-        string lastName;
-        string blockChainAdd;
+    struct authMemory {
+        string email;
+        string password;
         string userRole;
+        string blockChainAdd;
     }
 
     struct user {
@@ -60,6 +62,13 @@ contract Auth {
         string username,
         string email,
         string number,
+        string password,
+        string userRole,
+        string blockChainAdd
+    );
+
+    event authCreated(
+        string email,
         string password,
         string userRole,
         string blockChainAdd
@@ -116,7 +125,7 @@ contract Auth {
         );
 
         userCount++;
-        users[_username] = user(
+        users[_email] = user(
             _username,
             _password,
             _email,
@@ -135,6 +144,29 @@ contract Auth {
 
         usedEmails[_email] = true;
         usedBlockchainAddresses[_blockChainAdd] = true;
+
+        createAuth(_email, _password, _userRole, _blockChainAdd);
+    }
+
+    function createAuth(
+        string memory _email,
+        string memory _password,
+        string memory _userRole,
+        string memory _blockChainAdd
+    ) public {
+
+        authUsers[_email] = authMemory(
+            _email,
+            _password,
+            _userRole,
+            _blockChainAdd
+        );
+        emit authCreated(
+            _email,
+            _password,
+            _userRole,
+            _blockChainAdd
+        );
     }
 
     function getUserDetails(string memory username) public view returns (string memory, string memory, string memory, string memory, string memory) {
@@ -152,38 +184,26 @@ contract Auth {
         return users[_username].username;
     }
 
-     function getUserOrEmployeeRole(
-        string memory _username
+    function getUserOrEmployeeRole(
+        string memory _email
     ) public view returns (string memory) {
         if (
-            keccak256(abi.encodePacked(users[_username].userRole)) !=
+            keccak256(abi.encodePacked(authUsers[_email].userRole)) !=
             keccak256(abi.encodePacked(""))
         ) {
-            return users[_username].userRole;
-        } else if (
-            keccak256(abi.encodePacked(employees[_username].userRole)) !=
-            keccak256(abi.encodePacked(""))
-        ) {
-            return employees[_username].userRole;
-        }
+            return authUsers[_email].userRole;
+        } 
         revert("User or employee not found");
     }
 
     function authenticateLogin(
-        string memory _username,
+        string memory _email,
         string memory _password
     ) public view returns (bool) {
-        user memory userInstance = users[_username];
+        authMemory memory userInstance = authUsers[_email];
 
-        if (bytes(userInstance.username).length == 0) {
-            employee memory employeeUser = employees[_username];
-            if (bytes(employeeUser.firstName).length == 0) {
-                return false;
-            } else {
-                return
-                    keccak256(abi.encodePacked(employeeUser.password)) ==
-                    keccak256(abi.encodePacked(_password));
-            }
+        if (bytes(userInstance.email).length == 0) {
+            return false;
         } else {
             return
                 keccak256(abi.encodePacked(userInstance.password)) ==
@@ -211,7 +231,7 @@ contract Auth {
         );
         
         employeeCount++;
-        employee memory newEmployee = employee(    /*appointment memory newAppointment = appointment(*/
+        employee memory newEmployee = employee(
             _firstName,
             _lastName,
             _email,
@@ -221,6 +241,8 @@ contract Auth {
             _userRole,
             _blockChainAdd
         );
+        employees[_email].push(newEmployee);
+        allEmployees.push(newEmployee);
         emit employeeCreated(
             _firstName,
             _lastName,
@@ -234,6 +256,8 @@ contract Auth {
 
         usedEmails[_email] = true;
         usedBlockchainAddresses[_blockChainAdd] = true;
+
+        createAuth(_email, _password, _userRole, _blockChainAdd);
     }
 
     function bookAppointment(
@@ -373,12 +397,6 @@ contract Auth {
         );
     }
 
-    // function getAllAppointments() public view returns (appointment[] memory) {
-    //     return allAppointments;
-    // }
-
-
-
     function getAllAppointments()
         public
         view
@@ -465,8 +483,8 @@ contract Auth {
     function getDoctors() public view returns (string[] memory, string[] memory, string[] memory) {
 
         uint256 doctorCount = 0;
-        for (uint256 i = 0; i < docemployees.length; i++) {
-            if (keccak256(abi.encodePacked(docemployees[i].userRole)) == keccak256(abi.encodePacked("doctor"))) {
+        for (uint256 i = 0; i < allEmployees.length; i++) {
+            if (keccak256(abi.encodePacked(allEmployees[i].userRole)) == keccak256(abi.encodePacked("doctor"))) {
                 doctorCount++;
             }
         }
@@ -476,11 +494,11 @@ contract Auth {
         string[] memory blockChainAdds = new string[](doctorCount);
 
         uint256 doctorIndex = 0;
-        for (uint256 i = 0; i < docemployees.length; i++) {
-            if (keccak256(abi.encodePacked(docemployees[i].userRole)) == keccak256(abi.encodePacked("doctor"))) {
-                firstNames[doctorIndex] = docemployees[i].firstName;
-                lastNames[doctorIndex] = docemployees[i].lastName;
-                blockChainAdds[doctorIndex] = docemployees[i].blockChainAdd;
+        for (uint256 i = 0; i < allEmployees.length; i++) {
+            if (keccak256(abi.encodePacked(allEmployees[i].userRole)) == keccak256(abi.encodePacked("doctor"))) {
+                firstNames[doctorIndex] = allEmployees[i].firstName;
+                lastNames[doctorIndex] = allEmployees[i].lastName;
+                blockChainAdds[doctorIndex] = allEmployees[i].blockChainAdd;
                 doctorIndex++;
             }
         }

@@ -37,7 +37,9 @@ const Form = () => {
     console.log(result);
     
     if (result[0].length > 0 && result[1].length > 0 && result[2].length > 0) {
-      const [firstNames, lastNames, blockChainAdds] = result;
+      const firstNames = result[0];
+      const lastNames = result[1];
+      const blockChainAdds = result[2];
       
       const doctors = firstNames.map((firstName, index) => ({
         firstName,
@@ -68,36 +70,6 @@ const Form = () => {
     appointmentCreation(values);
     console.log("handleForm function called!");
   };
-
-  // const appointmentCreation = async (values) => {
-  //   try {
-  //     console.log(auth); // Check the value of auth
-  //     console.log(auth.methods);
-
-  //     const accounts = await window.ethereum.request({
-  //       method: "eth_requestAccounts",
-  //     });
-  //     const account = accounts[0]; // The first account is the user's primary account
-
-  //     // Send the transaction to the blockchain
-  //     await auth.methods
-  //       .bookAppointment(
-  //         values.firstName,
-  //         values.lastName,
-  //         values.email,
-  //         values.contact,
-  //         values.address,
-  //         values.timeslot,
-  //         values.doctorname
-  //       )
-  //       .send({ from: account });
-
-  //     alert("Appointment Booked Succesfully!");
-  //   } catch (e) {
-  //     console.error(e.message);
-  //     alert("Something went wrong!");
-  //   }
-  // };
 
   const appointmentCreation = async (values) => {
     try {

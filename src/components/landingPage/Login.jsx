@@ -23,11 +23,10 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
   const adminName = "Muhammad Anis";
   const adminPassword = "admin123";
 
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-
-  localStorage.setItem('name', name);
+  localStorage.setItem('email', email);
   const [accounts, setAccounts] = useState(null);
   const [auth, setAuth] = useState(null);
   const [isAuthentic, setIsAuthentic] = useState(false);
@@ -62,8 +61,8 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
     try {
       e.preventDefault();
 
-      if (name && password) {
-        if (name === adminName && password === adminPassword) {
+      if (email && password) {
+        if (email === adminName && password === adminPassword) {
           alert("Admin Hardcore.");
           setIsAuthenticated(true);
           setUserRole("admin");
@@ -76,17 +75,17 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
           const account = accounts[0];
           console.log(account);
           const isauthentic = await auth.methods
-            .authenticateLogin(name, password)
+            .authenticateLogin(email, password)
             .call({ from: account });
 
           const userRole = await auth.methods
-            .getUserOrEmployeeRole(name)
+            .getUserOrEmployeeRole(email)
             .call({ from: account });
 
             console.log(isauthentic);
             console.log(userRole);
 
-            console.log("Name:" , name);
+            console.log("Email:" , email);
             console.log("Password: ", password);
     
           if (isauthentic) {
@@ -165,8 +164,8 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
           <h2>Login</h2>
 
           <div className="login-inputfield">
-            <input type="text" onChange={(e) => setName(e.target.value)} />
-            <span>Name</span>
+            <input type="text" onChange={(e) => setEmail(e.target.value)} />
+            <span>Email</span>
             <i></i>
           </div>
           <div className="login-inputfield">

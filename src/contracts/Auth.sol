@@ -8,18 +8,14 @@ contract Auth {
     address public adminAddress; //fix this
 
     mapping(string => user) users;
-    mapping(string => employee) employees;
+    mapping(string => employee[]) employees;
     mapping(address => appointment[]) appointments;
 
     mapping(string => bool) private usedEmails;
     mapping(string => bool) private usedBlockchainAddresses;
-
     appointment[] public allAppointments;
-    docEmployee[] public docemployees;
-
-    constructor() {
-        adminAddress = 0x5b13955ab787Bb94D98EBc84ff4Af43dA605Ab84;
-    }
+    employee[] public docemployees;
+    
 
     struct docEmployee {
         string firstName;
@@ -156,7 +152,7 @@ contract Auth {
         return users[_username].username;
     }
 
-    function getUserOrEmployeeRole(
+     function getUserOrEmployeeRole(
         string memory _username
     ) public view returns (string memory) {
         if (
@@ -215,7 +211,7 @@ contract Auth {
         );
         
         employeeCount++;
-        employees[_firstName] = employee(
+        employee memory newEmployee = employee(    /*appointment memory newAppointment = appointment(*/
             _firstName,
             _lastName,
             _email,
@@ -381,6 +377,8 @@ contract Auth {
     //     return allAppointments;
     // }
 
+
+
     function getAllAppointments()
         public
         view
@@ -478,11 +476,11 @@ contract Auth {
         string[] memory blockChainAdds = new string[](doctorCount);
 
         uint256 doctorIndex = 0;
-        for (uint256 i = 0; i < userCount; i++) {
-            if (keccak256(abi.encodePacked(employees[i].userRole)) == keccak256(abi.encodePacked("doctor"))) {
-                firstNames[doctorIndex] = employees[i].firstName;
-                lastNames[doctorIndex] = employees[i].lastName;
-                blockChainAdds[doctorIndex] = employees[i].blockChainAdd;
+        for (uint256 i = 0; i < docemployees.length; i++) {
+            if (keccak256(abi.encodePacked(docemployees[i].userRole)) == keccak256(abi.encodePacked("doctor"))) {
+                firstNames[doctorIndex] = docemployees[i].firstName;
+                lastNames[doctorIndex] = docemployees[i].lastName;
+                blockChainAdds[doctorIndex] = docemployees[i].blockChainAdd;
                 doctorIndex++;
             }
         }

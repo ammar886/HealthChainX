@@ -8,42 +8,42 @@ contract Auth {
     address public adminAddress; //fix this
 
     mapping(string => user) users;
-    mapping(string => authMemory) authUsers;
     mapping(string => employee[]) employees;
+    mapping(string => authMemory) authUsers;
     mapping(address => appointment[]) appointments;
 
     mapping(string => bool) private usedEmails;
     mapping(string => bool) private usedBlockchainAddresses;
     
-    appointment[] public allAppointments;
     employee[] public allEmployees;
-    
-
-    struct authMemory {
-        string email;
-        string password;
-        string userRole;
-        string blockChainAdd;
-    }
+    appointment[] public allAppointments;    
 
     struct user {
+        string blockChainAdd;
         string username;
-        string password;
         string email;
         string number;
         string userRole;
-        string blockChainAdd;
+        string password;
     }
 
     struct employee {
-        string firstName;
-        string lastName;
+        string blockChainAdd;
+        string username;
         string email;
         string number;
         string adr;
-        string password;
+        string qualifications;
         string userRole;
+        string specialization;
+        string password;
+    }
+
+    struct authMemory {
         string blockChainAdd;
+        string email;
+        string userRole;
+        string password;
     }
 
     struct appointment {
@@ -53,36 +53,37 @@ contract Auth {
         string email;
         string number;
         string adr;
-        string timeSlot;
         string doctor;
+        string timeSlot;
         string status;
     }
 
     event userCreated(
+        string blockChainAdd,
         string username,
         string email,
         string number,
-        string password,
         string userRole,
-        string blockChainAdd
-    );
-
-    event authCreated(
-        string email,
-        string password,
-        string userRole,
-        string blockChainAdd
+        string password
     );
 
     event employeeCreated(
-        string firstName,
-        string lastName,
+        string blockChainAdd,
+        string username,
         string email,
         string number,
         string adr,
-        string password,
+        string qualifications,
         string userRole,
-        string blockChainAdd
+        string specialization,
+        string password
+    );
+
+    event authCreated(
+        string blockChainAdd,
+        string email,
+        string userRole,
+        string password
     );
 
     event appointmentCreated(
@@ -92,8 +93,8 @@ contract Auth {
         string email,
         string number,
         string adr,
-        string timeSlot,
         string doctor,
+        string timeSlot,
         string status
     );
 
@@ -108,12 +109,12 @@ contract Auth {
     }
 
     function createUser(
+        string memory _blockChainAdd,
         string memory _username,
-        string memory _password,
         string memory _email,
         string memory _number,
         string memory _userRole,
-        string memory _blockChainAdd
+        string memory _password
     ) public {
         require(
             !isEmailUsed(_email),
@@ -126,62 +127,114 @@ contract Auth {
 
         userCount++;
         users[_email] = user(
+            _blockChainAdd,
             _username,
-            _password,
             _email,
             _number,
             _userRole,
-            _blockChainAdd
+            _password
         );
         emit userCreated(
+            _blockChainAdd,
             _username,
-            _password,
             _email,
             _number,
             _userRole,
-            _blockChainAdd
+            _password
         );
 
         usedEmails[_email] = true;
         usedBlockchainAddresses[_blockChainAdd] = true;
 
-        createAuth(_email, _password, _userRole, _blockChainAdd);
+        createAuth(_blockChainAdd, _email, _userRole, _password);
     }
 
-    function createAuth(
-        string memory _email,
-        string memory _password,
-        string memory _userRole,
-        string memory _blockChainAdd
-    ) public {
-
-        authUsers[_email] = authMemory(
-            _email,
-            _password,
-            _userRole,
-            _blockChainAdd
-        );
-        emit authCreated(
-            _email,
-            _password,
-            _userRole,
-            _blockChainAdd
-        );
-    }
-
-    function getUserDetails(string memory username) public view returns (string memory, string memory, string memory, string memory, string memory) {
-        user memory userInstance = users[username];
+    function getUserDetails(string memory email) public view returns (string memory, string memory, string memory, string memory, string memory) {
+        user memory userInstance = users[email];
         return (userInstance.username, userInstance.email, userInstance.number, userInstance.userRole, userInstance.blockChainAdd);
     }
 
     function getUsername(
-        string memory _username
+        string memory _email
     ) public view returns (string memory) {
         require(
-            bytes(users[_username].username).length > 0,
+            bytes(users[_email].username).length > 0,
             "User does not exist"
         );
-        return users[_username].username;
+        return users[_email].username;
+    }
+
+    function createEmployee(
+        string memory _blockChainAdd,
+        string memory _username,
+        string memory _email,
+        string memory _number,
+        string memory _adr,
+        string memory _qualifications,
+        string memory _userRole,
+        string memory _specialization,
+        string memory _password
+    ) public {
+        require(
+            !isEmailUsed(_email),
+            "Email is already used. Please, use another email."
+        );
+        require(
+            !isBlockchainAddressUsed(_blockChainAdd),
+            "Blockchain address is already used. Please, use another blockchain address."
+        );
+        
+        employeeCount++;
+        employee memory newEmployee = employee(
+            _blockChainAdd,
+            _username,
+            _email,
+            _number,
+            _adr,
+            _qualifications,
+            _userRole,
+            _specialization,
+            _password
+        );
+        employees[_email].push(newEmployee);
+        allEmployees.push(newEmployee);
+        emit employeeCreated(
+            _blockChainAdd,
+            _username,
+            _email,
+            _number,
+            _adr,
+            _qualifications,
+            _userRole,
+            _specialization,
+            _password
+        );
+
+        usedEmails[_email] = true;
+        usedBlockchainAddresses[_blockChainAdd] = true;
+
+        createAuth(_blockChainAdd, _email, _userRole, _password);
+    }
+
+    function createAuth(
+        string memory _blockChainAdd,
+        string memory _email,
+        string memory _userRole,
+        string memory _password
+    ) public {
+
+        authUsers[_email] = authMemory(
+            _blockChainAdd,
+            _email,
+            _userRole,
+            _password
+        );
+        emit authCreated(
+            _blockChainAdd,
+            _email,
+            _userRole,
+            _password
+        );
     }
 
     function getUserOrEmployeeRole(
@@ -211,63 +264,14 @@ contract Auth {
         }
     }
 
-    function createEmployee(
-        string memory _firstName,
-        string memory _lastName,
-        string memory _email,
-        string memory _number,
-        string memory _adr,
-        string memory _password,
-        string memory _userRole,
-        string memory _blockChainAdd
-    ) public {
-        require(
-            !isEmailUsed(_email),
-            "Email is already used. Please, use another email."
-        );
-        require(
-            !isBlockchainAddressUsed(_blockChainAdd),
-            "Blockchain address is already used. Please, use another blockchain address."
-        );
-        
-        employeeCount++;
-        employee memory newEmployee = employee(
-            _firstName,
-            _lastName,
-            _email,
-            _number,
-            _adr,
-            _password,
-            _userRole,
-            _blockChainAdd
-        );
-        employees[_email].push(newEmployee);
-        allEmployees.push(newEmployee);
-        emit employeeCreated(
-            _firstName,
-            _lastName,
-            _email,
-            _number,
-            _adr,
-            _password,
-            _userRole,
-            _blockChainAdd
-        );
-
-        usedEmails[_email] = true;
-        usedBlockchainAddresses[_blockChainAdd] = true;
-
-        createAuth(_email, _password, _userRole, _blockChainAdd);
-    }
-
     function bookAppointment(
         string memory _firstName,
         string memory _lastName,
         string memory _email,
         string memory _number,
         string memory _adr,
-        string memory _timeSlot,
         string memory _doctor,
+        string memory _timeSlot,
         string memory _status
     ) public {
         totalAppointmets++;
@@ -278,8 +282,8 @@ contract Auth {
             _email,
             _number,
             _adr,
-            _timeSlot,
             _doctor,
+            _timeSlot,
             _status
         );
         appointments[msg.sender].push(newAppointment);
@@ -291,8 +295,8 @@ contract Auth {
             _email,
             _number,
             _adr,
-            _timeSlot,
             _doctor,
+            _timeSlot,
             _status
         );
     }
@@ -310,8 +314,8 @@ contract Auth {
             string[] memory emails,
             string[] memory numbers,
             string[] memory adrs,
-            string[] memory timeSlots,
             string[] memory doctors,
+            string[] memory timeSlots,
             string[] memory status
         )
     {
@@ -321,17 +325,18 @@ contract Auth {
         emails = new string[](userAppointments.length);
         numbers = new string[](userAppointments.length);
         adrs = new string[](userAppointments.length);
-        timeSlots = new string[](userAppointments.length);
         doctors = new string[](userAppointments.length);
+        timeSlots = new string[](userAppointments.length);
         status = new string[](userAppointments.length);
+
         for (uint256 i = 0; i < userAppointments.length; i++) {
             firstNames[i] = userAppointments[i].firstName;
             lastNames[i] = userAppointments[i].lastName;
             emails[i] = userAppointments[i].email;
             numbers[i] = userAppointments[i].number;
             adrs[i] = userAppointments[i].adr;
-            timeSlots[i] = userAppointments[i].timeSlot;
             doctors[i] = userAppointments[i].doctor;
+            timeSlots[i] = userAppointments[i].timeSlot;
             status[i] = userAppointments[i].status;
         }
 
@@ -341,8 +346,8 @@ contract Auth {
             emails,
             numbers,
             adrs,
-            timeSlots,
             doctors,
+            timeSlots,
             status
         );
     }
@@ -358,8 +363,8 @@ contract Auth {
             string[] memory emails,
             string[] memory numbers,
             string[] memory adrs,
-            string[] memory timeSlots,
             string[] memory doctors,
+            string[] memory timeSlots,
             string[] memory status
         )
     {
@@ -370,8 +375,8 @@ contract Auth {
         emails = new string[](userAppointments.length);
         numbers = new string[](userAppointments.length);
         adrs = new string[](userAppointments.length);
-        timeSlots = new string[](userAppointments.length);
         doctors = new string[](userAppointments.length);
+        timeSlots = new string[](userAppointments.length);
         status = new string[](userAppointments.length);
 
         for (uint256 i = 0; i < userAppointments.length; i++) {
@@ -380,8 +385,8 @@ contract Auth {
             emails[i] = userAppointments[i].email;
             numbers[i] = userAppointments[i].number;
             adrs[i] = userAppointments[i].adr;
-            timeSlots[i] = userAppointments[i].timeSlot;
             doctors[i] = userAppointments[i].doctor;
+            timeSlots[i] = userAppointments[i].timeSlot;
             status[i] = userAppointments[i].status;
         }
 
@@ -391,8 +396,8 @@ contract Auth {
             emails,
             numbers,
             adrs,
-            timeSlots,
             doctors,
+            timeSlots,
             status
         );
     }
@@ -406,8 +411,8 @@ contract Auth {
             string[] memory emails,
             string[] memory numbers,
             string[] memory adrs,
-            string[] memory timeSlots,
             string[] memory doctors,
+            string[] memory timeSlots,
             string[] memory status,
             address[] memory owner
         )
@@ -418,18 +423,19 @@ contract Auth {
         emails = new string[](appointmentList.length);
         numbers = new string[](appointmentList.length);
         adrs = new string[](appointmentList.length);
-        timeSlots = new string[](appointmentList.length);
         doctors = new string[](appointmentList.length);
+        timeSlots = new string[](appointmentList.length);
         status = new string[](appointmentList.length);
         owner = new address[](appointmentList.length);
+
         for (uint256 i = 0; i < appointmentList.length; i++) {
             firstNames[i] = appointmentList[i].firstName;
             lastNames[i] = appointmentList[i].lastName;
             emails[i] = appointmentList[i].email;
             numbers[i] = appointmentList[i].number;
             adrs[i] = appointmentList[i].adr;
-            timeSlots[i] = appointmentList[i].timeSlot;
             doctors[i] = appointmentList[i].doctor;
+            timeSlots[i] = appointmentList[i].timeSlot;
             status[i] = appointmentList[i].status;
             owner[i] = appointmentList[i].owner;
         }
@@ -440,8 +446,8 @@ contract Auth {
             emails,
             numbers,
             adrs,
-            timeSlots,
             doctors,
+            timeSlots,
             status,
             owner
         );
@@ -480,7 +486,7 @@ contract Auth {
         );
     }
 
-    function getDoctors() public view returns (string[] memory, string[] memory, string[] memory) {
+    function getDoctors() public view returns (string[] memory, string[] memory) {
 
         uint256 doctorCount = 0;
         for (uint256 i = 0; i < allEmployees.length; i++) {
@@ -489,20 +495,18 @@ contract Auth {
             }
         }
         
-        string[] memory firstNames = new string[](doctorCount);
-        string[] memory lastNames = new string[](doctorCount);
+        string[] memory userNames = new string[](doctorCount);
         string[] memory blockChainAdds = new string[](doctorCount);
 
         uint256 doctorIndex = 0;
         for (uint256 i = 0; i < allEmployees.length; i++) {
             if (keccak256(abi.encodePacked(allEmployees[i].userRole)) == keccak256(abi.encodePacked("doctor"))) {
-                firstNames[doctorIndex] = allEmployees[i].firstName;
-                lastNames[doctorIndex] = allEmployees[i].lastName;
+                userNames[doctorIndex] = allEmployees[i].username;
                 blockChainAdds[doctorIndex] = allEmployees[i].blockChainAdd;
                 doctorIndex++;
             }
         }
 
-        return (firstNames, lastNames, blockChainAdds);
+        return (userNames, blockChainAdds);
     }
 }

@@ -6,10 +6,10 @@ import { AuthContext } from '../context/AuthContext';
 import Topbar from "../components/admin/Topbar";
 import Sidebar from "../components/admin/Sidebar";
 import Dashboard from "../components/admin/Dashboard";
-import ManagePatient from "../components/admin/ManagePatient";
+import ManageAccounts from "../components/admin/ManageAccounts";
 import Invoices from "../components/admin/Invoices";
 import ManageAppointments from "../components/admin/ManageAppointments";
-import Form from "../components/admin/Form";
+import CreateEmployee from "../components/admin/CreateEmployee";
 import FAQ from "../components/admin/Faq";
 
 
@@ -35,10 +35,10 @@ function AdminPage() {
             <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              <Route path="managepatient" element={<ManagePatient />} />
+              <Route path="manageaccounts" element={<ManageAccounts />} />
               <Route path="manageappointments" element={<ManageAppointments />} />
               <Route path="invoices" element={<Invoices />} />
-              <Route path="form" element={<Form />} />
+              <Route path="createemployee" element={<CreateEmployee />} />
               <Route path="faq" element={<FAQ />} />
             </Routes>
           </main>

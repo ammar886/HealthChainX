@@ -181,7 +181,7 @@ const PatientDashboard = () => {
             p="15px"
           >
             <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-              Recent Transactions
+              Recent Appointements
             </Typography>
           </Box>
           {mockTransactions.map((transaction, i) => (

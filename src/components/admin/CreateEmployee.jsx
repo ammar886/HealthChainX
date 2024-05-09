@@ -61,7 +61,7 @@ const employeeCreation = async(values) => {
 
   // Send the transaction to the blockchain
   await auth.methods
-    .createEmployee(values.firstName, values.lastName, values.email, values.contact, values.address, values.password, values.userRole, values.blockChainAdd)
+    .createEmployee(values.blockChainAdd, values.firstName + " " + values.lastName, values.email, values.contact, values.address, values.qualifications, values.userRole, values.specialization, values.password)
     .send({ from: account });
 
     alert("Employee Created Succesfully!");
@@ -73,7 +73,7 @@ const employeeCreation = async(values) => {
 
   return (
     <Box m="20px">
-      <Header title="CREATE USER" subtitle="Create a New User Profile" />
+      <Header title="CREATE NEW ACCOUNT" subtitle="Create a New User Profile" />
 
       <Formik
         onSubmit={handleFormSubmit}
@@ -176,6 +176,20 @@ const employeeCreation = async(values) => {
                 sx={{ gridColumn: "span 4" }}
               />
 
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Qualifications"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.qualifications}
+                name="qualifications"
+                error={!!touched.blockChainAdd && !!errors.blockChainAdd}
+                helperText={touched.blockChainAdd && errors.blockChainAdd}
+                sx={{ gridColumn: "span 4" }}
+              />
+
               {/* User Role Dropdown */}
               <TextField
                 select
@@ -193,8 +207,30 @@ const employeeCreation = async(values) => {
                 <MenuItem value="">Select User Role</MenuItem>
                 <MenuItem value="doctor">Doctor</MenuItem>
                 <MenuItem value="receptionist">Receptionist</MenuItem>
-                <MenuItem value="patient">Patient</MenuItem>
               </TextField>
+
+              {values.userRole === 'doctor' && (
+                <TextField
+                  select
+                  fullWidth
+                  variant="filled"
+                  label="Specialization"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.specialization}
+                  name="specialization"
+                  error={!!touched.specialization && !!errors.specialization}
+                  helperText={touched.specialization && errors.specialization}
+                  sx={{ gridColumn: "span 4" }}
+                >
+                  <MenuItem value="">Select Specialization</MenuItem>
+                  <MenuItem value="Gynecologist">Gynecologist</MenuItem>
+                  <MenuItem value="Dermatologist">Dermatologist</MenuItem>
+                  <MenuItem value="Neurologist">Neurologist</MenuItem>
+                  <MenuItem value="Dentist">Dentist</MenuItem>
+                  <MenuItem value="Psychiatrist">Psychiatrist</MenuItem>
+                </TextField>
+              )}
             </Box>
 
             <Box display="flex" justifyContent="end" mt="20px">
@@ -213,6 +249,7 @@ const phoneRegExp =
   /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 
 const checkoutSchema = yup.object().shape({
+  blockChainAdd: yup.string().required("required"),
   firstName: yup.string().required("required"),
   lastName: yup.string().required("required"),
   email: yup.string().email("invalid email").required("required"),
@@ -221,20 +258,23 @@ const checkoutSchema = yup.object().shape({
     .matches(phoneRegExp, "Phone number is not valid")
     .required("required"),
   address: yup.string().required("required"),
-  password: yup.string().required("required"),
-  blockChainAdd: yup.string().required("required"),
+  qualifications: yup.string().required("requird"),
   userRole: yup.string().required("Please select a user role"),
+  specialization: yup.string().required("Please select a specialization of doctor"),
+  password: yup.string().required("required"),
 });
 
 const initialValues = {
+  blockChainAdd: "",
   firstName: "",
   lastName: "",
   email: "",
   contact: "",
   address: "",
-  password: "12345678",
+  qualifications: "",
   userRole: "",
-  blockChainAdd: "",
+  specialization: "None",
+  password: "12345678",
 };
 
 export default Form;

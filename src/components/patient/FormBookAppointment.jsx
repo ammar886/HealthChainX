@@ -36,14 +36,12 @@ const Form = () => {
     const result = await auth.methods.getDoctors().call({ from: account });
     console.log(result);
     
-    if (result[0].length > 0 && result[1].length > 0 && result[2].length > 0) {
-      const firstNames = result[0];
-      const lastNames = result[1];
-      const blockChainAdds = result[2];
+    if (result[0].length > 0 && result[1].length > 0) {
+      const userNames = result[0];
+      const blockChainAdds = result[1];
       
-      const doctors = firstNames.map((firstName, index) => ({
-        firstName,
-        lastName: lastNames[index],
+      const doctors = userNames.map((userNames, index) => ({
+        userNames,
         blockChainAdd: blockChainAdds[index]
       }));
   
@@ -62,12 +60,12 @@ const Form = () => {
   }, []);
 
   const handleFormSubmit = (values) => {
-    console.log("Form submitted!");
-    console.log(values.lastName);
-     localStorage.setItem("firstname",values.firstName);
-     localStorage.setItem("lastname",values.lastName);
-     localStorage.setItem("email",values.email);
+    localStorage.setItem("firstname", values.firstName);
+    localStorage.setItem("lastname", values.lastName);
+    localStorage.setItem("email", values.email);
+
     appointmentCreation(values);
+
     console.log("handleForm function called!");
   };
 
@@ -83,7 +81,7 @@ const Form = () => {
       });
       const account = accounts[0]; // The first account is the user's primary account
   
-      localStorage.setItem("firstname",values.firstName);
+      localStorage.setItem("firstname", values.firstName);
       let status = "pending";
       // Send the transaction to the blockchain
       await auth.methods
@@ -92,9 +90,9 @@ const Form = () => {
           values.lastName,
           values.email,
           values.contact,
-          values.address1,
-          values.timeslot,
+          values.address,
           values.doctorname,
+          values.timeslot,
           values.status
         )
         .send({ from: account });
@@ -114,7 +112,7 @@ const Form = () => {
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={{ ...initialValues, userRole: "" }}
-        // validationSchema={checkoutSchema}
+        validationSchema={checkoutSchema}
       >
         {({
           values,
@@ -192,32 +190,12 @@ const Form = () => {
                 label="Address"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.address1}
-                name="address1"
-                error={!!touched.address1 && !!errors.address1}
-                helperText={touched.address1 && errors.address1}
+                value={values.address}
+                name="address"
+                error={!!touched.address && !!errors.address}
+                helperText={touched.address && errors.address}
                 sx={{ gridColumn: "span 4" }}
               />
-
-              {/* User Role Dropdown */}
-              <TextField
-                select
-                fullWidth
-                variant="filled"
-                label="Time Slot"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.timeslot}
-                name="timeslot"
-                error={!!touched.timeslot && !!errors.timeslot}
-                helperText={touched.timeslot && errors.timeslot}
-                sx={{ gridColumn: "span 4" }}
-              >
-                <MenuItem value="">Select Time Slot</MenuItem>
-                <MenuItem value="11:30">11:30</MenuItem>
-                <MenuItem value="12:30">12:30</MenuItem>
-                <MenuItem value="01:30">01:30</MenuItem>
-              </TextField>
 
               <TextField
                 select
@@ -235,9 +213,28 @@ const Form = () => {
                 <MenuItem value="">Select Doctor</MenuItem>
                 {doctors.map((doctor, index) => (
                     <MenuItem key={index} value={doctor.blockChainAdd}>
-                        {doctor.firstName} {doctor.lastName}
+                        {doctor.userNames}
                     </MenuItem>
                 ))}
+              </TextField>
+
+              <TextField
+                select
+                fullWidth
+                variant="filled"
+                label="Time Slot"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.timeslot}
+                name="timeslot"
+                error={!!touched.timeslot && !!errors.timeslot}
+                helperText={touched.timeslot && errors.timeslot}
+                sx={{ gridColumn: "span 4" }}
+              >
+                <MenuItem value="">Select Time Slot</MenuItem>
+                <MenuItem value="11:30">11:30</MenuItem>
+                <MenuItem value="12:30">12:30</MenuItem>
+                <MenuItem value="01:30">01:30</MenuItem>
               </TextField>
             </Box>
 
@@ -265,8 +262,8 @@ const checkoutSchema = yup.object().shape({
     .matches(phoneRegExp, "Phone number is not valid")
     .required("required"),
   address: yup.string().required("required"),
-  timeslot: yup.string().required("Please select a user role"),
-  doctorname: yup.string().required("Please select a user role"),
+  doctorname: yup.string().required("Please select a doctor"),
+  timeslot: yup.string().required("Please select a timeslot"),
 });
 
 const initialValues = {
@@ -275,8 +272,8 @@ const initialValues = {
   email: "",
   contact: "",
   address: "",
-  timeslot: "",
   doctorname: "",
+  timeslot: "",
   status: "pending"
 };
 

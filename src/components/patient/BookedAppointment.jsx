@@ -53,22 +53,6 @@ const Invoices = () => {
   const [auth, setAuth] = useState(null);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
-  // useEffect(() => {
-  //   const getAppointment = async () => {
-  //     if(!auth) return;
-  //     const accounts = await web3.eth.getAccounts();
-  //     const account = accounts[0];
-      
-     
-  //     const appointment = await auth.methods.getAppointments().call({ from: account });
-  //     setAppointment(appointment);
-  //     console.log("new appointment:", appointment)
-  //     localStorage.setItem('appointment', JSON.stringify(appointment));
-  //   };
-
-  //   getAppointment();
-  // }, [auth]); //added auth as a dependency
   
   useEffect(() => {
     const getAppointment = async () => {
@@ -145,8 +129,8 @@ const Invoices = () => {
         <p style = {styles.p}>Email</p>
         <p style = {styles.p}>Phone</p>
         <p style = {styles.p}>Address</p>
+        <p style = {styles.p}>Doctor</p>
         <p style = {styles.p}>Slot</p>
-        <p style = {styles.p}>Doc-ID</p>
         <p style = {styles.p}>Status</p>
       </div>
       <Box
@@ -179,25 +163,23 @@ const Invoices = () => {
         }}
       >
         {/* { <DataGrid checkboxSelection rows={mockDataInvoices} columns={appointment} />} */}
-        
         {/* <pre>{JSON.stringify(appointment, null, 2)}</pre> */}
         
         {appointment && appointment.map((appt, index) => (
-  appt.firstNames && appt.firstNames.map((firstName, i) => (
-    <div style={styles.appointmentDiv} className="appointmentDiv" key={i}> 
-      <p style={styles.p}>{firstName}</p>
-      <p style={styles.p}>{appt.lastNames && appt.lastNames[i]}</p>
-      <p style={styles.p}>{appt.emails && appt.emails[i]}</p>
-      <p style={styles.p}>{appt.numbers && appt.numbers[i]}</p>
-      <p style={styles.p}>{appt.adrs && appt.adrs[i]}</p>
-      <p style={styles.p}>{appt.timeSlots && appt.timeSlots[i]}</p>
-      <p style={styles.p}>{appt.doctors && appt.doctors[i]}</p>
-      <p style={styles.p}>{appt.status && appt.status[i]}</p>
-      <br />
-    </div>
-  ))
-))}
-        
+          appt.firstNames && appt.firstNames.map((firstName, i) => (
+            <div style={styles.appointmentDiv} className="appointmentDiv" key={i}> 
+              <p style={styles.p}>{firstName}</p>
+              <p style={styles.p}>{appt.lastNames && appt.lastNames[i]}</p>
+              <p style={styles.p}>{appt.emails && appt.emails[i]}</p>
+              <p style={styles.p}>{appt.numbers && appt.numbers[i]}</p>
+              <p style={styles.p}>{appt.adrs && appt.adrs[i]}</p>
+              <p style={styles.p}>{appt.doctors && appt.doctors[i]}</p>
+              <p style={styles.p}>{appt.timeSlots && appt.timeSlots[i]}</p>
+              <p style={styles.p}>{appt.status && appt.status[i]}</p>
+              <br />
+            </div>
+          ))
+        ))}
       </Box>
     </Box>
     </>

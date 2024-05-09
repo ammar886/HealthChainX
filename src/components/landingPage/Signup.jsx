@@ -51,7 +51,6 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
       const account = accounts[0]; // The first account is the user's primary account
 
       const blockChainAdd = accounts[0];
-      console.log(blockChainAdd);
 
       const isEmailUsed = await auth.methods.isEmailUsed(email).call({ from: account });
       const isBlockchainAddUsed = await auth.methods.isBlockchainAddressUsed(blockChainAdd).call({ from: account });
@@ -65,28 +64,24 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
         alert("Blockchain address is already used. Please, use another blockchain address.");
         return;
       }
+
+      if (password != confirmpassword) {
+        alert("Password and confirmpassword dosen't match.");
+        return;
+      }
   
       // Send the transaction to the blockchain
       await auth.methods
-        .createUser(name, password, email, number, userRole, blockChainAdd)
+        .createUser(blockChainAdd, name, email, number, userRole, password)
         .send({ from: account });
   
       // Store the username, password, and wallet address in local storage
+      localStorage.setItem("walletAddress", account);
       localStorage.setItem("username", name);
       localStorage.setItem("email", email);
       localStorage.setItem("username", number);
-      localStorage.setItem("password", password);
       localStorage.setItem("userRole", userRole);
-      localStorage.setItem("walletAddress", account);
-      
-
-      console.log(name);
-      console.log(password);
-      console.log(email);
-      console.log(number);
-      console.log(userRole);
-      console.log(account);
-
+      localStorage.setItem("password", password);
       
       alert("Account Succesfully Created on Blockchain");
       
@@ -96,7 +91,6 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
     }
   };
   
-
   return (
     <div className="signup-form-main-container">
       <div className="signup-container">

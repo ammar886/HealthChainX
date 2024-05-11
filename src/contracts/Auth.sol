@@ -8,7 +8,7 @@ contract Auth {
     address public adminAddress; //fix this
 
     mapping(string => authMemory) authUsers;
-    mapping(string => user) users;
+    mapping(string => user[]) users;
     mapping(string => employee[]) employees;
     mapping(address => appointment[]) appointments;
 
@@ -16,7 +16,8 @@ contract Auth {
     mapping(string => bool) private usedBlockchainAddresses;
     
     employee[] public allEmployees;
-    appointment[] public allAppointments;    
+    appointment[] public allAppointments;  
+    user[] public allUsers;  
 
     struct user {
         string blockChainAdd;
@@ -126,7 +127,7 @@ contract Auth {
         );
 
         userCount++;
-        users[_email] = user(
+        user memory newUser = user(
             _blockChainAdd,
             _username,
             _email,
@@ -134,6 +135,8 @@ contract Auth {
             _userRole,
             _password
         );
+        users[_email].push(newUser);
+        allUsers.push(newUser);
         emit userCreated(
             _blockChainAdd,
             _username,
@@ -149,20 +152,20 @@ contract Auth {
         createAuth(_blockChainAdd, _email, _userRole, _password);
     }
 
-    function getUserDetails(string memory email) public view returns (string memory, string memory, string memory, string memory, string memory) {
-        user memory userInstance = users[email];
-        return (userInstance.username, userInstance.email, userInstance.number, userInstance.userRole, userInstance.blockChainAdd);
-    }
+    // function getUserDetails(string memory email) public view returns (string memory, string memory, string memory, string memory, string memory) {
+    //     user memory userInstance = users[email];
+    //     return (userInstance.username, userInstance.email, userInstance.number, userInstance.userRole, userInstance.blockChainAdd);
+    // }
 
-    function getUsername(
-        string memory _email
-    ) public view returns (string memory) {
-        require(
-            bytes(users[_email].username).length > 0,
-            "User does not exist"
-        );
-        return users[_email].username;
-    }
+    // function getUsername(
+    //     string memory _email
+    // ) public view returns (string memory) {
+    //     require(
+    //         bytes(users[_email].username).length > 0,
+    //         "User does not exist"
+    //     );
+    //     return users[_email].username;
+    // }
 
     function createEmployee(
         string memory _blockChainAdd,
@@ -516,5 +519,30 @@ contract Auth {
         }
 
         return accountCount;
+    }
+
+      function getPatients() public view returns (string[] memory, string[] memory) {
+
+        uint256 patientCount = 0;
+        for (uint256 i = 0; i < allUsers.length; i++) {
+            if (keccak256(abi.encodePacked(allUsers[i].userRole)) == keccak256(abi.encodePacked("patient"))) {
+                patientCount++;
+            }
+        }
+        
+        
+        string[] memory username = new string[](patientCount);
+        string[] memory blockChainAdds = new string[](patientCount);
+
+        uint256 patientIndex = 0;
+        for (uint256 i = 0; i < allUsers.length; i++) {
+            if (keccak256(abi.encodePacked(allUsers[i].userRole)) == keccak256(abi.encodePacked("patient"))) {
+                username[patientIndex] = allUsers[i].username;
+                blockChainAdds[patientIndex] = allUsers[i].blockChainAdd;
+                patientIndex++;
+            }
+        }
+
+        return (username, blockChainAdds);
     }
 }

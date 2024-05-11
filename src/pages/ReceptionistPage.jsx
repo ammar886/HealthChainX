@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "../theme";
 import { AuthContext } from '../context/AuthContext';
-import PatientTopbar from "../components/patient/Topbar";
+import Topbar from "../components/Topbar";
 
 function PatientPage() {
   const [theme, colorMode] = useMode();
@@ -28,7 +28,7 @@ function PatientPage() {
         <CssBaseline />
         <div className="app">
           <main className="content">
-          <PatientTopbar />
+          <Topbar />
             <div>
               <h1>Receptionist Page</h1>
               <table>

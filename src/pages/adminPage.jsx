@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "../theme";
 import { AuthContext } from '../context/AuthContext';
-import Topbar from "../components/admin/Topbar";
+import Topbar from "../components/Topbar";
 import Sidebar from "../components/admin/Sidebar";
 import AdminDashboard from "../components/admin/AdminDashboard";
 import ManageAccounts from "../components/admin/ManageAccounts";
@@ -11,7 +11,6 @@ import Invoices from "../components/admin/Invoices";
 import ManageAppointments from "../components/admin/ManageAppointments";
 import CreateEmployee from "../components/admin/CreateEmployee";
 import FAQ from "../components/Faq";
-
 
 function AdminPage() {
   const [theme, colorMode] = useMode();

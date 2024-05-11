@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "../theme";
 import { AuthContext } from '../context/AuthContext';
-import Topbar from "../components/doctor/Topbar";
+import Topbar from "../components/Topbar";
 import Sidebar from "../components/doctor/Sidebar";
 import DoctorDashboard from "../components/doctor/DoctorDashboard";
 import ManagePatients from "../components/doctor/ManagePatients";

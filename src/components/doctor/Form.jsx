@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Box, Button, TextField, MenuItem } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "./Header";
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
-import Web3 from "web3";
 
 const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [accounts, setAccounts] = React.useState(null);
   const [auth, setAuth] = React.useState(null);
+
   const loadAccounts = async () => {
     let { auth, accounts } = await loadBlockchainData();
   
@@ -27,37 +27,20 @@ const Form = () => {
   }, []);
 
   const handleFormSubmit = (values) => {
-    employeeCreation(values);
+    console.log("Write Function");
   };
-
-
-const employeeCreation = async(values) => {
-  try{
-    console.log(auth); // Check the value of auth
-    console.log(auth.methods); 
-
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0]; // The first account is the user's primary account
-
-  // Send the transaction to the blockchain
-  await auth.methods
-    .createEmployee(values.firstName, values.lastName, values.email, values.contact, values.address, values.password, values.userRole)
-    .send({ from: account });
-
-    alert("Employee Created Succesfully!");
-  }catch(e){
-    console.error(e.message);
-    alert("Something went wrong!");
-  }
-};
 
   return (
     <Box m="20px">
-      <Header title="CREATE USER" subtitle="Create a New User Profile" />
+      <Header title="Save Patient Record" subtitle="Create a Patient Record " />
 
       <Formik
         onSubmit={handleFormSubmit}
-        initialValues={{ ...initialValues, userRole: "" }}
+        initialValues={{
+          ...initialValues,
+          clinicalNotes: "",
+          prescription: "",
+        }}
         validationSchema={checkoutSchema}
       >
         {({
@@ -77,6 +60,7 @@ const employeeCreation = async(values) => {
                 "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
               }}
             >
+              {/* Existing fields */}
               <TextField
                 fullWidth
                 variant="filled"
@@ -114,7 +98,7 @@ const employeeCreation = async(values) => {
                 name="email"
                 error={!!touched.email && !!errors.email}
                 helperText={touched.email && errors.email}
-                sx={{ gridColumn: "span 4" }}
+                sx={{ gridColumn: "span 2" }}
               />
               <TextField
                 fullWidth
@@ -127,7 +111,7 @@ const employeeCreation = async(values) => {
                 name="contact"
                 error={!!touched.contact && !!errors.contact}
                 helperText={touched.contact && errors.contact}
-                sx={{ gridColumn: "span 4" }}
+                sx={{ gridColumn: "span 2" }}
               />
               <TextField
                 fullWidth
@@ -142,44 +126,40 @@ const employeeCreation = async(values) => {
                 helperText={touched.address && errors.address}
                 sx={{ gridColumn: "span 4" }}
               />
-              {/* <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Address 2"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.address2}
-                name="address2"
-                error={!!touched.address2 && !!errors.address2}
-                helperText={touched.address2 && errors.address2}
-                sx={{ gridColumn: "span 4" }}
-              /> */}
-
-              {/* User Role Dropdown */}
+              {/* New fields replacing the last four fields */}
               <TextField
-                select
                 fullWidth
                 variant="filled"
-                label="User Role"
+                multiline
+                rows={6}
+                label="Clinical Notes"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.userRole}
-                name="userRole"
-                error={!!touched.userRole && !!errors.userRole}
-                helperText={touched.userRole && errors.userRole}
+                value={values.clinicalNotes}
+                name="clinicalNotes"
+                error={!!touched.clinicalNotes && !!errors.clinicalNotes}
+                helperText={touched.clinicalNotes && errors.clinicalNotes}
                 sx={{ gridColumn: "span 4" }}
-              >
-                <MenuItem value="">Select User Role</MenuItem>
-                <MenuItem value="doctor">Doctor</MenuItem>
-                <MenuItem value="receptionist">Receptionist</MenuItem>
-                <MenuItem value="patient">Patient</MenuItem>
-              </TextField>
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                multiline
+                rows={6}
+                label="Prescription"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.prescription}
+                name="prescription"
+                error={!!touched.prescription && !!errors.prescription}
+                helperText={touched.prescription && errors.prescription}
+                sx={{ gridColumn: "span 4" }}
+              />
             </Box>
 
             <Box display="flex" justifyContent="end" mt="20px">
               <Button type="submit" color="secondary" variant="contained">
-                Create New User
+                SAVE PATIENT RECORD
               </Button>
             </Box>
           </form>
@@ -201,8 +181,8 @@ const checkoutSchema = yup.object().shape({
     .matches(phoneRegExp, "Phone number is not valid")
     .required("required"),
   address: yup.string().required("required"),
-  password: yup.string().required("required"),
-  userRole: yup.string().required("Please select a user role"),
+  clinicalNotes: yup.string().required("required"),
+  prescription: yup.string().required("Please select a user role"),
 });
 
 const initialValues = {
@@ -211,8 +191,8 @@ const initialValues = {
   email: "",
   contact: "",
   address: "",
-  password: "12345678",
-  userRole: "",
+  clinicalNotes: "",
+  prescription: "",
 };
 
 export default Form;

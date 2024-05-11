@@ -7,7 +7,7 @@ import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import Header from "./Header";
 
-const ManagePatient = () => {
+const ManageAccounts = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const columns = [
@@ -106,4 +106,4 @@ const ManagePatient = () => {
   );
 };
 
-export default ManagePatient;
+export default ManageAccounts;

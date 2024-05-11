@@ -7,9 +7,9 @@ contract Auth {
     uint public totalAppointmets = 0;
     address public adminAddress; //fix this
 
+    mapping(string => authMemory) authUsers;
     mapping(string => user) users;
     mapping(string => employee[]) employees;
-    mapping(string => authMemory) authUsers;
     mapping(address => appointment[]) appointments;
 
     mapping(string => bool) private usedEmails;
@@ -488,12 +488,7 @@ contract Auth {
 
     function getDoctors() public view returns (string[] memory, string[] memory) {
 
-        uint256 doctorCount = 0;
-        for (uint256 i = 0; i < allEmployees.length; i++) {
-            if (keccak256(abi.encodePacked(allEmployees[i].userRole)) == keccak256(abi.encodePacked("doctor"))) {
-                doctorCount++;
-            }
-        }
+        uint256 doctorCount = getLengthEmployees("doctor");
         
         string[] memory userNames = new string[](doctorCount);
         string[] memory blockChainAdds = new string[](doctorCount);
@@ -508,5 +503,18 @@ contract Auth {
         }
 
         return (userNames, blockChainAdds);
+    }
+
+    function getLengthEmployees(
+        string memory _userRole
+    ) public view returns (uint256) {
+        uint256 accountCount = 0;
+        for (uint256 i = 0; i < allEmployees.length; i++) {
+            if (keccak256(abi.encodePacked(allEmployees[i].userRole)) == keccak256(abi.encodePacked(_userRole))) {
+                accountCount++;
+            }
+        }
+
+        return accountCount;
     }
 }

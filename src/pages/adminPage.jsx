@@ -5,7 +5,7 @@ import { ColorModeContext, useMode } from "../theme";
 import { AuthContext } from '../context/AuthContext';
 import Topbar from "../components/admin/Topbar";
 import Sidebar from "../components/admin/Sidebar";
-import Dashboard from "../components/admin/Dashboard";
+import AdminDashboard from "../components/admin/AdminDashboard";
 import ManageAccounts from "../components/admin/ManageAccounts";
 import Invoices from "../components/admin/Invoices";
 import ManageAppointments from "../components/admin/ManageAppointments";
@@ -34,7 +34,7 @@ function AdminPage() {
           <main className="content">
             <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/" element={<AdminDashboard />} />
               <Route path="manageaccounts" element={<ManageAccounts />} />
               <Route path="manageappointments" element={<ManageAppointments />} />
               <Route path="invoices" element={<Invoices />} />

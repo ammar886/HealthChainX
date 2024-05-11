@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Box, Button, TextField, MenuItem } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "./HeaderPatient";
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
-import Web3 from "web3";
 import { Pending } from "@mui/icons-material";
 
-const Form = () => {
+const FormBookAppointment = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [accounts, setAccounts] = React.useState(null);
-  const [doctors, setDoctors] = useState([]);
+  const [doctors, setDoctors] = React.useState([]);
   const [auth, setAuth] = React.useState(null);
 
   const loadAccounts = async () => {
@@ -23,6 +22,13 @@ const Form = () => {
     // Call loadDoctors here after auth has been set
     loadDoctors(auth);
   };
+
+  React.useEffect(() => {
+    loadWeb3();
+  }, []);
+  React.useEffect(() => {
+    loadAccounts();
+  }, []);
   
   const loadDoctors = async (auth) => {
     if (!auth) {
@@ -51,13 +57,6 @@ const Form = () => {
       console.log('No doctors found.');
     }
   };
-
-  React.useEffect(() => {
-    loadWeb3();
-  }, []);
-  React.useEffect(() => {
-    loadAccounts();
-  }, []);
 
   const handleFormSubmit = (values) => {
     localStorage.setItem("firstname", values.firstName);
@@ -277,4 +276,4 @@ const initialValues = {
   status: "pending"
 };
 
-export default Form;
+export default FormBookAppointment;

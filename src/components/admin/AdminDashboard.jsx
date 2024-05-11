@@ -1,3 +1,5 @@
+import React from "react";
+import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { mockTransactions } from "../data/mockData";
@@ -9,9 +11,51 @@ import Person4Icon from '@mui/icons-material/Person4';
 import Header from "./Header";
 import StatBox from "./StatBox";
 
-const Dashboard = () => {
+const AdminDashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const [accounts, setAccounts] = React.useState(null);
+  const [auth, setAuth] = React.useState(null);
+  const [doctors, setDoctors] = React.useState(null);
+  const [receptionists, setReceptionists] = React.useState(null);
+  const [patients, setPaitents] = React.useState(null);
+
+  const loadAccounts = async () => {
+    let { auth, accounts } = await loadBlockchainData();
+  
+    setAccounts(accounts);
+    setAuth(auth);
+
+    loadData(auth);
+  };
+  
+  React.useEffect(() => {
+    loadWeb3();
+  }, []);
+  
+  React.useEffect(() => {
+    loadAccounts();
+  }, []);
+
+  const loadData = async (auth) => {
+    if (!auth) {
+      console.log('Auth object is not initialized yet. Please try again.');
+      return;
+    }
+
+    const accounts = await web3.eth.getAccounts();
+    const account = accounts[0];
+  
+    const doctors = await auth.methods.getLengthEmployees("doctor").call({ from: account });
+    const receptionists = await auth.methods.getLengthEmployees("receptionist").call({ from: account });
+
+    console.log(doctors + " Doctors");
+    setDoctors(doctors);
+
+    console.log(receptionists + " Receptionists");
+    setReceptionists(receptionists);
+  };
 
   return (
     <Box m="20px">
@@ -174,4 +218,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default AdminDashboard;

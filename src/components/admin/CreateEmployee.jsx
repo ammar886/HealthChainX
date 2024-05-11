@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Box, Button, TextField, MenuItem } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "./Header";
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
-import Web3 from "web3";
 
-const Form = () => {
+const CreateEmployee = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [accounts, setAccounts] = React.useState(null);
   const [auth, setAuth] = React.useState(null);
+
   const loadAccounts = async () => {
     let { auth, accounts } = await loadBlockchainData();
   
@@ -277,4 +277,4 @@ const initialValues = {
   password: "12345678",
 };
 
-export default Form;
+export default CreateEmployee;

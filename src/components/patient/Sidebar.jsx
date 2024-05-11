@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
-import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
@@ -12,13 +11,13 @@ import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import "react-pro-sidebar/dist/css/styles.css";
 
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   
-
   return (
     <MenuItem
       active={selected === title}
@@ -126,43 +125,43 @@ const Sidebar = () => {
             </Typography>
 
             <Item
-              title="Patient Dashboard"
+              title="Dashboard"
               to="/patient"
               icon={<HomeOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="View Medical Record"
-              to="/patient/medicalrecord"
+              title="Appointment History"
+              to="/patient/appointmenthistory"
+              icon={<ReceiptOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="View Medical Records"
+              to="/patient/medicalrecords"
               icon={<PeopleOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Billing & Payment History"
-              to="/patient/billpayment"
+              to="/patient/invoices"
               icon={<ContactsOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
-            <Item
-              title="Appointment History"
-              to="/patient/bookedappointment"
-              icon={<ReceiptOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+            />      
             <Item
               title="Book Appointment"
-              to="/patient/formbookappointment"
+              to="/patient/bookappointmentform"
               icon={<PersonOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />            
+            />      
             <Item
-              title="FeedBack"
-              to="/patient/feedbackfaq"
+              title="FAQ Page"
+              to="/patient/faq"
               icon={<HelpOutlineOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

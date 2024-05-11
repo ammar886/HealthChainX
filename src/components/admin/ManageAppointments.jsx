@@ -1,12 +1,12 @@
-import { Box } from "@mui/material";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { tokens } from "../../theme";
-import { mockDataContacts } from "../data/mockData";
-import Header from "./Header";
 import { useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
+import { Box } from "@mui/material";
+import { tokens } from "../../theme";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { mockDataContacts } from "../data/mockData";
 import { Receipt } from "@mui/icons-material";
+import Header from "../Header";
 
 const styles = {
   appointmentsContainer: {
@@ -29,7 +29,16 @@ const styles = {
   },
 };
 
-const ManageAppointments = () => {    
+const ManageAppointments = () => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  const adminAddress = "0x741266e87931524809355fd80A887d1AFc1c38D7";
+  
+  const [auth, setAuth] = useState(null);
+  const [accounts, setAccounts] = useState(null);
+  const [appointment, setAppointment] = useState(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  
   const loadAccounts = async () => {
     let { auth, accounts } = await loadBlockchainData();
 
@@ -43,14 +52,9 @@ const ManageAppointments = () => {
     loadAccounts();
   }, []);
 
-  const [appointment, setAppointment] = useState(null);
-  const [accounts, setAccounts] = useState(null);
-  const [auth, setAuth] = useState(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  const adminAddress = "0x741266e87931524809355fd80A887d1AFc1c38D7";
+  useEffect(() => {
+    getAppointment();
+  }, [auth]);
   
   const getAppointment = async () => {
     if(!auth) return;
@@ -72,11 +76,6 @@ const ManageAppointments = () => {
     console.log("new appointments:", appointments)
     localStorage.setItem('appointments', JSON.stringify(appointments));
   };
-    
-  //added auth as a dependency
-  useEffect(() => {
-    getAppointment();
-  }, [auth]);
 
   const handleRefresh = () => {
     getAppointment();

@@ -2,8 +2,8 @@ import { Box } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataContacts } from "../data/mockData";
-import Header from "./Header";
 import { useTheme } from "@mui/material";
+import Header from "../Header";
 
 const ManageAppointments = () => {
   const theme = useTheme();

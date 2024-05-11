@@ -6,10 +6,10 @@ import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import BadgeIcon from '@mui/icons-material/Badge';
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Person4Icon from '@mui/icons-material/Person4';
-import Header from "./Header";
-import StatBox from "./StatBox";
+import Header from "../Header";
+import StatBox from "../StatBox";
 
-const Dashboard = () => {
+const DoctorDashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -134,7 +134,7 @@ const Dashboard = () => {
             p="15px"
           >
             <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-              Doctor Appointments
+              Recent Appointments
             </Typography>
           </Box>
           {mockTransactions.map((transaction, i) => (
@@ -174,4 +174,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default DoctorDashboard;

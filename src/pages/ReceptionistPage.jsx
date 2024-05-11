@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "../theme";
 import { AuthContext } from '../context/AuthContext';
-import PatientTopbar from "../components/patient/PatientTopbar";
+import PatientTopbar from "../components/patient/Topbar";
 
 function PatientPage() {
   const [theme, colorMode] = useMode();

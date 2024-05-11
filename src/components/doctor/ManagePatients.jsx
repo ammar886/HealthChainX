@@ -5,11 +5,12 @@ import { mockDataTeam } from "../data/mockData";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
-import Header from "./Header";
+import Header from "../Header";
 
-const ManagePatient = () => {
+const ManagePatients = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  
   const columns = [
     { field: "id", headerName: "ID" },
     {
@@ -106,4 +107,4 @@ const ManagePatient = () => {
   );
 };
 
-export default ManagePatient;
+export default ManagePatients;

@@ -2,10 +2,10 @@ import { Box } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataContacts } from "../data/mockData";
-import Header from "./HeaderPatient";
 import { useTheme } from "@mui/material";
+import Header from "../Header";
 
-const Contacts = () => {
+const Invoices = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -100,4 +100,4 @@ const Contacts = () => {
   );
 };
 
-export default Contacts;
+export default Invoices;

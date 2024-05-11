@@ -10,7 +10,7 @@ import ManageAccounts from "../components/admin/ManageAccounts";
 import Invoices from "../components/admin/Invoices";
 import ManageAppointments from "../components/admin/ManageAppointments";
 import CreateEmployee from "../components/admin/CreateEmployee";
-import FAQ from "../components/admin/Faq";
+import FAQ from "../components/Faq";
 
 
 function AdminPage() {
@@ -37,8 +37,8 @@ function AdminPage() {
               <Route path="/" element={<AdminDashboard />} />
               <Route path="manageaccounts" element={<ManageAccounts />} />
               <Route path="manageappointments" element={<ManageAppointments />} />
-              <Route path="invoices" element={<Invoices />} />
               <Route path="createemployee" element={<CreateEmployee />} />
+              <Route path="invoices" element={<Invoices />} />
               <Route path="faq" element={<FAQ />} />
             </Routes>
           </main>

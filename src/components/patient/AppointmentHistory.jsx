@@ -1,12 +1,12 @@
-import { Box, Typography, useTheme } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
-import { tokens } from "../../theme";
-import { mockDataInvoices } from "../data/mockData";
 import { useEffect, useState } from "react";
-import Header from "./HeaderPatient";
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
+import { Box, Typography, useTheme } from "@mui/material";
+import { tokens } from "../../theme";
+import { DataGrid } from "@mui/x-data-grid";
+import { mockDataInvoices } from "../data/mockData";
 import { Margin } from "@mui/icons-material";
 import { withTheme } from "@emotion/react";
+import Header from "../Header";
 
 const styles = {
   appointmentsContainer: {
@@ -21,8 +21,7 @@ const styles = {
     color: 'white',
     alignItems: 'left',
     justifyContent: 'center',
-
-    
+  
      // Adjust this value as needed
   },
   p:{
@@ -32,8 +31,13 @@ const styles = {
 
 
 };
-const Invoices = () => {
-  
+const AppointmentHistory = () => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  const [auth, setAuth] = useState(null);
+  const [accounts, setAccounts] = useState(null);
+  const [appointment, setAppointment] = useState(null);
+
   const loadAccounts = async () => {
     let { auth, accounts } = await loadBlockchainData();
 
@@ -47,13 +51,6 @@ const Invoices = () => {
     loadAccounts();
   }, []);
 
-
-  const [appointment, setAppointment] = useState(null);
-  const [accounts, setAccounts] = useState(null);
-  const [auth, setAuth] = useState(null);
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  
   useEffect(() => {
     const getAppointment = async () => {
       if(!auth) return;
@@ -186,4 +183,4 @@ const Invoices = () => {
   );
 };
 
-export default Invoices;
+export default AppointmentHistory;

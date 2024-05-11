@@ -1,17 +1,17 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
+import { Pending } from "@mui/icons-material";
 import { Box, Button, TextField, MenuItem } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Header from "./HeaderPatient";
-import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
-import { Pending } from "@mui/icons-material";
+import Header from "../Header";
 
-const FormBookAppointment = () => {
+const BookAppointmentForm = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  const [accounts, setAccounts] = React.useState(null);
-  const [doctors, setDoctors] = React.useState([]);
-  const [auth, setAuth] = React.useState(null);
+  const [auth, setAuth] = useState(null);
+  const [accounts, setAccounts] = useState(null);
+  const [doctors, setDoctors] = useState([]);
 
   const loadAccounts = async () => {
     let { auth, accounts } = await loadBlockchainData();
@@ -23,10 +23,11 @@ const FormBookAppointment = () => {
     loadDoctors(auth);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     loadWeb3();
   }, []);
-  React.useEffect(() => {
+
+  useEffect(() => {
     loadAccounts();
   }, []);
   
@@ -276,4 +277,4 @@ const initialValues = {
   status: "pending"
 };
 
-export default FormBookAppointment;
+export default BookAppointmentForm;

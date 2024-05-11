@@ -3,20 +3,20 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "../theme";
 import { AuthContext } from '../context/AuthContext';
-import PatientTopbar from "../components/patient/PatientTopbar";
-import PatientSidebar from "../components/patient/PatientSidebar";
+import Topbar from "../components/patient/Topbar";
+import Sidebar from "../components/patient/Sidebar";
 import PatientDashboard from "../components/patient/PatientDashboard";
-import MedicalRecord from "../components/patient/MedicalRecord";
-import BookedAppointment from "../components/patient/BookedAppointment";
-import BillPayment from "../components/patient/BillPayment";
-import FormBookAppointment from "../components/patient/FormBookAppointment";
-import FeedbackFaq from "../components/patient/FeedbackFaq";
+import MedicalRecords from "../components/patient/MedicalRecords";
+import AppointmentHistory from "../components/patient/AppointmentHistory";
+import BookAppointmentForm from "../components/patient/BookAppointmentForm";
+import Invoices from "../components/patient/Invoices";
+import Faq from "../components/Faq";
 
 function PatientPage() {
+  const navigate = useNavigate();
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const { isAuthenticated } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -29,16 +29,16 @@ function PatientPage() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="app">
-          <PatientSidebar isSidebar={isSidebar} />
+          <Sidebar isSidebar={isSidebar} />
           <main className="content">
-            <PatientTopbar setIsSidebar={setIsSidebar} />
+            <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
               <Route path="/" element={<PatientDashboard />} />
-              <Route path="medicalrecord" element={<MedicalRecord />} />
-              <Route path="billpayment" element={<BillPayment />} />
-              <Route path="bookedappointment" element={<BookedAppointment />} />
-              <Route path="formbookappointment" element={<FormBookAppointment />} />
-              <Route path="feedbackfaq" element={<FeedbackFaq />} />
+              <Route path="appointmenthistory" element={<AppointmentHistory />} />
+              <Route path="medicalrecords" element={<MedicalRecords />} />
+              <Route path="bookappointmentform" element={<BookAppointmentForm />} />
+              <Route path="invoices" element={<Invoices />} />
+              <Route path="faq" element={<Faq />} />
             </Routes>
           </main>
         </div>

@@ -1,3 +1,5 @@
+import { useState, useEffect, ProfileruseState } from 'react';
+import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { mockTransactions } from "../data/mockData";
@@ -6,19 +8,18 @@ import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import BadgeIcon from '@mui/icons-material/Badge';
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Person4Icon from '@mui/icons-material/Person4';
-import Header from "./HeaderPatient";
-import StatBox from "./StatBox";
-import React, { useState } from 'react';
-import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
+import Header from "../Header";
+import StatBox from "../StatBox";
 
 const PatientDashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [naam, setNaam] = useState(null);
-  const [accounts, setAccounts] = React.useState(null);
-  const [auth, setAuth] = React.useState(null);
-  const [patientDetails, setPatientDetails] = React.useState(null);
+
+  // const [naam, setNaam] = ProfileruseState(null);
+  const [auth, setAuth] = useState(null);
+  const [accounts, setAccounts] = useState(null);
   const [contract, setContract] = useState(null);
+  const [patientDetails, setPatientDetails] = useState(null);
 
   const username = localStorage.getItem('name');
 
@@ -30,25 +31,18 @@ const PatientDashboard = () => {
     setContract(contract);
     console.log({ contract, accounts });
 
-    // Ensure contract is set before calling getUserDetails
     if (contract) {
         getUserDetails(username, contract);
     }
   };
   
-  React.useEffect(() => {
+  useEffect(() => {
     loadWeb3();
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     loadAccounts();
   }, []);
-
-  // React.useEffect(() => {
-  //   getUserDetails(username);
-  // }, []);
-
- 
 
   async function getUserDetails(username, contract) {
     const accounts = await web3.eth.getAccounts();
@@ -56,13 +50,12 @@ const PatientDashboard = () => {
     console.log(userDetails);
     setPatientDetails(userDetails);
   }
-  // const classes = useStyles();
 
   return (
     <Box m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Header title={naam} subtitle=" PATIENT STATS: "/>
+        <Header title="DASHBOARD" subtitle=" PATIENT STATS: "/>
 
         <Box>
           <Button
@@ -164,8 +157,6 @@ const PatientDashboard = () => {
             }
           />
         </Box>
-
-
         <Box
           gridColumn="span 12"
           gridRow="span 3"
@@ -181,7 +172,7 @@ const PatientDashboard = () => {
             p="15px"
           >
             <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-              Recent Appointements
+              Recent Prescriptions
             </Typography>
           </Box>
           {mockTransactions.map((transaction, i) => (

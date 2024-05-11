@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
@@ -8,18 +8,18 @@ import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import BadgeIcon from '@mui/icons-material/Badge';
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Person4Icon from '@mui/icons-material/Person4';
-import Header from "./Header";
-import StatBox from "./StatBox";
+import Header from "../Header";
+import StatBox from "../StatBox";
 
 const AdminDashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const [accounts, setAccounts] = React.useState(null);
-  const [auth, setAuth] = React.useState(null);
-  const [doctors, setDoctors] = React.useState(null);
-  const [receptionists, setReceptionists] = React.useState(null);
-  const [patients, setPaitents] = React.useState(null);
+  const [accounts, setAccounts] = useState(null);
+  const [auth, setAuth] = useState(null);
+  const [doctors, setDoctors] = useState(null);
+  const [receptionists, setReceptionists] = useState(null);
+  const [patients, setPaitents] = useState(null);
 
   const loadAccounts = async () => {
     let { auth, accounts } = await loadBlockchainData();
@@ -30,11 +30,11 @@ const AdminDashboard = () => {
     loadData(auth);
   };
   
-  React.useEffect(() => {
+  useEffect(() => {
     loadWeb3();
   }, []);
   
-  React.useEffect(() => {
+  useEffect(() => {
     loadAccounts();
   }, []);
 

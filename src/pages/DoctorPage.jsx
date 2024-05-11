@@ -5,18 +5,17 @@ import { ColorModeContext, useMode } from "../theme";
 import { AuthContext } from '../context/AuthContext';
 import Topbar from "../components/doctor/Topbar";
 import Sidebar from "../components/doctor/Sidebar";
-import Dashboard from "../components/doctor/Dashboard";
-import ManagePatient from "../components/doctor/ManagePatient";
-import Invoices from "../components/doctor/Invoices";
+import DoctorDashboard from "../components/doctor/DoctorDashboard";
+import ManagePatients from "../components/doctor/ManagePatients";
 import ManageAppointments from "../components/doctor/ManageAppointments";
-import Form from "../components/doctor/Form";
-import FAQ from "../components/doctor/Faq";
+import PrescriptionForm from "../components/doctor/PrescriptionForm";
+import FAQ from "../components/Faq";
 
 function DoctorPage() {
+  const navigate = useNavigate();
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const { isAuthenticated } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -33,11 +32,10 @@ function DoctorPage() {
           <main className="content">
             <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="managepatient" element={<ManagePatient />} />
+              <Route path="/" element={<DoctorDashboard />} />
+              <Route path="managepatients" element={<ManagePatients />} />
               <Route path="manageappointments" element={<ManageAppointments />} />
-              <Route path="invoices" element={<Invoices />} />
-              <Route path="form" element={<Form />} />
+              <Route path="prescriptionform" element={<PrescriptionForm />} />
               <Route path="faq" element={<FAQ />} />
             </Routes>
           </main>

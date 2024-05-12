@@ -1,13 +1,22 @@
-import React, { useState, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FaTimes } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import { AuthContext } from "../../context/AuthContext";
 import "./Login.css";
 
 const Login = ({ onCloseIcon, onSignupButton }) => {
-
   const navigate = useNavigate();
+  const [auth, setAuth] = useState(null);
+  const [accounts, setAccounts] = useState(null);
+  const { isAuthenticated, userRole, setIsAuthenticated, setUserRole, blockchainAddress, setBlockchainAddress, emailAdd, setEmailAdd } = useContext(AuthContext);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const adminEmail = "muhammadanis745@hcx.com";
+  const adminPassword = "admin123";
+  
   const handleSignupClick = () => {
     onSignupButton();
     navigate('/signup');
@@ -18,19 +27,6 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
     navigate('/');
   };
 
-  const { isAuthenticated, userRole, setIsAuthenticated, setUserRole } = useContext(AuthContext);
-
-  const adminName = "Muhammad Anis";
-  const adminPassword = "admin123";
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  localStorage.setItem('email', email);
-  const [accounts, setAccounts] = useState(null);
-  const [auth, setAuth] = useState(null);
-  const [isAuthentic, setIsAuthentic] = useState(false);
-
   const loadAccounts = async () => {
     let { auth, accounts } = await loadBlockchainData();
 
@@ -38,89 +34,65 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
     setAuth(auth);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     loadWeb3();
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     loadAccounts();
   }, []);
 
-  React.useEffect(() => {
-    console.log('Is authenticated:', isAuthenticated);
-    console.log('User role:', userRole);
-  }, [isAuthenticated, userRole]);
-
-  // React.useEffect(() => {
-  //   if (isAuthentic) {
-  //     onLogin();
-  //   }
-  // }, [isAuthentic, onLogin]);
+  // useEffect(() => {
+  //   console.log('Is authenticated:', isAuthenticated);
+  //   console.log('User role:', userRole);
+  //   console.log('BlockChain Address:', blockchainAddress);
+  // }, [isAuthenticated, userRole, blockchainAddress]);
 
   const handleSubmission = async (e) => {
     try {
       e.preventDefault();
-
       if (email && password) {
-        if (email === adminName && password === adminPassword) {
+        if (email === adminEmail && password === adminPassword) {
           alert("Admin Hardcore.");
           setIsAuthenticated(true);
           setUserRole("admin");
           navigate("/admin");
         } else {
-          const accounts = await window.ethereum.request({
-            method: "eth_requestAccounts",
-          });
-    
+          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
           const account = accounts[0];
-          console.log(account);
-          const isauthentic = await auth.methods
+
+          const uData = await auth.methods
             .authenticateLogin(email, password)
-            .call({ from: account });
-
-          const userRole = await auth.methods
-            .getUserOrEmployeeRole(email)
-            .call({ from: account });
-
-            console.log(isauthentic);
-            console.log(userRole);
-
-            console.log("Email:" , email);
-            console.log("Password: ", password);
+            .call({ from: account });  
     
-          if (isauthentic) {
-            // if (isUser && isUser.userRole) {
-            //   const userRole = isUser.userRole;
-
-              switch (userRole) {
+          if (uData[0]) {
+            setBlockchainAddress(uData[2]);
+            setEmailAdd(email);
+              switch (uData[1]) {
                 case "patient":
-                  setIsAuthenticated(true);
-                  setUserRole(userRole);
+                  setIsAuthenticated(uData[0]);
+                  setUserRole(uData[1]);
                   navigate("/patient");
                   alert("Patient Account.");
                   break;
                 case "doctor":
-                  setIsAuthenticated(true);
-                  setUserRole(userRole);
+                  setIsAuthenticated(uData[0]);
+                  setUserRole(uData[1]);
                   navigate("/doctor");
                   alert("Doctor Account.");
                   break;
                 case "receptionist":
-                  setIsAuthenticated(true);
-                  setUserRole(userRole);
+                  setIsAuthenticated(uData[0]);
+                  setUserRole(uData[1]);
                   navigate("/receptionist");
                   alert("Receptionist Account.");
                   break;
                 default:
-                  console.error("Unknown user role:", userRole);
+                  console.error("Unknown user role:", uData[1]);
                   alert("Invalid or unknown user role");
-              }        
-            // } else {
-            //   console.error("User data missing role field");
-            //   alert("User data missing role information");
-            // }
+              }
           } else {
-            alert("Account not found. Please sign up.");
+            alert("Account not found. Please try again.");
           }
         }
       } else {
@@ -135,14 +107,14 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
   const handleMetaMaskLogin = async () => {
     if (window.ethereum) {
       try {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
+        const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
         const ethereumAddress = accounts[0];
         alert("MetaMask Connection Successful! You're good to go");
+
         setIsAuthenticated(true);
         setUserRole("patient");
         navigate("/patient");
+        
         console.log(ethereumAddress);
       } catch (error) {
         console.error("Error connecting with MetaMask:", error);
@@ -164,7 +136,7 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
           <h2>Login</h2>
 
           <div className="login-inputfield">
-            <input type="text" onChange={(e) => setEmail(e.target.value)} />
+            <input type="email" onChange={(e) => setEmail(e.target.value)} />
             <span>Email</span>
             <i></i>
           </div>

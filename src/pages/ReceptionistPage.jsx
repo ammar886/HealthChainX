@@ -4,6 +4,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "../theme";
 import { AuthContext } from '../context/AuthContext';
 import Topbar from "../components/Topbar";
+import ProfileDetails from "../components/ProfileDetails";
 
 function PatientPage() {
   const [theme, colorMode] = useMode();

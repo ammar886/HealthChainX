@@ -4,6 +4,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "../theme";
 import { AuthContext } from '../context/AuthContext';
 import Topbar from "../components/Topbar";
+import ProfileDetails from "../components/ProfileDetails";
 import Sidebar from "../components/doctor/Sidebar";
 import DoctorDashboard from "../components/doctor/DoctorDashboard";
 import ManagePatients from "../components/doctor/ManagePatients";
@@ -37,6 +38,7 @@ function DoctorPage() {
               <Route path="manageappointments" element={<ManageAppointments />} />
               <Route path="prescriptionform" element={<PrescriptionForm />} />
               <Route path="faq" element={<FAQ />} />
+              <Route path="profiledetails" element={<ProfileDetails />} />
             </Routes>
           </main>
         </div>

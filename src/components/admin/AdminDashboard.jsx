@@ -7,7 +7,7 @@ import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import BadgeIcon from '@mui/icons-material/Badge';
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import Person4Icon from '@mui/icons-material/Person4';
+import BookOnlineIcon from '@mui/icons-material/BookOnline';
 import Header from "../Header";
 import StatBox from "../StatBox";
 
@@ -17,9 +17,10 @@ const AdminDashboard = () => {
 
   const [accounts, setAccounts] = useState(null);
   const [auth, setAuth] = useState(null);
-  const [doctors, setDoctors] = useState(null);
-  const [receptionists, setReceptionists] = useState(null);
-  const [patients, setPaitents] = useState(null);
+  const [doctors, setDoctors] = useState(0);
+  const [receptionists, setReceptionists] = useState(0);
+  const [patients, setPatients] = useState(0);
+  const [appointments, setppointments] = useState(0);
 
   const loadAccounts = async () => {
     let { auth, accounts } = await loadBlockchainData();
@@ -49,12 +50,11 @@ const AdminDashboard = () => {
   
     const doctors = await auth.methods.getLengthEmployees("doctor").call({ from: account });
     const receptionists = await auth.methods.getLengthEmployees("receptionist").call({ from: account });
+    const patients = await auth.methods.getLengthEmployees("patient").call({ from: account });
 
-    console.log(doctors + " Doctors");
-    setDoctors(doctors);
-
-    console.log(receptionists + " Receptionists");
-    setReceptionists(receptionists);
+    setDoctors(doctors.toString());
+    setReceptionists(receptionists.toString());
+    setPatients(patients.toString());
   };
 
   return (
@@ -95,10 +95,8 @@ const AdminDashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="248"
-            subtitle="Doctors"
-            progress="0.22"
-            increase="+14%"
+            title="No. of Doctors"
+            value={doctors}
             icon={
               <LocalHospitalIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -114,29 +112,8 @@ const AdminDashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="789"
-            subtitle="No. of Employees"
-            progress="0.41"
-            increase="+21%"
-            icon={
-              <BadgeIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="15,234"
-            subtitle="No. of Patients"
-            progress="0.79"
-            increase="+79%"
+            title="Total Patients"
+            value={patients}
             icon={
               <PersonAddIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -152,12 +129,27 @@ const AdminDashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="102"
-            subtitle="VIP Staff"
-            progress="0.10"
-            increase="+4%"
+            title="Total Receptionists"
+            value={receptionists}
             icon={
-              < Person4Icon
+              <BadgeIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+            }
+          />
+        </Box>
+        <Box
+          gridColumn="span 3"
+          backgroundColor={colors.primary[400]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <StatBox
+            title="Today's Appointments"
+            value="1"
+            icon={
+              <BookOnlineIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }

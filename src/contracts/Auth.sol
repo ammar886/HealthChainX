@@ -152,10 +152,23 @@ contract Auth {
         createAuth(_blockChainAdd, _email, _userRole, _password);
     }
 
-    // function getUserDetails(string memory email) public view returns (string memory, string memory, string memory, string memory, string memory) {
-    //     user memory userInstance = users[email];
-    //     return (userInstance.username, userInstance.email, userInstance.number, userInstance.userRole, userInstance.blockChainAdd);
-    // }
+    function getUserDetails(string memory blockChainAddress) public view returns (user memory) {
+        for (uint i = 0; i < allUsers.length; i++) {
+            if (keccak256(abi.encodePacked((allUsers[i].blockChainAdd))) == keccak256(abi.encodePacked((blockChainAddress)))) {
+                return allUsers[i];
+            }
+        }
+        revert("User not found");
+    }
+
+    function getEmployeeDetails(string memory blockChainAddress) public view returns (employee memory) {
+        for (uint i = 0; i < allEmployees.length; i++) {
+            if (keccak256(abi.encodePacked((allEmployees[i].blockChainAdd))) == keccak256(abi.encodePacked((blockChainAddress)))) {
+                return allEmployees[i];
+            }
+        }
+        revert("User not found");
+    }
 
     // function getUsername(
     //     string memory _email
@@ -240,30 +253,20 @@ contract Auth {
         );
     }
 
-    function getUserOrEmployeeRole(
-        string memory _email
-    ) public view returns (string memory) {
-        if (
-            keccak256(abi.encodePacked(authUsers[_email].userRole)) !=
-            keccak256(abi.encodePacked(""))
-        ) {
-            return authUsers[_email].userRole;
-        } 
-        revert("User or employee not found");
-    }
-
     function authenticateLogin(
         string memory _email,
         string memory _password
-    ) public view returns (bool) {
+    ) public view returns (bool, string memory, string memory) {
         authMemory memory userInstance = authUsers[_email];
 
         if (bytes(userInstance.email).length == 0) {
-            return false;
+            return (false, "", "");
         } else {
-            return
-                keccak256(abi.encodePacked(userInstance.password)) ==
-                keccak256(abi.encodePacked(_password));
+            if (keccak256(abi.encodePacked(userInstance.password)) == keccak256(abi.encodePacked(_password))) {
+                return (true, userInstance.userRole, userInstance.blockChainAdd);
+            } else {
+                return (false, "", "");
+            }
         }
     }
 
@@ -512,16 +515,24 @@ contract Auth {
         string memory _userRole
     ) public view returns (uint256) {
         uint256 accountCount = 0;
-        for (uint256 i = 0; i < allEmployees.length; i++) {
-            if (keccak256(abi.encodePacked(allEmployees[i].userRole)) == keccak256(abi.encodePacked(_userRole))) {
-                accountCount++;
+        if (keccak256(abi.encodePacked(_userRole)) == keccak256(abi.encodePacked("patient"))) {
+            for (uint256 i = 0; i < allUsers.length; i++) {
+                if (keccak256(abi.encodePacked(allUsers[i].userRole)) == keccak256(abi.encodePacked(_userRole))) {
+                    accountCount++;
+                }
+            }
+        } else {
+            for (uint256 i = 0; i < allEmployees.length; i++) {
+                if (keccak256(abi.encodePacked(allEmployees[i].userRole)) == keccak256(abi.encodePacked(_userRole))) {
+                    accountCount++;
+                }
             }
         }
 
         return accountCount;
     }
 
-      function getPatients() public view returns (string[] memory, string[] memory) {
+    function getPatients() public view returns (string[] memory, string[] memory) {
 
         uint256 patientCount = 0;
         for (uint256 i = 0; i < allUsers.length; i++) {

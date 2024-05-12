@@ -1,13 +1,21 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaTimes } from "react-icons/fa"; // Import the close icon
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
-import Web3 from "web3";
 import "./Signup.css";
 
 const Signup = ({ onCloseIcon, onLoginButton }) => {
-  
   const navigate = useNavigate();
+  const [auth, setAuth] = useState(null);
+  const [accounts, setAccounts] = useState(null);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [number, setNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [userRole, setUserRole] = useState("patient");
+  const [confirmpassword, setConfirmPassword] = useState("");
+  
   const handleLoginClick = () => {
     onLoginButton();
     navigate('/login');
@@ -18,15 +26,6 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
     navigate('/');
   };
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [number, setNumber] = useState("");
-  const [password, setPassword] = useState("");
-  const [userRole, setUserRole] = useState("patient");
-  const [confirmpassword, setConfirmPassword] = useState("");
-  const [accounts, setAccounts] = React.useState(null);
-  const [auth, setAuth] = React.useState(null);
-
   const loadAccounts = async () => {
     let { auth, accounts } = await loadBlockchainData();
 
@@ -34,24 +33,22 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
     setAuth(auth);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     loadWeb3();
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     loadAccounts();
   }, []);
   
   const handleSignup = async (e) => {
     try {
       e.preventDefault();
-
       // Request account access with MetaMask
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       const account = accounts[0]; // The first account is the user's primary account
 
       const blockChainAdd = accounts[0];
-
       const isEmailUsed = await auth.methods.isEmailUsed(email).call({ from: account });
       const isBlockchainAddUsed = await auth.methods.isBlockchainAddressUsed(blockChainAdd).call({ from: account });
   
@@ -65,7 +62,7 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
         return;
       }
 
-      if (password != confirmpassword) {
+      if (password !== confirmpassword) {
         alert("Password and confirmpassword dosen't match.");
         return;
       }
@@ -74,17 +71,8 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
       await auth.methods
         .createUser(blockChainAdd, name, email, number, userRole, password)
         .send({ from: account });
-  
-      // Store the username, password, and wallet address in local storage
-      localStorage.setItem("walletAddress", account);
-      localStorage.setItem("username", name);
-      localStorage.setItem("email", email);
-      localStorage.setItem("username", number);
-      localStorage.setItem("userRole", userRole);
-      localStorage.setItem("password", password);
       
       alert("Account Succesfully Created on Blockchain");
-      
     } catch (e) {
       console.log(e.message);
       alert("Something went wrong!");
@@ -111,7 +99,7 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
           </div>
           <div className="signup-inputfield">
             <input
-              type="text"
+              type="email"
               required
               onChange={(e) => setEmail(e.target.value)}
             />

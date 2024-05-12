@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Box, IconButton, useTheme } from "@mui/material";
-import { useContext } from "react";
+import { useContext, useTransition } from "react";
 import { ColorModeContext, tokens } from "../theme";
 import InputBase from "@mui/material/InputBase";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
@@ -17,7 +17,7 @@ const Topbar = () => {
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
   const navigate = useNavigate();
-  const { logout } = useContext(AuthContext);
+  const { logout, userRole } = useContext(AuthContext);
 
   const handleLogout = () => {
     logout();
@@ -53,9 +53,11 @@ const Topbar = () => {
         <IconButton>
           <SettingsOutlinedIcon />
         </IconButton> */}
-        <IconButton>
-          <PersonOutlinedIcon />
-        </IconButton>
+        {['doctor', 'receptionist', 'patient'].includes(userRole) && (
+          <IconButton onClick={() => navigate(`/${userRole}/profiledetails`)}>
+            <PersonOutlinedIcon />
+          </IconButton>
+        )}
         <IconButton onClick={handleLogout}>
           <LogoutOutlinedIcon />
         </IconButton>

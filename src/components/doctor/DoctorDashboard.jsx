@@ -51,10 +51,8 @@ const DoctorDashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="248"
-            subtitle="Doctors"
-            progress="0.22"
-            increase="+14%"
+            title="No. of Doctors"
+            value="10"
             icon={
               <LocalHospitalIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -70,10 +68,8 @@ const DoctorDashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="789"
-            subtitle="No. of Employees"
-            progress="0.41"
-            increase="+21%"
+            title="Total Patients"
+            value="10"
             icon={
               <BadgeIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -89,10 +85,8 @@ const DoctorDashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="15,234"
-            subtitle="No. of Patients"
-            progress="0.79"
-            increase="+79%"
+            title="Total Receptionists"
+            value="10"
             icon={
               <PersonAddIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -108,10 +102,8 @@ const DoctorDashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="102"
-            subtitle="VIP Staff"
-            progress="0.10"
-            increase="+4%"
+            title="Total Appointments"
+            value="10"
             icon={
               < Person4Icon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}

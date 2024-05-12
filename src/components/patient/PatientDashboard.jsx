@@ -15,25 +15,20 @@ const PatientDashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  // const [naam, setNaam] = ProfileruseState(null);
   const [auth, setAuth] = useState(null);
   const [accounts, setAccounts] = useState(null);
-  const [contract, setContract] = useState(null);
+  const [doctors, setDoctors] = useState(0);
   const [patientDetails, setPatientDetails] = useState(null);
 
-  const username = localStorage.getItem('name');
+  const email = localStorage.getItem('email');
 
   const loadAccounts = async () => {
-    let { auth, accounts, contract } = await loadBlockchainData();
+    let { auth, accounts } = await loadBlockchainData();
 
     setAccounts(accounts);
     setAuth(auth);
-    setContract(contract);
-    console.log({ contract, accounts });
 
-    if (contract) {
-        getUserDetails(username, contract);
-    }
+    loadData(auth);
   };
   
   useEffect(() => {
@@ -44,11 +39,21 @@ const PatientDashboard = () => {
     loadAccounts();
   }, []);
 
-  async function getUserDetails(username, contract) {
+  const loadData = async (auth) => {
+    if (!auth) {
+      console.log('Auth object is not initialized yet. Please try again.');
+      return;
+    }
+    
     const accounts = await web3.eth.getAccounts();
-    const userDetails = await contract.methods.getUserDetails(username).call({from: accounts[0]});
-    console.log(userDetails);
-    setPatientDetails(userDetails);
+    const account = accounts[0];
+
+    // const userDetails = await auth.methods.getUserDetails(email).call({ from: account });
+    // console.log(userDetails);
+    // setPatientDetails(userDetails);
+
+    const doctors = await auth.methods.getLengthEmployees("doctor").call({ from: account });
+    setDoctors(doctors.toString());
   }
 
   return (
@@ -89,10 +94,8 @@ const PatientDashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="248"
-            subtitle="Doctors"
-            progress="0.22"
-            increase="+14%"
+            title="No. of Doctors"
+            value={doctors}
             icon={
               <LocalHospitalIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -108,10 +111,8 @@ const PatientDashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="789"
-            subtitle="No. of Employees"
-            progress="0.41"
-            increase="+21%"
+            title="Total Patients"
+            value="10"
             icon={
               <BadgeIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -127,10 +128,8 @@ const PatientDashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="15,234"
-            subtitle="No. of Patients"
-            progress="0.79"
-            increase="+79%"
+            title="Total Receptionists"
+            value="10"
             icon={
               <PersonAddIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -146,10 +145,8 @@ const PatientDashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="102"
-            subtitle="VIP Staff"
-            progress="0.10"
-            increase="+4%"
+            title="Total Appointments"
+            value="10"
             icon={
               < Person4Icon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}

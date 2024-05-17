@@ -10,14 +10,18 @@ import Header from "../Header";
 const BookAppointmentForm = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [auth, setAuth] = useState(null);
+  const [appointment, setAppointment] = useState(null); //contract state
   const [accounts, setAccounts] = useState(null);
   const [doctors, setDoctors] = useState([]);
+  
 
   const loadAccounts = async () => {
-    let { auth, accounts } = await loadBlockchainData();
+    let { auth, appointment, accounts } = await loadBlockchainData();
   
     setAccounts(accounts);
     setAuth(auth);
+    setAppointment(appointment);
+
   
     // Call loadDoctors here after auth has been set
     loadDoctors(auth);
@@ -84,7 +88,7 @@ const BookAppointmentForm = () => {
       localStorage.setItem("firstname", values.firstName);
       let status = "pending";
       // Send the transaction to the blockchain
-      await auth.methods
+      await appointment.methods
         .bookAppointment(
           values.firstName,
           values.lastName,
@@ -212,7 +216,7 @@ const BookAppointmentForm = () => {
               >
                 <MenuItem value="">Select Doctor</MenuItem>
                 {doctors.map((doctor, index) => (
-                    <MenuItem key={index} value={doctor.blockChainAdd}>
+                    <MenuItem key={index} value={doctor.userNames}>
                         {doctor.userNames}
                     </MenuItem>
                 ))}

@@ -3,9 +3,6 @@ import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import { Box, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { DataGrid } from "@mui/x-data-grid";
-import { mockDataInvoices } from "../data/mockData";
-import { Margin } from "@mui/icons-material";
-import { withTheme } from "@emotion/react";
 import Header from "../Header";
 
 const styles = {
@@ -21,56 +18,59 @@ const styles = {
     color: 'white',
     alignItems: 'left',
     justifyContent: 'center',
-  
-     // Adjust this value as needed
+    // Adjust this value as needed
   },
-  p:{
+  p: {
     marginRight: '30px',
     width: '100px',
   },
-
-
 };
+
 const AppointmentHistory = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [auth, setAuth] = useState(null);
   const [accounts, setAccounts] = useState(null);
   const [appointment, setAppointment] = useState(null);
+  const [appointments, setAppointments] = useState([]);
 
   const loadAccounts = async () => {
-    let { auth, accounts } = await loadBlockchainData();
+    let { auth, appointment, accounts } = await loadBlockchainData();
 
     setAccounts(accounts);
     setAuth(auth);
-    let { contract } = await loadBlockchainData();
-    console.log({ contract, accounts }); // Add this line
+    setAppointment(appointment);
+    console.log({ auth, appointment, accounts }); // Add this line
   };
+
+  useEffect(() => {
+    loadWeb3();
+  }, []);
 
   useEffect(() => {
     loadAccounts();
   }, []);
 
   useEffect(() => {
-    const getAppointment = async () => {
-      if(!auth) return;
+    const getAppointmentData = async () => {
+      if (!appointment) return;
       const accounts = await web3.eth.getAccounts();
       const account = accounts[0];
-  
-      const appointmentCount = await auth.methods.getAppointmentCount().call({ from: account });
+
+      const appointmentCount = await appointment.methods.getAppointmentCount().call({ from: account });
       console.log(appointmentCount);
       const appointments = [];
-      for(let i=0; i<1; i++){
-        const appointment = await auth.methods.getAppointments(i).call({ from: account });
-        appointments.push(appointment);
+      for (let i = 0; i < 1; i++) {
+        const appointmentData = await appointment.methods.getAppointments(i).call({ from: account });
+        appointments.push(appointmentData);
       }
-      setAppointment(appointments);
-      console.log("new appointments:", appointments)
+      setAppointments(appointments);
+      console.log("new appointments:", appointments);
       localStorage.setItem('appointments', JSON.stringify(appointments));
     };
-  
-    getAppointment();
-  }, [auth]); //added auth as a dependency
+
+    getAppointmentData();
+  }, [appointment]); // Added appointment as a dependency
 
   const columns = [
     { field: "firstname", headerName: "First Name" },
@@ -162,7 +162,7 @@ const AppointmentHistory = () => {
         {/* { <DataGrid checkboxSelection rows={mockDataInvoices} columns={appointment} />} */}
         {/* <pre>{JSON.stringify(appointment, null, 2)}</pre> */}
         
-        {appointment && appointment.map((appt, index) => (
+        {appointments && appointments.map((appt, index) => (
           appt.firstNames && appt.firstNames.map((firstName, i) => (
             <div style={styles.appointmentDiv} className="appointmentDiv" key={i}> 
               <p style={styles.p}>{firstName}</p>

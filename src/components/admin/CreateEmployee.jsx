@@ -53,15 +53,14 @@ const CreateEmployee = () => {
 
 const employeeCreation = async(values) => {
   try{
-    console.log(auth); // Check the value of auth
-    console.log(auth.methods); 
+    console.log(values);
 
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     const account = accounts[0]; // The first account is the user's primary account
 
   // Send the transaction to the blockchain
   await auth.methods
-    .createEmployee(values.blockChainAdd, values.firstName + " " + values.lastName, values.email, values.contact, values.address, values.qualifications, values.userRole, values.specialization, values.password)
+    .createEmployee(values.blockChainAdd, values.firstName + " " + values.lastName, values.email, values.contact, values.address, values.qualifications, values.userRole, values.specialization, values.startShiftTime, values.endShiftTime, values.password)
     .send({ from: account });
 
     alert("Employee Created Succesfully!");
@@ -77,7 +76,7 @@ const employeeCreation = async(values) => {
 
       <Formik
         onSubmit={handleFormSubmit}
-        initialValues={{ ...initialValues, userRole: "" }}
+        initialValues={{ ...initialValues }}
         validationSchema={checkoutSchema}
       >
         {({
@@ -175,7 +174,6 @@ const employeeCreation = async(values) => {
                 helperText={touched.blockChainAdd && errors.blockChainAdd}
                 sx={{ gridColumn: "span 4" }}
               />
-
               <TextField
                 fullWidth
                 variant="filled"
@@ -185,8 +183,8 @@ const employeeCreation = async(values) => {
                 onChange={handleChange}
                 value={values.qualifications}
                 name="qualifications"
-                error={!!touched.blockChainAdd && !!errors.blockChainAdd}
-                helperText={touched.blockChainAdd && errors.blockChainAdd}
+                error={!!touched.qualifications && !!errors.qualifications}
+                helperText={touched.qualifications && errors.qualifications}
                 sx={{ gridColumn: "span 4" }}
               />
 
@@ -231,6 +229,45 @@ const employeeCreation = async(values) => {
                   <MenuItem value="Psychiatrist">Psychiatrist</MenuItem>
                 </TextField>
               )}
+
+              <TextField
+                fullWidth
+                variant="filled"
+                type="time"
+                label="Start Shift Time"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.startShiftTime}
+                name="startShiftTime"
+                error={!!touched.startShiftTime && !!errors.startShiftTime}
+                helperText={touched.startShiftTime && errors.startShiftTime}
+                sx={{ gridColumn: "span 2" }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                inputProps={{
+                  step: 300, // 5 min
+                }}
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="time"
+                label="End Shift Time"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.endShiftTime}
+                name="endShiftTime"
+                error={!!touched.endShiftTime && !!errors.endShiftTime}
+                helperText={touched.endShiftTime && errors.endShiftTime}
+                sx={{ gridColumn: "span 2" }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                inputProps={{
+                  step: 300, // 5 min
+                }}
+              />
             </Box>
 
             <Box display="flex" justifyContent="end" mt="20px">
@@ -261,6 +298,8 @@ const checkoutSchema = yup.object().shape({
   qualifications: yup.string().required("requird"),
   userRole: yup.string().required("Please select a user role"),
   specialization: yup.string().required("Please select a specialization of doctor"),
+  startShiftTime: yup.string().required("required"),
+  endShiftTime: yup.string().required("required"),
   password: yup.string().required("required"),
 });
 
@@ -274,6 +313,8 @@ const initialValues = {
   qualifications: "",
   userRole: "",
   specialization: "None",
+  startShiftTime: "",
+  endShiftTime: "",
   password: "12345678",
 };
 

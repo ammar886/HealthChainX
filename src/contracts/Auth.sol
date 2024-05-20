@@ -37,8 +37,6 @@ contract Auth {
         string qualifications;
         string userRole;
         string specialization;
-        string startShiftTime;
-        string endShiftTime;
         string password;
     }
 
@@ -79,8 +77,6 @@ contract Auth {
         string qualifications,
         string userRole,
         string specialization,
-        string startShiftTime,
-        string endShiftTime,
         string password
     );
 
@@ -174,6 +170,16 @@ contract Auth {
         revert("User not found");
     }
 
+    // function getUsername(
+    //     string memory _email
+    // ) public view returns (string memory) {
+    //     require(
+    //         bytes(users[_email].username).length > 0,
+    //         "User does not exist"
+    //     );
+    //     return users[_email].username;
+    // }
+
     function createEmployee(
         string memory _blockChainAdd,
         string memory _username,
@@ -183,8 +189,6 @@ contract Auth {
         string memory _qualifications,
         string memory _userRole,
         string memory _specialization,
-        string memory _startShiftTime,
-        string memory _endShiftTime,
         string memory _password
     ) public {
         require(
@@ -206,8 +210,6 @@ contract Auth {
             _qualifications,
             _userRole,
             _specialization,
-            _startShiftTime,
-            _endShiftTime,
             _password
         );
         employees[_email].push(newEmployee);
@@ -221,8 +223,6 @@ contract Auth {
             _qualifications,
             _userRole,
             _specialization,
-            _startShiftTime,
-            _endShiftTime,
             _password
         );
 

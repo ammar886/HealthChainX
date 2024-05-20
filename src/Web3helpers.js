@@ -1,6 +1,8 @@
 import Web3 from "web3";
 
 import Auth from "./build/contracts/Auth.json";
+import Appointment from "./build/contracts/Appointment.json";
+
 
 export const loadWeb3 = async () => {
   if (window.ethereum) {
@@ -32,11 +34,20 @@ export const loadBlockchainData = async () => {
       Auth.networks[networkId].address
     );
 
-    const contract = new web3.eth.Contract(
-      Auth.abi,
-      Auth.networks[networkId].address
+    const appointment = new web3.eth.Contract(
+      Appointment.abi,
+      Appointment.networks[networkId].address
     );
 
-    return { auth, accounts: accounts[0], contract };
+
+    const contract = new web3.eth.Contract(
+      Auth.abi,
+      Auth.networks[networkId].address,
+      Appointment.abi,
+      Appointment.networks[networkId].address,
+     
+    );
+
+    return { auth, appointment, accounts: accounts[0], contract };
   }
 };

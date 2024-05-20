@@ -37,13 +37,15 @@ const ManageAppointments = () => {
   const [auth, setAuth] = useState(null);
   const [accounts, setAccounts] = useState(null);
   const [appointment, setAppointment] = useState(null);
+  const [appointments, setAppointments] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   const loadAccounts = async () => {
-    let { auth, accounts } = await loadBlockchainData();
+    let { auth, appointment, accounts } = await loadBlockchainData();
 
     setAccounts(accounts);
     setAuth(auth);
+    setAppointment(appointment); 
     let { contract } = await loadBlockchainData();
     console.log({ contract, accounts }); // Add this line
   };
@@ -54,7 +56,7 @@ const ManageAppointments = () => {
 
   useEffect(() => {
     getAppointment();
-  }, [auth]);
+  }, [appointment]);
   
   const getAppointment = async () => {
     if(!auth) return;
@@ -62,16 +64,16 @@ const ManageAppointments = () => {
     const account = accounts[0];
     setIsRefreshing(true);
 
-    const appointmentCount = await auth.methods.getAppointmentCount().call({ from: account });
+    const appointmentCount = await appointment.methods.getAppointmentCount().call({ from: account });
     console.log(appointmentCount);
 
     const appointments = [];
     for(let i=0; i<1; i++){
-      const appointmentData = await auth.methods.getAllAppointments(i).call({ from: account });
+      const appointmentData = await appointment.methods.getAllAppointments(i).call({ from: account });
       appointments.push(appointmentData);
     }
 
-    setAppointment(appointments);
+    setAppointments(appointments);
     setIsRefreshing(false);
     console.log("new appointments:", appointments)
     localStorage.setItem('appointments', JSON.stringify(appointments));
@@ -82,10 +84,10 @@ const ManageAppointments = () => {
   };
 
   const updateAppointmentStatus = async (userAddress, index, newStatus) => {
-    if (!auth) return;
+    if (!appointment) return;
     const accounts = await web3.eth.getAccounts();
     const account = accounts[0];
-    await auth.methods.updateAppointmentStatus(userAddress, index, newStatus).send({ from: account })
+    await appointment.methods.updateAppointmentStatus(userAddress, index, newStatus).send({ from: account })
     .on('receipt', (receipt) => {
       console.log(receipt);
       console.log("ammar");
@@ -191,7 +193,7 @@ const ManageAppointments = () => {
         {/* <pre>{JSON.stringify(appointment, null, 2)}</pre> */}
 
         <div>
-          {appointment && appointment.map((appt, index) => (
+          {appointments && appointments.map((appt, index) => (
             appt.firstNames && appt.firstNames.map((firstName, i) => (
               <div style={styles.appointmentDiv} className="appointmentDiv" key={i}> 
                 <p style={styles.p}>Sr# {i+1}</p>
@@ -207,7 +209,7 @@ const ManageAppointments = () => {
                 {console.log("Index:", index)}
                 {console.log("Owner:", appt.owner)}
                 {/* <button onClick={() => updateAppointmentStatus(appt.owner[i], index, "Approved")}>Approve</button> */}
-                <select onChange={(e) => updateAppointmentStatus(appt.owner[i], index, e.target.value)}>
+                <select onChange={(e) => updateAppointmentStatus(appt.owner[i], i, e.target.value)}>
                   <option value="">Select</option>
                   <option value="Approved">Approve</option>
                   <option value="Rejected">Reject</option>

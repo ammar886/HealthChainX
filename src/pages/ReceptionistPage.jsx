@@ -2,20 +2,22 @@ import { useState, useContext, useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "../theme";
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContext';xc
 import Topbar from "../components/Topbar";
 import ProfileDetails from "../components/ProfileDetails";
+import Sidebar from "../components/patient/Sidebar";
+import ReceptionistDashboard from "../components/receptionist/ReceptionistDashboard";
+import ManagePatients from "../components/receptionist/ManagePatients";
+import ManageAppointments from "../components/receptionist/ManageAppointments";
+import CreateAppointmentForm from "../components/receptionist/CreateAppointmentForm";
+import Invoices from "../components/receptionist/Invoices";
+import Faq from "../components/Faq";
 
-function PatientPage() {
-  const [theme, colorMode] = useMode();
-  const { isAuthenticated } = useContext(AuthContext);
+function ReceptionistPage() {
   const navigate = useNavigate();
-
-  const patients = [
-    { id: 1, name: 'John Doe', age: 30, gender: 'Male' },
-    { id: 2, name: 'Jane Smith', age: 25, gender: 'Female' },
-    { id: 3, name: 'Michael Johnson', age: 40, gender: 'Male' },
-  ];
+  const [theme, colorMode] = useMode();
+  const [isSidebar, setIsSidebar] = useState(true);
+  const { isAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -28,31 +30,18 @@ function PatientPage() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="app">
+          <Sidebar isSidebar={isSidebar} />
           <main className="content">
-          <Topbar />
-            <div>
-              <h1>Receptionist Page</h1>
-              <table>
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Gender</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {patients.map((patient) => (
-                    <tr key={patient.id}>
-                      <td>{patient.id}</td>
-                      <td>{patient.name}</td>
-                      <td>{patient.age}</td>
-                      <td>{patient.gender}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <Topbar setIsSidebar={setIsSidebar} />
+            <Routes>
+              <Route path="/" element={<ReceptionistDashboard />} />
+              <Route path="managepatients" element={<ManagePatients />} />
+              <Route path="manageappointments" element={<ManageAppointments />} />
+              <Route path="createappointmentform" element={<CreateAppointmentForm />} />
+              <Route path="invoices" element={<Invoices />} />
+              <Route path="faq" element={<Faq />} />
+              <Route path="profiledetails" element={<ProfileDetails />} />
+            </Routes>
           </main>
         </div>
       </ThemeProvider>
@@ -60,4 +49,4 @@ function PatientPage() {
   );
 }
 
-export default PatientPage;
+export default ReceptionistPage;

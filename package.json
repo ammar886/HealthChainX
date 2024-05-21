@@ -22,6 +22,7 @@
     "@nivo/line": "^0.84.0",
     "@nivo/pie": "^0.84.0",
     "@truffle/hdwallet-provider": "^2.1.15",
+    "date-fns": "^3.6.0",
     "ethereumjs-util": "^7.1.5",
     "ethers": "^6.12.0",
     "formik": "^2.4.5",

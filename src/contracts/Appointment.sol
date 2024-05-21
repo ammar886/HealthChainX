@@ -252,7 +252,4 @@ contract Appointment {
             newStatus
         );
     }
-
-
-
 }

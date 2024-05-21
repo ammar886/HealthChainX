@@ -63,7 +63,6 @@ const ManageAccounts = () => {
     }
   };
  
- 
   const columns = [
     { field: "id", headerName: "ID" },
     {
@@ -124,7 +123,7 @@ const ManageAccounts = () => {
 
   return (
     <Box m="20px">
-      {/* <Header title="MANAGE PATIENT" subtitle="Managing the Patient's" />
+      <Header title="MANAGE PATIENT" subtitle="Managing the Patient's" />
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -155,7 +154,7 @@ const ManageAccounts = () => {
         }}
       >
         <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
-      </Box> */}
+      </Box>
        {patients && patients.map((patient, index) => (
       <div key={index}>
         {patient.userNames}

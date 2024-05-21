@@ -26,6 +26,11 @@ const CreateEmployee = () => {
     loadAccounts();
   }, []);
 
+  function timeToMinutes(time) {
+    const [hours, minutes] = time.split(':').map(Number);
+    return (hours * 60) + minutes;
+  }
+
   const handleFormSubmit = async (values) => {
     try {
       values.blockChainAdd = values.blockChainAdd.toLowerCase();
@@ -43,6 +48,13 @@ const CreateEmployee = () => {
         alert("Blockchain address is already used. Please, use another blockchain address.");
         return;
       }
+
+      // Calculate shift duration in minutes
+      const startMinutes = timeToMinutes(values.startShiftTime);
+      const endMinutes = timeToMinutes(values.endShiftTime);
+      values.shiftDuration = (endMinutes - startMinutes).toString();
+
+      console.log(`Shift duration: ${values.shiftDuration} minutes`);
   
       employeeCreation(values);
     } catch (e) {
@@ -60,7 +72,7 @@ const employeeCreation = async(values) => {
 
   // Send the transaction to the blockchain
   await auth.methods
-    .createEmployee(values.blockChainAdd, values.firstName + " " + values.lastName, values.email, values.contact, values.address, values.qualifications, values.userRole, values.specialization, values.startShiftTime, values.endShiftTime, values.password)
+    .createEmployee(values.blockChainAdd, values.firstName + " " + values.lastName, values.email, values.contact, values.address, values.qualifications, values.userRole, values.specialization, values.startShiftTime, values.endShiftTime, values.shiftDuration, values.password)
     .send({ from: account });
 
     alert("Employee Created Succesfully!");
@@ -297,7 +309,7 @@ const checkoutSchema = yup.object().shape({
   address: yup.string().required("required"),
   qualifications: yup.string().required("requird"),
   userRole: yup.string().required("Please select a user role"),
-  specialization: yup.string().required("Please select a specialization of doctor"),
+  specialization: yup.string().required("Please select a specialization for doctor"),
   startShiftTime: yup.string().required("required"),
   endShiftTime: yup.string().required("required"),
   password: yup.string().required("required"),
@@ -315,6 +327,7 @@ const initialValues = {
   specialization: "None",
   startShiftTime: "",
   endShiftTime: "",
+  shiftDuration: "",
   password: "12345678",
 };
 

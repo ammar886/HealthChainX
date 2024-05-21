@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
+import { addMinutes, format } from 'date-fns';
 import { Pending } from "@mui/icons-material";
 import { Box, Button, TextField, MenuItem } from "@mui/material";
 import { Formik } from "formik";
@@ -13,6 +14,7 @@ const BookAppointmentForm = () => {
   const [appointment, setAppointment] = useState(null); //contract state
   const [accounts, setAccounts] = useState(null);
   const [doctors, setDoctors] = useState([]);
+  const [timeSlots, setTimeSlots] = useState([]);
   
 
   const loadAccounts = async () => {
@@ -22,7 +24,6 @@ const BookAppointmentForm = () => {
     setAuth(auth);
     setAppointment(appointment);
 
-  
     // Call loadDoctors here after auth has been set
     loadDoctors(auth);
   };
@@ -48,19 +49,38 @@ const BookAppointmentForm = () => {
     console.log(result);
     
     if (result[0].length > 0 && result[1].length > 0) {
-      const userNames = result[0];
-      const blockChainAdds = result[1];
+      const blockChainAdds = result[0];
+      const userNames = result[1];
+      const startShiftTimes = result[2];
+      const endShiftTimes = result[3];
+      const shiftDurations = result[4];
       
-      const doctors = userNames.map((userNames, index) => ({
-        userNames,
-        blockChainAdd: blockChainAdds[index]
+      const doctors = blockChainAdds.map((blockChainAdd, index) => ({
+        blockChainAdd,
+        userName: userNames[index],
+        startShiftTime: startShiftTimes[index],
+        endShiftTime: endShiftTimes[index],
+        shiftDuration: shiftDurations[index]
       }));
-  
+    
       console.log(doctors);
       setDoctors(doctors);
     } else {
       console.log('No doctors found.');
     }
+  };
+
+  const generateTimeSlots = (startShiftTime, shiftDuration) => {
+    const slots = [];
+    let startTime = new Date(`1970-01-01T${startShiftTime}:00`);
+    const endTime = addMinutes(startTime, shiftDuration);
+  
+    while (startTime < endTime) {
+      slots.push(format(startTime, 'HH:mm'));
+      startTime = addMinutes(startTime, 15);
+    }
+  
+    setTimeSlots(slots);
   };
 
   const handleFormSubmit = (values) => {
@@ -207,7 +227,13 @@ const BookAppointmentForm = () => {
                 variant="filled"
                 label="Select Doctor"
                 onBlur={handleBlur}
-                onChange={handleChange}
+                onChange={(event) => {
+                  handleChange(event);
+                  const selectedDoctor = doctors.find(doctor => doctor.userName === event.target.value);
+                  if (selectedDoctor) {
+                    generateTimeSlots(selectedDoctor.startShiftTime, selectedDoctor.shiftDuration);
+                  }
+                }}
                 value={values.doctorname}
                 name="doctorname"
                 error={!!touched.doctorname && !!errors.doctorname}
@@ -216,8 +242,8 @@ const BookAppointmentForm = () => {
               >
                 <MenuItem value="">Select Doctor</MenuItem>
                 {doctors.map((doctor, index) => (
-                    <MenuItem key={index} value={doctor.userNames}>
-                        {doctor.userNames}
+                    <MenuItem key={index} value={doctor.userName}>
+                        {doctor.userName}
                     </MenuItem>
                 ))}
               </TextField>
@@ -236,9 +262,11 @@ const BookAppointmentForm = () => {
                 sx={{ gridColumn: "span 4" }}
               >
                 <MenuItem value="">Select Time Slot</MenuItem>
-                <MenuItem value="11:30">11:30</MenuItem>
-                <MenuItem value="12:30">12:30</MenuItem>
-                <MenuItem value="01:30">01:30</MenuItem>
+                {timeSlots.map((timeSlot, index) => (
+                  <MenuItem key={index} value={timeSlot}>
+                    {timeSlot}
+                  </MenuItem>
+                ))}
               </TextField>
             </Box>
 

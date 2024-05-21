@@ -152,7 +152,7 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
           <button type="submit">Login</button>
 
           <div className="login-alt">
-            <div className="login-text">Alredy have an Account:</div>
+            <div className="login-text">Already have an Account:</div>
             <button type="button" onClick={handleSignupClick}>
               Sign Up
             </button>

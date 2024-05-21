@@ -20,7 +20,7 @@ const StatBox = ({ icon, title, value }) => {
           </Box>
         </Grid>
         <Grid item xs={4}>
-          <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+          <Box display="flex" justifyContent="right" alignItems="center" height="100%">
             <Typography
               variant="h2"
               fontWeight="bold"

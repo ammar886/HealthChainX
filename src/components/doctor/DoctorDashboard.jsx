@@ -44,14 +44,14 @@ const DoctorDashboard = () => {
       >
         {/* ROW 1 */}
         <Box
-          gridColumn="span 3"
+          gridColumn="span 4"
           backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
           justifyContent="center"
         >
           <StatBox
-            title="No. of Doctors"
+            title="Total Appointments"
             value="10"
             icon={
               <LocalHospitalIcon
@@ -61,7 +61,7 @@ const DoctorDashboard = () => {
           />
         </Box>
         <Box
-          gridColumn="span 3"
+          gridColumn="span 4"
           backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
@@ -78,14 +78,14 @@ const DoctorDashboard = () => {
           />
         </Box>
         <Box
-          gridColumn="span 3"
+          gridColumn="span 4"
           backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
           justifyContent="center"
         >
           <StatBox
-            title="Total Receptionists"
+            title="Pending Appointments"
             value="10"
             icon={
               <PersonAddIcon
@@ -94,7 +94,7 @@ const DoctorDashboard = () => {
             }
           />
         </Box>
-        <Box
+        {/* <Box
           gridColumn="span 3"
           backgroundColor={colors.primary[400]}
           display="flex"
@@ -110,7 +110,7 @@ const DoctorDashboard = () => {
               />
             }
           />
-        </Box>
+        </Box> */}
         <Box
           gridColumn="span 12"
           gridRow="span 3"

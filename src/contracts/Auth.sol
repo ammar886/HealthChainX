@@ -37,6 +37,9 @@ contract Auth {
         string qualifications;
         string userRole;
         string specialization;
+        string startShiftTime;
+        string endShiftTime;
+        string shiftDuration;
         string password;
     }
 
@@ -46,7 +49,6 @@ contract Auth {
         string userRole;
         string password;
     }
-
 
     event userCreated(
         string blockChainAdd,
@@ -66,6 +68,9 @@ contract Auth {
         string qualifications,
         string userRole,
         string specialization,
+        string startShiftTime,
+        string endShiftTime,
+        string shiftDuration,
         string password
     );
 
@@ -75,8 +80,6 @@ contract Auth {
         string userRole,
         string password
     );
-
-
 
     function isEmailUsed(string memory email) public view returns (bool) {
         return usedEmails[email];
@@ -168,6 +171,9 @@ contract Auth {
         string memory _qualifications,
         string memory _userRole,
         string memory _specialization,
+        string memory _startShiftTime,
+        string memory _endShiftTime,
+        string memory _shiftDuration,
         string memory _password
     ) public {
         require(
@@ -189,6 +195,9 @@ contract Auth {
             _qualifications,
             _userRole,
             _specialization,
+            _startShiftTime,
+            _endShiftTime,
+            _shiftDuration,
             _password
         );
         employees[_email].push(newEmployee);
@@ -202,6 +211,9 @@ contract Auth {
             _qualifications,
             _userRole,
             _specialization,
+            _startShiftTime,
+            _endShiftTime,
+            _shiftDuration,
             _password
         );
 
@@ -249,23 +261,29 @@ contract Auth {
         }
     }
 
-    function getDoctors() public view returns (string[] memory, string[] memory) {
+    function getDoctors() public view returns (string[] memory, string[] memory, string[] memory, string[] memory, string[] memory) {
 
         uint256 doctorCount = getLengthEmployees("doctor");
-        
-        string[] memory userNames = new string[](doctorCount);
-        string[] memory blockChainAdds = new string[](doctorCount);
 
+        string[] memory blockChainAdds = new string[](doctorCount);
+        string[] memory userNames = new string[](doctorCount);
+        string[] memory startShiftTimes = new string[](doctorCount);
+        string[] memory endShiftTimes = new string[](doctorCount);
+        string[] memory shiftDurations = new string[](doctorCount);
+        
         uint256 doctorIndex = 0;
         for (uint256 i = 0; i < allEmployees.length; i++) {
             if (keccak256(abi.encodePacked(allEmployees[i].userRole)) == keccak256(abi.encodePacked("doctor"))) {
-                userNames[doctorIndex] = allEmployees[i].username;
                 blockChainAdds[doctorIndex] = allEmployees[i].blockChainAdd;
+                userNames[doctorIndex] = allEmployees[i].username;
+                startShiftTimes[doctorIndex] = allEmployees[i].startShiftTime;
+                endShiftTimes[doctorIndex] = allEmployees[i].endShiftTime;
+                shiftDurations[doctorIndex] = allEmployees[i].shiftDuration;
                 doctorIndex++;
             }
         }
 
-        return (userNames, blockChainAdds);
+        return (blockChainAdds, userNames, startShiftTimes, endShiftTimes, shiftDurations);
     }
 
     function getLengthEmployees(
@@ -297,7 +315,6 @@ contract Auth {
                 patientCount++;
             }
         }
-        
         
         string[] memory username = new string[](patientCount);
         string[] memory blockChainAdds = new string[](patientCount);

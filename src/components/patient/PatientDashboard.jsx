@@ -5,9 +5,9 @@ import { tokens } from "../../theme";
 import { mockTransactions } from "../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import BadgeIcon from '@mui/icons-material/Badge';
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import Person4Icon from '@mui/icons-material/Person4';
+import BookOnlineIcon from '@mui/icons-material/BookOnline';
+import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import Header from "../Header";
 import StatBox from "../StatBox";
 
@@ -47,10 +47,6 @@ const PatientDashboard = () => {
     
     const accounts = await web3.eth.getAccounts();
     const account = accounts[0];
-
-    // const userDetails = await auth.methods.getUserDetails(email).call({ from: account });
-    // console.log(userDetails);
-    // setPatientDetails(userDetails);
 
     const doctors = await auth.methods.getLengthEmployees("doctor").call({ from: account });
     setDoctors(doctors.toString());
@@ -111,10 +107,10 @@ const PatientDashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="Total Patients"
+            title="Pending Appointments"
             value="10"
             icon={
-              <BadgeIcon
+              <PendingActionsIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -128,10 +124,10 @@ const PatientDashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="Total Receptionists"
+            title="Approved Appointments"
             value="10"
             icon={
-              <PersonAddIcon
+              <CheckBoxOutlinedIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -148,7 +144,7 @@ const PatientDashboard = () => {
             title="Total Appointments"
             value="10"
             icon={
-              < Person4Icon
+              <BookOnlineIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }

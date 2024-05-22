@@ -2,10 +2,9 @@ import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { mockTransactions } from "../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
-import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import BadgeIcon from '@mui/icons-material/Badge';
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import Person4Icon from '@mui/icons-material/Person4';
+import BookOnlineIcon from '@mui/icons-material/BookOnline';
 import Header from "../Header";
 import StatBox from "../StatBox";
 
@@ -54,7 +53,7 @@ const DoctorDashboard = () => {
             title="Total Appointments"
             value="10"
             icon={
-              <LocalHospitalIcon
+              <BookOnlineIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -71,7 +70,7 @@ const DoctorDashboard = () => {
             title="Total Patients"
             value="10"
             icon={
-              <BadgeIcon
+              <PersonAddIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -88,29 +87,12 @@ const DoctorDashboard = () => {
             title="Pending Appointments"
             value="10"
             icon={
-              <PersonAddIcon
+              <PendingActionsIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
           />
         </Box>
-        {/* <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="Total Appointments"
-            value="10"
-            icon={
-              < Person4Icon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box> */}
         <Box
           gridColumn="span 12"
           gridRow="span 3"

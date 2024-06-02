@@ -284,4 +284,21 @@ contract Appointment {
 
         return exactBookedTimeSlots;
     }
+
+    function getCurrentDateAppointementCount(string memory _currentDate)
+    public
+    view
+    returns (uint256)
+    {
+        uint count = 0;
+        for (uint i = 0; i < allAppointments.length; i++) {
+            if (
+                keccak256(abi.encodePacked(allAppointments[i].currentDate)) == keccak256(abi.encodePacked(_currentDate))
+            ) {
+                count++;
+            }
+        }
+
+        return count;
+    }
 }

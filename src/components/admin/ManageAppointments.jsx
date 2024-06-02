@@ -46,6 +46,7 @@ const ManageAppointments = () => {
     setAccounts(accounts);
     setAuth(auth);
     setAppointment(appointment); 
+    
     let { contract } = await loadBlockchainData();
     console.log({ contract, accounts }); // Add this line
   };

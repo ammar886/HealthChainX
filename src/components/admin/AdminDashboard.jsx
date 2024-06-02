@@ -17,18 +17,20 @@ const AdminDashboard = () => {
 
   const [accounts, setAccounts] = useState(null);
   const [auth, setAuth] = useState(null);
+  const [appointment, setAppointment] = useState(null);
   const [doctors, setDoctors] = useState(0);
   const [receptionists, setReceptionists] = useState(0);
   const [patients, setPatients] = useState(0);
-  const [appointments, setppointments] = useState(0);
+  const [appointments, setAppointments] = useState(0);
 
   const loadAccounts = async () => {
-    let { auth, accounts } = await loadBlockchainData();
+    let { auth, appointment, accounts } = await loadBlockchainData();
   
     setAccounts(accounts);
     setAuth(auth);
+    setAppointment(appointment);
 
-    loadData(auth);
+    loadData(auth, appointment);
   };
   
   useEffect(() => {
@@ -39,9 +41,13 @@ const AdminDashboard = () => {
     loadAccounts();
   }, []);
 
-  const loadData = async (auth) => {
+  const loadData = async (auth, appointment) => {
     if (!auth) {
       console.log('Auth object is not initialized yet. Please try again.');
+      return;
+    }
+    if (!appointment) {
+      console.log('Appointment object is not initialized yet. Please try again.');
       return;
     }
 
@@ -52,9 +58,13 @@ const AdminDashboard = () => {
     const receptionists = await auth.methods.getLengthEmployees("receptionist").call({ from: account });
     const patients = await auth.methods.getLengthEmployees("patient").call({ from: account });
 
+    const currentDate = new Date().toLocaleDateString();
+    const appointments = await appointment.methods.getCurrentDateAppointementCount(currentDate).call({ from: account });
+
     setDoctors(doctors.toString());
     setReceptionists(receptionists.toString());
     setPatients(patients.toString());
+    setAppointments(appointments.toString());
   };
 
   return (
@@ -147,7 +157,7 @@ const AdminDashboard = () => {
         >
           <StatBox
             title="Today's Appointments"
-            value="1"
+            value={appointments}
             icon={
               <BookOnlineIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}

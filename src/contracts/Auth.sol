@@ -11,12 +11,10 @@ contract Auth {
     mapping(string => user[]) users;
     mapping(string => employee[]) employees;
     
-
     mapping(string => bool) private usedEmails;
     mapping(string => bool) private usedBlockchainAddresses;
     
     employee[] public allEmployees;
-     
     user[] public allUsers;  
 
     struct user {
@@ -304,13 +302,6 @@ contract Auth {
 
     function getPatients() public view returns (string[] memory, string[] memory) {
 
-        uint256 patientCount = 0;
-        for (uint256 i = 0; i < allUsers.length; i++) {
-            if (keccak256(abi.encodePacked(allUsers[i].userRole)) == keccak256(abi.encodePacked("patient"))) {
-                patientCount++;
-            }
-        }
-        
         string[] memory username = new string[](patientCount);
         string[] memory blockChainAdds = new string[](patientCount);
 

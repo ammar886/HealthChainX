@@ -36,6 +36,7 @@ const Sidebar = () => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
+  const userName = localStorage.getItem('username');
 
   return (
     <Box
@@ -103,7 +104,7 @@ const Sidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  Ahsan
+                  <h5>Welcome, {userName}</h5>
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
                   HealthChainX Inc.

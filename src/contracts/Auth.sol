@@ -45,6 +45,7 @@ contract Auth {
 
     struct authMemory {
         string blockChainAdd;
+        string username;
         string email;
         string userRole;
         string password;
@@ -76,6 +77,7 @@ contract Auth {
 
     event authCreated(
         string blockChainAdd,
+        string username,
         string email,
         string userRole,
         string password
@@ -131,7 +133,7 @@ contract Auth {
         usedEmails[_email] = true;
         usedBlockchainAddresses[_blockChainAdd] = true;
 
-        createAuth(_blockChainAdd, _email, _userRole, _password);
+        createAuth(_blockChainAdd, _username, _email, _userRole, _password);
     }
 
     function getUserDetails(string memory blockChainAddress) public view returns (user memory) {
@@ -151,16 +153,6 @@ contract Auth {
         }
         revert("User not found");
     }
-
-    // function getUsername(
-    //     string memory _email
-    // ) public view returns (string memory) {
-    //     require(
-    //         bytes(users[_email].username).length > 0,
-    //         "User does not exist"
-    //     );
-    //     return users[_email].username;
-    // }
 
     function createEmployee(
         string memory _blockChainAdd,
@@ -220,11 +212,12 @@ contract Auth {
         usedEmails[_email] = true;
         usedBlockchainAddresses[_blockChainAdd] = true;
 
-        createAuth(_blockChainAdd, _email, _userRole, _password);
+        createAuth(_blockChainAdd, _username, _email, _userRole, _password);
     }
 
     function createAuth(
         string memory _blockChainAdd,
+        string memory _username,
         string memory _email,
         string memory _userRole,
         string memory _password
@@ -232,12 +225,14 @@ contract Auth {
 
         authUsers[_email] = authMemory(
             _blockChainAdd,
+            _username,
             _email,
             _userRole,
             _password
         );
         emit authCreated(
             _blockChainAdd,
+            _username,
             _email,
             _userRole,
             _password
@@ -247,16 +242,16 @@ contract Auth {
     function authenticateLogin(
         string memory _email,
         string memory _password
-    ) public view returns (bool, string memory, string memory) {
+    ) public view returns (bool, string memory, string memory, string memory) {
         authMemory memory userInstance = authUsers[_email];
 
         if (bytes(userInstance.email).length == 0) {
-            return (false, "", "");
+            return (false, "", "", "");
         } else {
             if (keccak256(abi.encodePacked(userInstance.password)) == keccak256(abi.encodePacked(_password))) {
-                return (true, userInstance.userRole, userInstance.blockChainAdd);
+                return (true, userInstance.blockChainAdd, userInstance.username, userInstance.userRole);
             } else {
-                return (false, "", "");
+                return (false, "", "", "");
             }
         }
     }

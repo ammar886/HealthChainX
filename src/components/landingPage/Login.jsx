@@ -9,7 +9,7 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
   const navigate = useNavigate();
   const [auth, setAuth] = useState(null);
   const [accounts, setAccounts] = useState(null);
-  const { isAuthenticated, userRole, setIsAuthenticated, setUserRole, blockchainAddress, setBlockchainAddress, emailAdd, setEmailAdd } = useContext(AuthContext);
+  const { setIsAuthenticated, setUserRole, setBlockchainAddress, setEmailAdd } = useContext(AuthContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,12 +42,6 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
     loadAccounts();
   }, []);
 
-  // useEffect(() => {
-  //   console.log('Is authenticated:', isAuthenticated);
-  //   console.log('User role:', userRole);
-  //   console.log('BlockChain Address:', blockchainAddress);
-  // }, [isAuthenticated, userRole, blockchainAddress]);
-
   const handleSubmission = async (e) => {
     try {
       e.preventDefault();
@@ -63,32 +57,35 @@ const Login = ({ onCloseIcon, onSignupButton }) => {
 
           const uData = await auth.methods
             .authenticateLogin(email, password)
-            .call({ from: account });  
+            .call({ from: account });
+
+          // Assuming uData is an object that contains a property 'username'
+          localStorage.setItem('username', uData[2]);
     
           if (uData[0]) {
-            setBlockchainAddress(uData[2]);
+            setBlockchainAddress(uData[1]);
             setEmailAdd(email);
-              switch (uData[1]) {
+              switch (uData[3]) {
                 case "patient":
                   setIsAuthenticated(uData[0]);
-                  setUserRole(uData[1]);
+                  setUserRole(uData[3]);
                   navigate("/patient");
                   alert("Patient Account.");
                   break;
                 case "doctor":
                   setIsAuthenticated(uData[0]);
-                  setUserRole(uData[1]);
+                  setUserRole(uData[3]);
                   navigate("/doctor");
                   alert("Doctor Account.");
                   break;
                 case "receptionist":
                   setIsAuthenticated(uData[0]);
-                  setUserRole(uData[1]);
+                  setUserRole(uData[3]);
                   navigate("/receptionist");
                   alert("Receptionist Account.");
                   break;
                 default:
-                  console.error("Unknown user role:", uData[1]);
+                  console.error("Unknown user role:", uData[3]);
                   alert("Invalid or unknown user role");
               }
           } else {

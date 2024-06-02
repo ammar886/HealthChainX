@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import { addMinutes, format } from 'date-fns';
 import { Pending } from "@mui/icons-material";
@@ -6,6 +6,7 @@ import { Box, Button, TextField, MenuItem } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { AuthContext } from "../../context/AuthContext";
 import Header from "../Header";
 
 const BookAppointmentForm = () => {
@@ -15,8 +16,8 @@ const BookAppointmentForm = () => {
   const [accounts, setAccounts] = useState(null);
   const [doctors, setDoctors] = useState([]);
   const [timeSlots, setTimeSlots] = useState([]);
+  const { blockchainAddress, emailAdd } = useContext(AuthContext);
   
-
   const loadAccounts = async () => {
     let { auth, appointment, accounts } = await loadBlockchainData();
   
@@ -24,7 +25,6 @@ const BookAppointmentForm = () => {
     setAuth(auth);
     setAppointment(appointment);
 
-    // Call loadDoctors here after auth has been set
     loadDoctors(auth);
   };
 
@@ -70,7 +70,7 @@ const BookAppointmentForm = () => {
     }
   };
 
-  const generateTimeSlots = (startShiftTime, shiftDuration) => {
+  const generateTimeSlots = async (startShiftTime, shiftDuration, doctorAdd) => {
     const slots = [];
     let startTime = new Date(`1970-01-01T${startShiftTime}:00`);
     const endTime = addMinutes(startTime, shiftDuration);
@@ -80,17 +80,37 @@ const BookAppointmentForm = () => {
       startTime = addMinutes(startTime, 15);
     }
   
-    setTimeSlots(slots);
+    const currentDate = new Date().toLocaleDateString();
+    const bookedSlots = await getBookedTimeSlots(doctorAdd, currentDate);
+  
+    const availableSlots = slots.filter(slot => !bookedSlots.includes(slot));
+  
+    setTimeSlots(availableSlots);
+  };
+
+  const getBookedTimeSlots = async (doctorAdd, currentDate) => {
+    try {
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      const account = accounts[0];
+      const bookedSlots = await appointment.methods
+        .getBookedTimeSlots(doctorAdd, currentDate)
+        .call({ from: account });
+      return bookedSlots;
+    } catch (e) {
+      console.error(e.message);
+      return [];
+    }
   };
 
   const handleFormSubmit = (values) => {
-    localStorage.setItem("firstname", values.firstName);
-    localStorage.setItem("lastname", values.lastName);
-    localStorage.setItem("email", values.email);
-
+    values.blockchainAddress = blockchainAddress;
+    values.currentDate = new Date().toLocaleDateString(); // Add the current date without time
     appointmentCreation(values);
-
+    console.log(values);
     console.log("handleForm function called!");
+    resetForm();
   };
 
   const appointmentCreation = async (values) => {
@@ -104,18 +124,18 @@ const BookAppointmentForm = () => {
         method: "eth_requestAccounts",
       });
       const account = accounts[0]; // The first account is the user's primary account
-  
-      localStorage.setItem("firstname", values.firstName);
-      let status = "pending";
-      // Send the transaction to the blockchain
+      let status = "pending"; // Send the transaction to the blockchain
+
       await appointment.methods
         .bookAppointment(
+          values.blockchainAddress,
           values.firstName,
           values.lastName,
           values.email,
           values.contact,
           values.address,
           values.doctorname,
+          values.currentDate,
           values.timeslot,
           values.status
         )
@@ -229,9 +249,9 @@ const BookAppointmentForm = () => {
                 onBlur={handleBlur}
                 onChange={(event) => {
                   handleChange(event);
-                  const selectedDoctor = doctors.find(doctor => doctor.userName === event.target.value);
+                  const selectedDoctor = doctors.find(doctor => doctor.blockChainAdd === event.target.value);
                   if (selectedDoctor) {
-                    generateTimeSlots(selectedDoctor.startShiftTime, selectedDoctor.shiftDuration);
+                    generateTimeSlots(selectedDoctor.startShiftTime, selectedDoctor.shiftDuration, selectedDoctor.blockChainAdd);
                   }
                 }}
                 value={values.doctorname}
@@ -242,7 +262,7 @@ const BookAppointmentForm = () => {
               >
                 <MenuItem value="">Select Doctor</MenuItem>
                 {doctors.map((doctor, index) => (
-                    <MenuItem key={index} value={doctor.userName}>
+                    <MenuItem key={index} value={doctor.blockChainAdd}>
                         {doctor.userName}
                     </MenuItem>
                 ))}
@@ -299,12 +319,14 @@ const checkoutSchema = yup.object().shape({
 });
 
 const initialValues = {
+  blockchainAddress: "",
   firstName: "",
   lastName: "",
   email: "",
   contact: "",
   address: "",
   doctorname: "",
+  currentDate: "",
   timeslot: "",
   status: "pending"
 };

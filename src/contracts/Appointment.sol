@@ -15,6 +15,7 @@ contract Appointment {
         string number;
         string adr;
         string doctor;
+        string currentDate;
         string timeSlot;
         string status;
     }
@@ -27,42 +28,47 @@ contract Appointment {
         string number,
         string adr,
         string doctor,
+        string currentDate,
         string timeSlot,
         string status
     );
 
     function bookAppointment(
+        address _owner,
         string memory _firstName,
         string memory _lastName,
         string memory _email,
         string memory _number,
         string memory _adr,
         string memory _doctor,
+        string memory _currentDate,
         string memory _timeSlot,
         string memory _status
     ) public {
         totalAppointmets++;
         appointment memory newAppointment = appointment(
-            msg.sender,
+            _owner,
             _firstName,
             _lastName,
             _email,
             _number,
             _adr,
             _doctor,
+            _currentDate,
             _timeSlot,
             _status
         );
-        appointments[msg.sender].push(newAppointment);
+        appointments[_owner].push(newAppointment);
         allAppointments.push(newAppointment);
         emit appointmentCreated(
-            msg.sender,
+            _owner,
             _firstName,
             _lastName,
             _email,
             _number,
             _adr,
             _doctor,
+            _currentDate,
             _timeSlot,
             _status
         );
@@ -251,5 +257,31 @@ contract Appointment {
             appointments[userAddress][appointmentIndex].status,
             newStatus
         );
+    }
+
+    function getBookedTimeSlots(string memory _doctorAdd, string memory _currentDate)
+    public
+    view
+    returns (string[] memory)
+    {
+        string[] memory bookedTimeSlots = new string[](totalAppointmets);
+        uint count = 0;
+        for (uint i = 0; i < allAppointments.length; i++) {
+            if (
+                keccak256(abi.encodePacked(allAppointments[i].doctor)) == keccak256(abi.encodePacked(_doctorAdd)) &&
+                keccak256(abi.encodePacked(allAppointments[i].currentDate)) == keccak256(abi.encodePacked(_currentDate))
+            ) {
+                bookedTimeSlots[count] = allAppointments[i].timeSlot;
+                count++;
+            }
+        }
+
+        // Create a new dynamic array with the exact length
+        string[] memory exactBookedTimeSlots = new string[](count);
+        for (uint i = 0; i < count; i++) {
+            exactBookedTimeSlots[i] = bookedTimeSlots[i];
+        }
+
+        return exactBookedTimeSlots;
     }
 }

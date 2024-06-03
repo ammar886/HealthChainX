@@ -302,8 +302,8 @@ contract Auth {
 
     function getPatients() public view returns (string[] memory, string[] memory) {
 
-        string[] memory username = new string[](patientCount);
-        string[] memory blockChainAdds = new string[](patientCount);
+        string[] memory username = new string[](userCount);
+        string[] memory blockChainAdds = new string[](userCount);
 
         uint256 patientIndex = 0;
         for (uint256 i = 0; i < allUsers.length; i++) {

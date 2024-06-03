@@ -62,64 +62,29 @@ const ManageAccounts = () => {
       console.log('No patients found.');
     }
   };
- 
+
   const columns = [
     { field: "id", headerName: "ID" },
     {
-      field: "name",
+      field: "userNames",
       headerName: "Name",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-    },
-    {
-      field: "phone",
-      headerName: "Phone Number",
+      field: "blockChainAdd",
+      headerName: "Blockchain Address",
       flex: 1,
     },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-    },
-    {
-      field: "accessLevel",
-      headerName: "Access Level",
-      flex: 1,
-      renderCell: ({ row: { access } }) => {
-        return (
-          <Box
-            width="60%"
-            m="0 auto"
-            p="5px"
-            display="flex"
-            justifyContent="center"
-            backgroundColor={
-              access === "admin"
-                ? colors.greenAccent[600]
-                : access === "manager"
-                ? colors.greenAccent[700]
-                : colors.greenAccent[700]
-            }
-            borderRadius="4px"
-          >
-            {access === "admin" && <AdminPanelSettingsOutlinedIcon />}
-            {access === "manager" && <SecurityOutlinedIcon />}
-            {access === "user" && <LockOpenOutlinedIcon />}
-            <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-              {access}
-            </Typography>
-          </Box>
-        );
-      },
-    },
+    // Add more columns as needed
   ];
+  
+  const rows = patients.map((patient, index) => ({
+    id: index,
+    userNames: patient.userNames,
+    blockChainAdd: patient.blockChainAdd,
+    // Add more properties as needed
+  }));
 
   return (
     <Box m="20px">
@@ -153,13 +118,8 @@ const ManageAccounts = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+        <DataGrid checkboxSelection rows={rows} columns={columns} />
       </Box>
-       {patients && patients.map((patient, index) => (
-      <div key={index}>
-        {patient.userNames}
-      </div>
-    ))}
     </Box>
   );
 };

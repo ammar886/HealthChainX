@@ -179,6 +179,7 @@ contract Appointment {
         public
         view
         returns (
+            address[] memory owner,
             string[] memory firstNames,
             string[] memory lastNames,
             string[] memory emails,
@@ -186,11 +187,11 @@ contract Appointment {
             string[] memory adrs,
             string[] memory doctors,
             string[] memory timeSlots,
-            string[] memory status,
-            address[] memory owner
+            string[] memory status
         )
     {
         appointment[] memory appointmentList = allAppointments;
+        owner = new address[](appointmentList.length);
         firstNames = new string[](appointmentList.length);
         lastNames = new string[](appointmentList.length);
         emails = new string[](appointmentList.length);
@@ -199,9 +200,9 @@ contract Appointment {
         doctors = new string[](appointmentList.length);
         timeSlots = new string[](appointmentList.length);
         status = new string[](appointmentList.length);
-        owner = new address[](appointmentList.length);
 
         for (uint256 i = 0; i < appointmentList.length; i++) {
+            owner[i] = appointmentList[i].owner;
             firstNames[i] = appointmentList[i].firstName;
             lastNames[i] = appointmentList[i].lastName;
             emails[i] = appointmentList[i].email;
@@ -210,10 +211,10 @@ contract Appointment {
             doctors[i] = appointmentList[i].doctor;
             timeSlots[i] = appointmentList[i].timeSlot;
             status[i] = appointmentList[i].status;
-            owner[i] = appointmentList[i].owner;
         }
 
         return (
+            owner,
             firstNames,
             lastNames,
             emails,
@@ -221,8 +222,7 @@ contract Appointment {
             adrs,
             doctors,
             timeSlots,
-            status,
-            owner
+            status
         );
     }
 

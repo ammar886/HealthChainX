@@ -1,7 +1,7 @@
 import { useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { tokens } from "../../theme";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { mockDataContacts } from "../data/mockData";
@@ -64,20 +64,35 @@ const ManageAppointments = () => {
     const accounts = await web3.eth.getAccounts();
     const account = accounts[0];
     setIsRefreshing(true);
-
-    const appointmentCount = await appointment.methods.getAppointmentCount().call({ from: account });
-    console.log(appointmentCount);
-
-    const appointments = [];
-    for(let i=0; i<1; i++){
-      const appointmentData = await appointment.methods.getAllAppointments(i).call({ from: account });
-      appointments.push(appointmentData);
+  
+    try {
+      const appointmentData = await appointment.methods.getAllAppointments().call({ from: account });
+      console.log("appointmentData:", appointmentData); // Add this line
+  
+      // Convert the appointment data into an array of appointment objects
+      const appointments = [];
+      for (let i = 0; i < appointmentData.owner.length; i++) {
+        appointments.push({
+          owner: appointmentData.owner[i],
+          firstName: appointmentData.firstNames[i],
+          lastName: appointmentData.lastNames[i],
+          email: appointmentData.emails[i],
+          number: appointmentData.numbers[i],
+          address: appointmentData.adrs[i],
+          doctor: appointmentData.doctors[i],
+          timeSlot: appointmentData.timeSlots[i],
+          status: appointmentData.status[i],
+        });
+      }
+  
+      setAppointments(appointments);
+      console.log("new appointments:", appointments);
+      localStorage.setItem('appointments', JSON.stringify(appointments));
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+    } finally {
+      setIsRefreshing(false);
     }
-
-    setAppointments(appointments);
-    setIsRefreshing(false);
-    console.log("new appointments:", appointments)
-    localStorage.setItem('appointments', JSON.stringify(appointments));
   };
 
   const handleRefresh = () => {
@@ -85,6 +100,9 @@ const ManageAppointments = () => {
   };
 
   const updateAppointmentStatus = async (userAddress, index, newStatus) => {
+    console.log("User Address:", userAddress);
+    console.log("Index:", index);
+    console.log("New:", newStatus);
     if (!appointment) return;
     const accounts = await web3.eth.getAccounts();
     const account = accounts[0];
@@ -99,46 +117,42 @@ const ManageAppointments = () => {
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
-    { field: "registrarId", headerName: "Registrar ID" },
+    { field: "firstName", headerName: "First Name", flex: 1 },
+    { field: "lastName", headerName: "Last Name", flex: 1 },
+    { field: "email", headerName: "Email", flex: 1 },
+    { field: "number", headerName: "Phone Number", flex: 1 },
+    { field: "adr", headerName: "Address", flex: 1 },
+    { field: "doctor", headerName: "Doctor", flex: 1 },
+    { field: "timeSlot", headerName: "Time Slot", flex: 1 },
+    { field: "status", headerName: "Status", flex: 1 },
     {
-      field: "name",
-      headerName: "Name",
+      field: "updateStatus",
+      headerName: "Update Status",
       flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-    },
-    {
-      field: "phone",
-      headerName: "Phone Number",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-    },
-    {
-      field: "address",
-      headerName: "Address",
-      flex: 1,
-    },
-    {
-      field: "city",
-      headerName: "City",
-      flex: 1,
-    },
-    {
-      field: "zipCode",
-      headerName: "Zip Code",
-      flex: 1,
+      renderCell: (params) => (
+        <select 
+          onChange={(e) => updateAppointmentStatus(params.row.owner, params.row.id, e.target.value)}
+        >
+          <option value="">Select</option>
+          <option value="Approved">Approve</option>
+          <option value="Rejected">Reject</option>
+        </select>
+      ),
     },
   ];
+
+  const rows = appointments.map((appointment, i) => ({
+    id: i,
+    owner: appointment.owner, // Add this line
+    firstName: appointment.firstName,
+    lastName: appointment.lastName,
+    email: appointment.email,
+    number: appointment.number,
+    adr: appointment.address,
+    doctor: appointment.doctor,
+    timeSlot: appointment.timeSlot,
+    status: appointment.status,
+  }));
 
   return (
     <>
@@ -146,21 +160,26 @@ const ManageAppointments = () => {
       <Header title="APPOINTMENTS" subtitle="List of Appointment History" /> 
       {isRefreshing ? (
         <p>Loading...</p>
-      ): (
-        <button onClick={handleRefresh}>Refresh</button>
+      ) : (
+        <button 
+          onClick={handleRefresh} 
+          style={{
+            backgroundColor: colors.blueAccent[600],
+            border: "none",
+            color: colors.primary[400],
+            padding: "15px 32px",
+            textAlign: "center",
+            textDecoration: "none",
+            display: "inline-block",
+            fontSize: "16px",
+            margin: "4px 2px",
+            cursor: "pointer",
+            borderRadius: "12px"
+          }}
+        >
+          Refresh
+        </button>
       )}
-        
-      <div style={styles.appointmentDiv}>
-      <p style = {styles.p}>Id</p>
-        <p style = {styles.p}>FirstName</p>
-        <p style = {styles.p}>LastName</p>
-        <p style = {styles.p}>Email</p>
-        <p style = {styles.p}>Phone</p>
-        <p style = {styles.p}>Address</p>
-        <p style = {styles.p}>Doctor</p>
-        <p style = {styles.p}>Slot</p>
-        <p style = {styles.p}>Status</p>
-      </div>
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -190,35 +209,7 @@ const ManageAppointments = () => {
           },
         }}
       >
-        {/* { <DataGrid checkboxSelection rows={mockDataInvoices} columns={appointment} />} */}
-        {/* <pre>{JSON.stringify(appointment, null, 2)}</pre> */}
-
-        <div>
-          {appointments && appointments.map((appt, index) => (
-            appt.firstNames && appt.firstNames.map((firstName, i) => (
-              <div style={styles.appointmentDiv} className="appointmentDiv" key={i}> 
-                <p style={styles.p}>Sr# {i+1}</p>
-                <p style={styles.p}>{firstName}</p>
-                <p style={styles.p}>{appt.lastNames && appt.lastNames[i]}</p>
-                <p style={styles.p}>{appt.emails && appt.emails[i]}</p>
-                <p style={styles.p}>{appt.numbers && appt.numbers[i]}</p>
-                <p style={styles.p}>{appt.adrs && appt.adrs[i]}</p>
-                <p style={styles.p}>{appt.doctors && appt.doctors[i]}</p>
-                <p style={styles.p}>{appt.timeSlots && appt.timeSlots[i]}</p>
-                <p style={styles.p}>{appt.status && appt.status[i]}</p>
-                {console.log(appt)}
-                {console.log("Index:", index)}
-                {console.log("Owner:", appt.owner)}
-                {/* <button onClick={() => updateAppointmentStatus(appt.owner[i], index, "Approved")}>Approve</button> */}
-                <select onChange={(e) => updateAppointmentStatus(appt.owner[i], i, e.target.value)}>
-                  <option value="">Select</option>
-                  <option value="Approved">Approve</option>
-                  <option value="Rejected">Reject</option>
-                </select>
-              </div>
-            ))
-          ))}
-        </div>
+        <DataGrid checkboxSelection rows={rows} columns={columns} />
       </Box>
     </Box>
     </>

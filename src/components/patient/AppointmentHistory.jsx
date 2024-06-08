@@ -33,6 +33,7 @@ const AppointmentHistory = () => {
   const [accounts, setAccounts] = useState(null);
   const [appointment, setAppointment] = useState(null);
   const [appointments, setAppointments] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const loadAccounts = async () => {
     let { auth, appointment, accounts } = await loadBlockchainData();
@@ -52,84 +53,100 @@ const AppointmentHistory = () => {
   }, []);
 
   useEffect(() => {
-    const getAppointmentData = async () => {
-      if (!appointment) return;
-      const accounts = await web3.eth.getAccounts();
-      const account = accounts[0];
+    getAppointment();
+  }, [appointment]); // Added appointment as a dependency
 
-      const appointmentCount = await appointment.methods.getAppointmentCount().call({ from: account });
-      console.log(appointmentCount);
+  const handleRefresh = () => {
+    getAppointment();
+  };
+
+  const getAppointment = async () => {
+    if(!auth) return;
+    const accounts = await web3.eth.getAccounts();
+    const account = accounts[0];
+    setIsRefreshing(true);
+  
+    try {
+      const appointmentData = await appointment.methods.getAppointments().call({ from: account });
+      console.log("appointmentData:", appointmentData); // Add this line
+  
+      // Convert the appointment data into an array of appointment objects
       const appointments = [];
-      for (let i = 0; i < 1; i++) {
-        const appointmentData = await appointment.methods.getAppointments(i).call({ from: account });
-        appointments.push(appointmentData);
+      for (let i = 0; i < appointmentData.owner.length; i++) {
+        appointments.push({
+          owner: appointmentData.owner[i],
+          firstName: appointmentData.firstNames[i],
+          lastName: appointmentData.lastNames[i],
+          email: appointmentData.emails[i],
+          number: appointmentData.numbers[i],
+          address: appointmentData.adrs[i],
+          doctor: appointmentData.doctors[i],
+          timeSlot: appointmentData.timeSlots[i],
+          status: appointmentData.status[i],
+        });
       }
+  
       setAppointments(appointments);
       console.log("new appointments:", appointments);
       localStorage.setItem('appointments', JSON.stringify(appointments));
-    };
-
-    getAppointmentData();
-  }, [appointment]); // Added appointment as a dependency
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const columns = [
-    { field: "firstname", headerName: "First Name" },
-    {
-      field: "lastname",
-      headerName: "Last Name",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "email",
-      headerName: "email",
-      flex: 1,
-    },
-    {
-      field: "phone",
-      headerName: "phone",
-      flex: 1,
-    },
-    {
-      field: "address",
-      headerName: "address",
-      flex: 1,
-      renderCell: (params) => (
-        <Typography color={colors.greenAccent[500]}>
-          ${params.row.cost}
-        </Typography>
-      ),
-    },
-    {
-      field: "time slot",
-      headerName: "time slot",
-      flex: 1,
-    },
-    {
-      field: "misc-1",
-      headerName: "misc 1"
-    },
-    {
-      field: "misc-2",
-      headerName: "misc 2"
-    }
-
+    { field: "id", headerName: "ID", flex: 0.5 },
+    { field: "firstName", headerName: "First Name", flex: 1 },
+    { field: "lastName", headerName: "Last Name", flex: 1 },
+    { field: "email", headerName: "Email", flex: 1 },
+    { field: "number", headerName: "Phone Number", flex: 1 },
+    { field: "adr", headerName: "Address", flex: 1 },
+    { field: "doctor", headerName: "Doctor", flex: 1 },
+    { field: "timeSlot", headerName: "Time Slot", flex: 1 },
+    { field: "status", headerName: "Status", flex: 1 },
   ];
+
+  const rows = appointments.map((appointment, i) => ({
+    id: i,
+    owner: appointment.owner, // Add this line
+    firstName: appointment.firstName,
+    lastName: appointment.lastName,
+    email: appointment.email,
+    number: appointment.number,
+    adr: appointment.address,
+    doctor: appointment.doctor,
+    timeSlot: appointment.timeSlot,
+    status: appointment.status,
+  }));
 
   return (
     <>
     <Box m="20px">
-      <Header title="APPOINTMENTS" subtitle="List of Appointment History" /> 
-      <div style={styles.appointmentDiv}>
-        <p style = {styles.p}>FirstName</p>
-        <p style = {styles.p}>LastName</p>
-        <p style = {styles.p}>Email</p>
-        <p style = {styles.p}>Phone</p>
-        <p style = {styles.p}>Address</p>
-        <p style = {styles.p}>Doctor</p>
-        <p style = {styles.p}>Slot</p>
-        <p style = {styles.p}>Status</p>
-      </div>
+      <Header title="APPOINTMENTS" subtitle="List of Appointment History" />
+      {isRefreshing ? (
+        <p>Loading...</p>
+      ) : (
+        <button 
+          onClick={handleRefresh} 
+          style={{
+            backgroundColor: colors.blueAccent[600],
+            border: "none",
+            color: colors.primary[400],
+            padding: "15px 32px",
+            textAlign: "center",
+            textDecoration: "none",
+            display: "inline-block",
+            fontSize: "16px",
+            margin: "4px 2px",
+            cursor: "pointer",
+            borderRadius: "12px"
+          }}
+        >
+          Refresh
+        </button>
+      )} 
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -159,24 +176,7 @@ const AppointmentHistory = () => {
           },
         }}
       >
-        {/* { <DataGrid checkboxSelection rows={mockDataInvoices} columns={appointment} />} */}
-        {/* <pre>{JSON.stringify(appointment, null, 2)}</pre> */}
-        
-        {appointments && appointments.map((appt, index) => (
-          appt.firstNames && appt.firstNames.map((firstName, i) => (
-            <div style={styles.appointmentDiv} className="appointmentDiv" key={i}> 
-              <p style={styles.p}>{firstName}</p>
-              <p style={styles.p}>{appt.lastNames && appt.lastNames[i]}</p>
-              <p style={styles.p}>{appt.emails && appt.emails[i]}</p>
-              <p style={styles.p}>{appt.numbers && appt.numbers[i]}</p>
-              <p style={styles.p}>{appt.adrs && appt.adrs[i]}</p>
-              <p style={styles.p}>{appt.doctors && appt.doctors[i]}</p>
-              <p style={styles.p}>{appt.timeSlots && appt.timeSlots[i]}</p>
-              <p style={styles.p}>{appt.status && appt.status[i]}</p>
-              <br />
-            </div>
-          ))
-        ))}
+        <DataGrid checkboxSelection rows={rows} columns={columns} />
       </Box>
     </Box>
     </>

@@ -37,7 +37,7 @@ const ManageAppointments = () => {
   const [auth, setAuth] = useState(null);
   const [accounts, setAccounts] = useState(null);
   const [appointment, setAppointment] = useState(null);
-  const [appointments, setAppointments] = useState([]);
+  const [appointmentsData, setAppointmentsData] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   const loadAccounts = async () => {
@@ -49,6 +49,10 @@ const ManageAppointments = () => {
     
     let { contract } = await loadBlockchainData();
     console.log({ contract, accounts }); // Add this line
+  };
+
+  const handleRefresh = () => {
+    getAppointment();
   };
 
   useEffect(() => {
@@ -66,37 +70,33 @@ const ManageAppointments = () => {
     setIsRefreshing(true);
   
     try {
-      const appointmentData = await appointment.methods.getAllAppointments().call({ from: account });
-      console.log("appointmentData:", appointmentData); // Add this line
+      const getAppointmentData = await appointment.methods.getAllAppointments().call({ from: account });
+      console.log("appointmentData:", getAppointmentData); // Add this line
   
       // Convert the appointment data into an array of appointment objects
-      const appointments = [];
-      for (let i = 0; i < appointmentData.owner.length; i++) {
-        appointments.push({
-          owner: appointmentData.owner[i],
-          firstName: appointmentData.firstNames[i],
-          lastName: appointmentData.lastNames[i],
-          email: appointmentData.emails[i],
-          number: appointmentData.numbers[i],
-          address: appointmentData.adrs[i],
-          doctor: appointmentData.doctors[i],
-          timeSlot: appointmentData.timeSlots[i],
-          status: appointmentData.status[i],
+      const appointmentsData = [];
+      for (let i = 0; i < getAppointmentData.owner.length; i++) {
+        appointmentsData.push({
+          owner: getAppointmentData.owner[i],
+          firstName: getAppointmentData.firstNames[i],
+          lastName: getAppointmentData.lastNames[i],
+          email: getAppointmentData.emails[i],
+          number: getAppointmentData.numbers[i],
+          address: getAppointmentData.adrs[i],
+          doctor: getAppointmentData.doctors[i],
+          timeSlot: getAppointmentData.timeSlots[i],
+          status: getAppointmentData.status[i],
         });
       }
   
-      setAppointments(appointments);
-      console.log("new appointments:", appointments);
-      localStorage.setItem('appointments', JSON.stringify(appointments));
+      setAppointmentsData(appointmentsData);
+      console.log("new appointments:", appointmentsData);
+      localStorage.setItem('appointments', JSON.stringify(appointmentsData));
     } catch (error) {
       console.error("Error fetching appointments:", error);
     } finally {
       setIsRefreshing(false);
     }
-  };
-
-  const handleRefresh = () => {
-    getAppointment();
   };
 
   const updateAppointmentStatus = async (userAddress, index, newStatus) => {
@@ -134,14 +134,14 @@ const ManageAppointments = () => {
           onChange={(e) => updateAppointmentStatus(params.row.owner, params.row.id, e.target.value)}
         >
           <option value="">Select</option>
-          <option value="Approved">Approve</option>
-          <option value="Rejected">Reject</option>
+          <option value="approved">Approve</option>
+          <option value="rejected">Reject</option>
         </select>
       ),
     },
   ];
 
-  const rows = appointments.map((appointment, i) => ({
+  const rows = appointmentsData.map((appointment, i) => ({
     id: i,
     owner: appointment.owner, // Add this line
     firstName: appointment.firstName,

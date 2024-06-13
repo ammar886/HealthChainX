@@ -1,5 +1,6 @@
-import { useState, useEffect, ProfileruseState } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
+import { AuthContext } from '../../context/AuthContext';
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { mockTransactions } from "../data/mockData";
@@ -16,19 +17,23 @@ const PatientDashboard = () => {
   const colors = tokens(theme.palette.mode);
 
   const [auth, setAuth] = useState(null);
-  const [accounts, setAccounts] = useState(null);
+  const [appointment, setAppointment] = useState(null);
+  const [appointmentsData, setAppointmentsData] = useState([]);
   const [doctors, setDoctors] = useState(0);
-  const [patientDetails, setPatientDetails] = useState(null);
+  const [approvedAppointments, setApprovedAppointments] = useState(0);
+  const [rejectedAppointments, setRejectedAppointments] = useState(0);
+  const [pendingAppointments, setPendingAppointments] = useState(0);
+  const { blockchainAddress } = useContext(AuthContext);
 
   const email = localStorage.getItem('email');
 
   const loadAccounts = async () => {
-    let { auth, accounts } = await loadBlockchainData();
+    let { auth, appointment } = await loadBlockchainData();
 
-    setAccounts(accounts);
     setAuth(auth);
+    setAppointment(appointment);
 
-    loadData(auth);
+    loadData(auth, appointment);
   };
   
   useEffect(() => {
@@ -39,17 +44,39 @@ const PatientDashboard = () => {
     loadAccounts();
   }, []);
 
-  const loadData = async (auth) => {
-    if (!auth) {
-      console.log('Auth object is not initialized yet. Please try again.');
+  const loadData = async (auth, appointment) => {
+    if (!auth && appointment) {
+      console.log('Auth/Appointment object is not initialized yet. Please try again.');
       return;
     }
-    
-    const accounts = await web3.eth.getAccounts();
-    const account = accounts[0];
 
-    const doctors = await auth.methods.getLengthEmployees("doctor").call({ from: account });
+    const doctors = await auth.methods.getLengthEmployees("doctor").call({ from: blockchainAddress });
     setDoctors(doctors.toString());
+
+    const getAppointmentData = await appointment.methods.getAppointments().call({ from: blockchainAddress });
+    console.log("appointmentData:", getAppointmentData); // Add this line
+  
+    // Convert the appointment data into an array of appointment objects
+    const appointmentsData = [];
+    for (let i = 0; i < getAppointmentData[0].length; i++) {
+      appointmentsData.push({
+        firstName: getAppointmentData.firstNames[i],
+        lastName: getAppointmentData.lastNames[i],
+        email: getAppointmentData.emails[i],
+        number: getAppointmentData.numbers[i],
+        address: getAppointmentData.adrs[i],
+        doctor: getAppointmentData.doctors[i],
+        timeSlot: getAppointmentData.timeSlots[i],
+        status: getAppointmentData.status[i],
+      });
+    }
+
+    setAppointmentsData(appointmentsData);
+    setApprovedAppointments(appointmentsData.filter(appointment => appointment.status === 'approved').length);
+    setRejectedAppointments(appointmentsData.filter(appointment => appointment.status === 'rejected').length);
+    setPendingAppointments(appointmentsData.filter(appointment => appointment.status === 'pending').length);
+    console.log("new appointments:", appointmentsData);
+    localStorage.setItem('appointments', JSON.stringify(appointmentsData));
   }
 
   return (
@@ -107,8 +134,8 @@ const PatientDashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="Pending Appointments"
-            value="10"
+            title="Approved Appointments"
+            value={approvedAppointments}
             icon={
               <PendingActionsIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -124,8 +151,8 @@ const PatientDashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="Approved Appointments"
-            value="10"
+            title="Rejected Appointments"
+            value={rejectedAppointments}
             icon={
               <CheckBoxOutlinedIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -141,8 +168,8 @@ const PatientDashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="Total Appointments"
-            value="10"
+            title="Pending Appointments"
+            value={pendingAppointments}
             icon={
               <BookOnlineIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -165,12 +192,12 @@ const PatientDashboard = () => {
             p="15px"
           >
             <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-              Recent Prescriptions
+              Recent Appointments
             </Typography>
           </Box>
-          {mockTransactions.map((transaction, i) => (
+          {appointmentsData.map((appointment, i) => (
             <Box
-              key={`${transaction.txId}-${i}`}
+              key={`${i}`}
               display="flex"
               justifyContent="space-between"
               alignItems="center"
@@ -183,19 +210,19 @@ const PatientDashboard = () => {
                   variant="h5"
                   fontWeight="600"
                 >
-                  {transaction.txId}
+                  {appointment.firstName} {appointment.lastName}
                 </Typography>
                 <Typography color={colors.grey[100]}>
-                  {transaction.user}
+                  {appointment.doctor}
                 </Typography>
               </Box>
-              <Box color={colors.grey[100]}>{transaction.date}</Box>
+              <Box color={colors.grey[100]}>{appointment.email}</Box>
               <Box
                 backgroundColor={colors.greenAccent[500]}
                 p="5px 10px"
                 borderRadius="4px"
               >
-                ${transaction.cost}
+                {appointment.timeSlot}
               </Box>
             </Box>
           ))}

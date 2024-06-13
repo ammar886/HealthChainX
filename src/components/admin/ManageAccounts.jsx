@@ -3,10 +3,6 @@ import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataTeam } from "../data/mockData";
-import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
-import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import Header from "../Header";
 
 const ManageAccounts = () => {
@@ -16,15 +12,13 @@ const ManageAccounts = () => {
   const [auth, setAuth] = useState(null);
   const [accounts, setAccounts] = useState(null);
   const [patients, setPatients] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const loadAccounts = async () => {
     let { auth, accounts } = await loadBlockchainData();
   
     setAccounts(accounts);
     setAuth(auth);
-  
-    // Call loadDoctors here after auth has been set
-    loadPatients(auth);
   };
 
   useEffect(() => {
@@ -34,61 +28,105 @@ const ManageAccounts = () => {
   useEffect(() => {
     loadAccounts();
   }, []);
+
+  useEffect(() => {
+    loadPatients();
+  }, [auth]);
   
-  const loadPatients = async (auth) => {
+  const loadPatients = async () => {
     if (!auth) {
       console.log('Auth object is not initialized yet. Please try again.');
       return;
     }
-
     const accounts = await web3.eth.getAccounts();
     const account = accounts[0];
-  
-    const result = await auth.methods.getPatients().call({ from: account });
-    console.log(result);
-    
-    if (result[0].length > 0 && result[1].length > 0) {
-      const userNames = result[0];
-      const blockChainAdds = result[1];
+    setIsRefreshing(true);
+
+    try {
+      const result = await auth.methods.getPatients().call({ from: account });
+      console.log(result);
       
-      const patients = userNames.map((userNames, index) => ({
-        userNames,
-        blockChainAdd: blockChainAdds[index]
-      }));
-  
-      console.log(patients);
+      const patients = [];
+      for (let i = 0; i < result[0].length; i++) {
+        patients.push({
+          blockChainAdd: result[0][i],
+          username: result[1][i],
+          email: result[2][i],
+          number: result[3][i],
+          userRole: result[4][i],
+        });
+      }
+
       setPatients(patients);
-    } else {
-      console.log('No patients found.');
+      console.log("new patients:", patients);
+      localStorage.setItem('patients', JSON.stringify(patients));
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+    } finally {
+      setIsRefreshing(false);
     }
+  };
+
+  const handleRefresh = () => {
+    loadPatients();
   };
 
   const columns = [
     { field: "id", headerName: "ID" },
-    {
-      field: "userNames",
-      headerName: "Name",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "blockChainAdd",
-      headerName: "Blockchain Address",
-      flex: 1,
-    },
-    // Add more columns as needed
+    { field: "userName", headerName: "Name", flex: 1, cellClassName: "name-column--cell", },
+    { field: "email", headerName: "Email", flex: 1 },
+    { field: "number", headerName: "Phone Number", flex: 1 },
+    { field: "userRole", headerName: "User Role", flex: 1 },
+    // {
+    //   field: "updateStatus",
+    //   headerName: "Update Status",
+    //   flex: 1,
+    //   renderCell: (params) => (
+    //     <select 
+    //       onChange={(e) => updateAppointmentStatus(params.row.owner, params.row.id, e.target.value)}
+    //     >
+    //       <option value="">Select</option>
+    //       <option value="Approved">Approve</option>
+    //       <option value="Rejected">Reject</option>
+    //     </select>
+    //   ),
+    // },
   ];
   
   const rows = patients.map((patient, index) => ({
     id: index,
-    userNames: patient.userNames,
     blockChainAdd: patient.blockChainAdd,
-    // Add more properties as needed
+    userName: patient.username,
+    email: patient.email,
+    number: patient.number,
+    userRole: patient.userRole,
   }));
 
   return (
     <Box m="20px">
       <Header title="MANAGE PATIENT" subtitle="Managing the Patient's" />
+      {isRefreshing ? (
+        <p>Loading...</p>
+      ) : (
+        <button 
+          onClick={handleRefresh} 
+          style={{
+            backgroundColor: colors.blueAccent[600],
+            border: "none",
+            color: colors.primary[400],
+            padding: "15px 32px",
+            textAlign: "center",
+            textDecoration: "none",
+            display: "inline-block",
+            fontSize: "16px",
+            margin: "4px 2px",
+            cursor: "pointer",
+            borderRadius: "12px"
+          }}
+        >
+          Refresh
+        </button>
+      )}
       <Box
         m="40px 0 0 0"
         height="75vh"

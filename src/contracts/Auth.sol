@@ -254,12 +254,13 @@ contract Auth {
         }
     }
 
-    function getDoctors() public view returns (string[] memory, string[] memory, string[] memory, string[] memory, string[] memory) {
+    function getDoctors() public view returns (string[] memory, string[] memory, string[] memory, string[] memory, string[] memory, string[] memory) {
 
         uint256 doctorCount = getLengthEmployees("doctor");
 
         string[] memory blockChainAdds = new string[](doctorCount);
         string[] memory userNames = new string[](doctorCount);
+        string[] memory specializations = new string[](doctorCount);
         string[] memory startShiftTimes = new string[](doctorCount);
         string[] memory endShiftTimes = new string[](doctorCount);
         string[] memory shiftDurations = new string[](doctorCount);
@@ -269,6 +270,7 @@ contract Auth {
             if (keccak256(abi.encodePacked(allEmployees[i].userRole)) == keccak256(abi.encodePacked("doctor"))) {
                 blockChainAdds[doctorIndex] = allEmployees[i].blockChainAdd;
                 userNames[doctorIndex] = allEmployees[i].username;
+                specializations[doctorIndex] = allEmployees[i].specialization;
                 startShiftTimes[doctorIndex] = allEmployees[i].startShiftTime;
                 endShiftTimes[doctorIndex] = allEmployees[i].endShiftTime;
                 shiftDurations[doctorIndex] = allEmployees[i].shiftDuration;
@@ -276,7 +278,7 @@ contract Auth {
             }
         }
 
-        return (blockChainAdds, userNames, startShiftTimes, endShiftTimes, shiftDurations);
+        return (blockChainAdds, userNames, specializations, startShiftTimes, endShiftTimes, shiftDurations);
     }
 
     function getLengthEmployees(
@@ -300,20 +302,22 @@ contract Auth {
         return accountCount;
     }
 
-    function getPatients() public view returns (string[] memory, string[] memory) {
+    function getPatients() public view returns (string[] memory, string[] memory, string[] memory, string[] memory, string[] memory) {
 
-        string[] memory username = new string[](userCount);
         string[] memory blockChainAdds = new string[](userCount);
+        string[] memory usernames = new string[](userCount);
+        string[] memory emails = new string[](userCount);
+        string[] memory numbers = new string[](userCount);
+        string[] memory userRoles = new string[](userCount);
 
-        uint256 patientIndex = 0;
         for (uint256 i = 0; i < allUsers.length; i++) {
-            if (keccak256(abi.encodePacked(allUsers[i].userRole)) == keccak256(abi.encodePacked("patient"))) {
-                username[patientIndex] = allUsers[i].username;
-                blockChainAdds[patientIndex] = allUsers[i].blockChainAdd;
-                patientIndex++;
-            }
+            blockChainAdds[i] = allUsers[i].blockChainAdd;
+            usernames[i] = allUsers[i].username;
+            emails[i] = allUsers[i].email;
+            numbers[i] = allUsers[i].number;
+            userRoles[i] = allUsers[i].userRole;
         }
 
-        return (username, blockChainAdds);
+        return (blockChainAdds, usernames, emails, numbers, userRoles);
     }
 }

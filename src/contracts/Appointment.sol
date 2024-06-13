@@ -1,11 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.11;
+import "./Auth.sol";
 
 contract Appointment {
+    Auth auth;
+    constructor(address _authAddress) {
+        // Initialize the auth variable with the address of the deployed Auth contract
+        auth = Auth(_authAddress);
+    }
+
     uint public totalAppointmets = 0; 
+    appointment[] public allAppointments;
+
     mapping(address => appointment[]) appointments;
-    appointment[] public allAppointments;  
-    address public adminAddress; //fix this 
+    mapping(uint => uint) public allAppointmentsToUserAppointments;
 
     struct appointment {
         address owner;
@@ -31,6 +39,13 @@ contract Appointment {
         string currentDate,
         string timeSlot,
         string status
+    );
+
+    event AppointmentStatusUpdated(
+        address indexed userAddress,
+        uint indexed appointmentIndex,
+        string originalStatus,
+        string newStatus
     );
 
     function bookAppointment(
@@ -72,10 +87,7 @@ contract Appointment {
             _timeSlot,
             _status
         );
-    }
-
-    function getAppointmentCount() public view returns (uint) {
-        return totalAppointmets;
+        allAppointmentsToUserAppointments[allAppointments.length - 1] = appointments[_owner].length - 1;
     }
 
     function getAppointments()
@@ -93,6 +105,7 @@ contract Appointment {
         )
     {
         appointment[] memory userAppointments = appointments[msg.sender];
+
         firstNames = new string[](userAppointments.length);
         lastNames = new string[](userAppointments.length);
         emails = new string[](userAppointments.length);
@@ -108,57 +121,7 @@ contract Appointment {
             emails[i] = userAppointments[i].email;
             numbers[i] = userAppointments[i].number;
             adrs[i] = userAppointments[i].adr;
-            doctors[i] = userAppointments[i].doctor;
-            timeSlots[i] = userAppointments[i].timeSlot;
-            status[i] = userAppointments[i].status;
-        }
-
-        return (
-            firstNames,
-            lastNames,
-            emails,
-            numbers,
-            adrs,
-            doctors,
-            timeSlots,
-            status
-        );
-    }
-
-    function getAppointmentsAdmin(
-        address userAddress
-    )
-        public
-        view
-        returns (
-            string[] memory firstNames,
-            string[] memory lastNames,
-            string[] memory emails,
-            string[] memory numbers,
-            string[] memory adrs,
-            string[] memory doctors,
-            string[] memory timeSlots,
-            string[] memory status
-        )
-    {
-        require(msg.sender == adminAddress, "only admin can call this func");
-        appointment[] memory userAppointments = appointments[userAddress]; // Use the provided userAddress
-        firstNames = new string[](userAppointments.length);
-        lastNames = new string[](userAppointments.length);
-        emails = new string[](userAppointments.length);
-        numbers = new string[](userAppointments.length);
-        adrs = new string[](userAppointments.length);
-        doctors = new string[](userAppointments.length);
-        timeSlots = new string[](userAppointments.length);
-        status = new string[](userAppointments.length);
-
-        for (uint256 i = 0; i < userAppointments.length; i++) {
-            firstNames[i] = userAppointments[i].firstName;
-            lastNames[i] = userAppointments[i].lastName;
-            emails[i] = userAppointments[i].email;
-            numbers[i] = userAppointments[i].number;
-            adrs[i] = userAppointments[i].adr;
-            doctors[i] = userAppointments[i].doctor;
+            doctors[i] = getEmployeeUsernameAndSpecialization(userAppointments[i].doctor);
             timeSlots[i] = userAppointments[i].timeSlot;
             status[i] = userAppointments[i].status;
         }
@@ -191,6 +154,7 @@ contract Appointment {
         )
     {
         appointment[] memory appointmentList = allAppointments;
+
         owner = new address[](appointmentList.length);
         firstNames = new string[](appointmentList.length);
         lastNames = new string[](appointmentList.length);
@@ -208,7 +172,7 @@ contract Appointment {
             emails[i] = appointmentList[i].email;
             numbers[i] = appointmentList[i].number;
             adrs[i] = appointmentList[i].adr;
-            doctors[i] = appointmentList[i].doctor;
+            doctors[i] = getEmployeeUsernameAndSpecialization(appointmentList[i].doctor);
             timeSlots[i] = appointmentList[i].timeSlot;
             status[i] = appointmentList[i].status;
         }
@@ -226,35 +190,35 @@ contract Appointment {
         );
     }
 
-    function getAllAppointmentsLength() public view returns (uint) {
-        return allAppointments.length;
-    }
+    function getEmployeeUsernameAndSpecialization(string memory blockChainAddress) public view returns (string memory) {
+        // Call the getEmployeeDetails function from the Auth contract
+        Auth.employee memory emp = auth.getEmployeeDetails(blockChainAddress);
 
-    event AppointmentStatusUpdated(
-        address indexed userAddress,
-        uint indexed appointmentIndex,
-        string originalStatus,
-        string newStatus
-    );
+        // Concatenate the username and specialization with parentheses in between
+        return string(abi.encodePacked(emp.username, "(", emp.specialization, ")"));
+    }
 
     function updateAppointmentStatus(
         address userAddress,
-        uint appointmentIndex,
+        uint allAppointmentsIndex,
         string memory newStatus
     ) public {
-        // require(msg.sender == adminAddress, "only admin can call this func");
+        uint userAppointmentsIndex = allAppointmentsToUserAppointments[allAppointmentsIndex];
+
         require(
-            appointmentIndex < appointments[userAddress].length,
+            userAppointmentsIndex < appointments[userAddress].length,
             "appointment does not exist"
         );
 
-        appointments[userAddress][appointmentIndex].status = newStatus;
-        allAppointments[appointmentIndex].status = newStatus;
+        string memory originalStatus = appointments[userAddress][userAppointmentsIndex].status;
+
+        appointments[userAddress][userAppointmentsIndex].status = newStatus;
+        allAppointments[allAppointmentsIndex].status = newStatus;
 
         emit AppointmentStatusUpdated(
             userAddress,
-            appointmentIndex,
-            appointments[userAddress][appointmentIndex].status,
+            allAppointmentsIndex,
+            originalStatus,
             newStatus
         );
     }

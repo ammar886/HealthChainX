@@ -1,47 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
+import { AuthContext } from '../../context/AuthContext';
 import { Box, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { DataGrid } from "@mui/x-data-grid";
 import Header from "../Header";
 
-const styles = {
-  appointmentsContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'left',
-    justifyContent: 'left',
-  },
-  appointmentDiv: {
-    display: 'flex',
-    flexDirection: 'row',
-    color: 'white',
-    alignItems: 'left',
-    justifyContent: 'center',
-    // Adjust this value as needed
-  },
-  p: {
-    marginRight: '30px',
-    width: '100px',
-  },
-};
-
 const AppointmentHistory = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [auth, setAuth] = useState(null);
-  const [accounts, setAccounts] = useState(null);
   const [appointment, setAppointment] = useState(null);
-  const [appointments, setAppointments] = useState([]);
+  const [appointmentsData, setAppointmentsData] = useState([]);
+  const { blockchainAddress } = useContext(AuthContext);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const loadAccounts = async () => {
-    let { auth, appointment, accounts } = await loadBlockchainData();
+    let { auth, appointment } = await loadBlockchainData();
 
-    setAccounts(accounts);
     setAuth(auth);
     setAppointment(appointment);
-    console.log({ auth, appointment, accounts }); // Add this line
+  };
+
+  const handleRefresh = () => {
+    getAppointment();
   };
 
   useEffect(() => {
@@ -56,39 +38,32 @@ const AppointmentHistory = () => {
     getAppointment();
   }, [appointment]); // Added appointment as a dependency
 
-  const handleRefresh = () => {
-    getAppointment();
-  };
-
   const getAppointment = async () => {
     if(!auth) return;
-    const accounts = await web3.eth.getAccounts();
-    const account = accounts[0];
     setIsRefreshing(true);
   
     try {
-      const appointmentData = await appointment.methods.getAppointments().call({ from: account });
-      console.log("appointmentData:", appointmentData); // Add this line
+      const getAppointmentData = await appointment.methods.getAppointments().call({ from: blockchainAddress });
+      console.log("appointmentData:", getAppointmentData); // Add this line
   
       // Convert the appointment data into an array of appointment objects
-      const appointments = [];
-      for (let i = 0; i < appointmentData.owner.length; i++) {
-        appointments.push({
-          owner: appointmentData.owner[i],
-          firstName: appointmentData.firstNames[i],
-          lastName: appointmentData.lastNames[i],
-          email: appointmentData.emails[i],
-          number: appointmentData.numbers[i],
-          address: appointmentData.adrs[i],
-          doctor: appointmentData.doctors[i],
-          timeSlot: appointmentData.timeSlots[i],
-          status: appointmentData.status[i],
+      const appointmentsData = [];
+      for (let i = 0; i < getAppointmentData[0].length; i++) {
+        appointmentsData.push({
+          firstName: getAppointmentData.firstNames[i],
+          lastName: getAppointmentData.lastNames[i],
+          email: getAppointmentData.emails[i],
+          number: getAppointmentData.numbers[i],
+          address: getAppointmentData.adrs[i],
+          doctor: getAppointmentData.doctors[i],
+          timeSlot: getAppointmentData.timeSlots[i],
+          status: getAppointmentData.status[i],
         });
       }
   
-      setAppointments(appointments);
-      console.log("new appointments:", appointments);
-      localStorage.setItem('appointments', JSON.stringify(appointments));
+      setAppointmentsData(appointmentsData);
+      console.log("new appointments:", appointmentsData);
+      localStorage.setItem('appointments', JSON.stringify(appointmentsData));
     } catch (error) {
       console.error("Error fetching appointments:", error);
     } finally {
@@ -108,9 +83,8 @@ const AppointmentHistory = () => {
     { field: "status", headerName: "Status", flex: 1 },
   ];
 
-  const rows = appointments.map((appointment, i) => ({
+  const rows = appointmentsData.map((appointment, i) => ({
     id: i,
-    owner: appointment.owner, // Add this line
     firstName: appointment.firstName,
     lastName: appointment.lastName,
     email: appointment.email,

@@ -51,13 +51,15 @@ const BookAppointmentForm = () => {
     if (result[0].length > 0 && result[1].length > 0) {
       const blockChainAdds = result[0];
       const userNames = result[1];
-      const startShiftTimes = result[2];
-      const endShiftTimes = result[3];
-      const shiftDurations = result[4];
+      const specializations = result[2]
+      const startShiftTimes = result[3];
+      const endShiftTimes = result[4];
+      const shiftDurations = result[5];
       
       const doctors = blockChainAdds.map((blockChainAdd, index) => ({
         blockChainAdd,
         userName: userNames[index],
+        specialization: specializations[index],
         startShiftTime: startShiftTimes[index],
         endShiftTime: endShiftTimes[index],
         shiftDuration: shiftDurations[index]
@@ -104,7 +106,7 @@ const BookAppointmentForm = () => {
     }
   };
 
-  const handleFormSubmit = (values) => {
+  const handleFormSubmit = (values, { resetForm }) => {
     values.blockchainAddress = blockchainAddress;
     values.currentDate = new Date().toLocaleDateString(); // Add the current date without time
     appointmentCreation(values);
@@ -134,7 +136,7 @@ const BookAppointmentForm = () => {
           values.email,
           values.contact,
           values.address,
-          values.doctorname,
+          values.doctorAdd,
           values.currentDate,
           values.timeslot,
           values.status
@@ -165,6 +167,7 @@ const BookAppointmentForm = () => {
           handleBlur,
           handleChange,
           handleSubmit,
+          resetForm,
         }) => (
           <form onSubmit={handleSubmit}>
             <Box
@@ -254,16 +257,16 @@ const BookAppointmentForm = () => {
                     generateTimeSlots(selectedDoctor.startShiftTime, selectedDoctor.shiftDuration, selectedDoctor.blockChainAdd);
                   }
                 }}
-                value={values.doctorname}
-                name="doctorname"
-                error={!!touched.doctorname && !!errors.doctorname}
-                helperText={touched.doctorname && errors.doctorname}
+                value={values.doctorAdd}
+                name="doctorAdd"
+                error={!!touched.doctorAdd && !!errors.doctorAdd}
+                helperText={touched.doctorAdd && errors.doctorAdd}
                 sx={{ gridColumn: "span 4" }}
               >
                 <MenuItem value="">Select Doctor</MenuItem>
                 {doctors.map((doctor, index) => (
                     <MenuItem key={index} value={doctor.blockChainAdd}>
-                        {doctor.userName}
+                        {doctor.userName} ({doctor.specialization})
                     </MenuItem>
                 ))}
               </TextField>
@@ -314,7 +317,7 @@ const checkoutSchema = yup.object().shape({
     .matches(phoneRegExp, "Phone number is not valid")
     .required("required"),
   address: yup.string().required("required"),
-  doctorname: yup.string().required("Please select a doctor"),
+  doctorAdd: yup.string().required("Please select a doctor"),
   timeslot: yup.string().required("Please select a timeslot"),
 });
 
@@ -325,7 +328,7 @@ const initialValues = {
   email: "",
   contact: "",
   address: "",
-  doctorname: "",
+  doctorAdd: "",
   currentDate: "",
   timeslot: "",
   status: "pending"

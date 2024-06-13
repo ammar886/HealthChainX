@@ -31,7 +31,7 @@ const CreateEmployee = () => {
     return (hours * 60) + minutes;
   }
 
-  const handleFormSubmit = async (values) => {
+  const handleFormSubmit = async (values, { resetForm }) => {
     try {
       values.blockChainAdd = values.blockChainAdd.toLowerCase();
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -57,6 +57,7 @@ const CreateEmployee = () => {
       console.log(`Shift duration: ${values.shiftDuration} minutes`);
   
       employeeCreation(values);
+      resetForm();
     } catch (e) {
       console.error(e.message);
       alert("Something went wrong!");
@@ -98,6 +99,7 @@ const employeeCreation = async(values) => {
           handleBlur,
           handleChange,
           handleSubmit,
+          resetForm,
         }) => (
           <form onSubmit={handleSubmit}>
             <Box

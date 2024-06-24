@@ -138,6 +138,69 @@ contract Appointment {
         );
     }
 
+    function getAppointmentsByDoctor(string memory _doctor)
+    public
+    view
+    returns (
+        address[] memory owners,
+        string[] memory firstNames,
+        string[] memory lastNames,
+        string[] memory emails,
+        string[] memory numbers,
+        string[] memory adrs,
+        string[] memory doctors,
+        string[] memory timeSlots,
+        string[] memory status
+    )
+{
+    // Count the number of appointments for the doctor
+    uint count = 0;
+    for (uint i = 0; i < allAppointments.length; i++) {
+        if (keccak256(abi.encodePacked(allAppointments[i].doctor)) == keccak256(abi.encodePacked(_doctor))) {
+            count++;
+        }
+    }
+
+    // Initialize the result arrays
+    owners = new address[](count);
+    firstNames = new string[](count);
+    lastNames = new string[](count);
+    emails = new string[](count);
+    numbers = new string[](count);
+    adrs = new string[](count);
+    doctors = new string[](count);
+    timeSlots = new string[](count);
+    status = new string[](count);
+
+    // Add the appointments to the result arrays
+    uint j = 0;
+    for (uint i = 0; i < allAppointments.length; i++) {
+        if (keccak256(abi.encodePacked(allAppointments[i].doctor)) == keccak256(abi.encodePacked(_doctor))) {
+            owners[j] = allAppointments[i].owner;
+            firstNames[j] = allAppointments[i].firstName;
+            lastNames[j] = allAppointments[i].lastName;
+            emails[j] = allAppointments[i].email;
+            numbers[j] = allAppointments[i].number;
+            adrs[j] = allAppointments[i].adr;
+            doctors[j] = getEmployeeUsernameAndSpecialization(allAppointments[i].doctor);
+            timeSlots[j] = allAppointments[i].timeSlot;
+            status[j] = allAppointments[i].status;
+            j++;
+        }
+    }
+
+    return (
+        owners,
+        firstNames,
+        lastNames,
+        emails,
+        numbers,
+        adrs,
+        doctors,
+        timeSlots,
+        status
+    );
+}
     function getAllAppointments()
         public
         view

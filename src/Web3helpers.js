@@ -2,6 +2,7 @@ import Web3 from "web3";
 
 import Auth from "./build/contracts/Auth.json";
 import Appointment from "./build/contracts/Appointment.json";
+import MedicalRecord from "./build/contracts/MedicalRecord.json";
 
 
 export const loadWeb3 = async () => {
@@ -39,15 +40,21 @@ export const loadBlockchainData = async () => {
       Appointment.networks[networkId].address
     );
 
+    const medicalRecord = new web3.eth.Contract(
+      MedicalRecord.abi,
+      MedicalRecord.networks[networkId].address
+    );
+
 
     const contract = new web3.eth.Contract(
       Auth.abi,
       Auth.networks[networkId].address,
       Appointment.abi,
       Appointment.networks[networkId].address,
-     
+      MedicalRecord.abi,
+      MedicalRecord.networks[networkId].address
     );
 
-    return { auth, appointment, accounts: accounts[0], contract };
+    return { auth, appointment, medicalRecord ,accounts: accounts[0], contract };
   }
 };

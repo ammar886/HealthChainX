@@ -23,7 +23,7 @@ contract Appointment {
         string number;
         string adr;
         string doctor;
-        string currentDate;
+        string appointmentDate;
         string timeSlot;
         string status;
     }
@@ -36,7 +36,7 @@ contract Appointment {
         string number,
         string adr,
         string doctor,
-        string currentDate,
+        string appointmentDate,
         string timeSlot,
         string status
     );
@@ -56,7 +56,7 @@ contract Appointment {
         string memory _number,
         string memory _adr,
         string memory _doctor,
-        string memory _currentDate,
+        string memory _appointmentDate,
         string memory _timeSlot,
         string memory _status
     ) public {
@@ -69,7 +69,7 @@ contract Appointment {
             _number,
             _adr,
             _doctor,
-            _currentDate,
+            _appointmentDate,
             _timeSlot,
             _status
         );
@@ -83,7 +83,7 @@ contract Appointment {
             _number,
             _adr,
             _doctor,
-            _currentDate,
+            _appointmentDate,
             _timeSlot,
             _status
         );
@@ -139,68 +139,73 @@ contract Appointment {
     }
 
     function getAppointmentsByDoctor(string memory _doctor)
-    public
-    view
-    returns (
-        address[] memory owners,
-        string[] memory firstNames,
-        string[] memory lastNames,
-        string[] memory emails,
-        string[] memory numbers,
-        string[] memory adrs,
-        string[] memory doctors,
-        string[] memory timeSlots,
-        string[] memory status
-    )
-{
-    // Count the number of appointments for the doctor
-    uint count = 0;
-    for (uint i = 0; i < allAppointments.length; i++) {
-        if (keccak256(abi.encodePacked(allAppointments[i].doctor)) == keccak256(abi.encodePacked(_doctor))) {
-            count++;
+        public
+        view
+        returns (
+            address[] memory owners,
+            string[] memory firstNames,
+            string[] memory lastNames,
+            string[] memory emails,
+            string[] memory numbers,
+            string[] memory adrs,
+            string[] memory doctors,
+            string[] memory appointmentDate,
+            string[] memory timeSlots,
+            string[] memory status
+        )
+    {
+        // Count the number of appointments for the doctor
+        uint count = 0;
+        for (uint i = 0; i < allAppointments.length; i++) {
+            if (keccak256(abi.encodePacked(allAppointments[i].doctor)) == keccak256(abi.encodePacked(_doctor))) {
+                count++;
+            }
         }
+
+        // Initialize the result arrays
+        owners = new address[](count);
+        firstNames = new string[](count);
+        lastNames = new string[](count);
+        emails = new string[](count);
+        numbers = new string[](count);
+        adrs = new string[](count);
+        doctors = new string[](count);
+        appointmentDate = new string[](count);
+        timeSlots = new string[](count);
+        status = new string[](count);
+
+        // Add the appointments to the result arrays
+        uint j = 0;
+        for (uint i = 0; i < allAppointments.length; i++) {
+            if (keccak256(abi.encodePacked(allAppointments[i].doctor)) == keccak256(abi.encodePacked(_doctor))) {
+                owners[j] = allAppointments[i].owner;
+                firstNames[j] = allAppointments[i].firstName;
+                lastNames[j] = allAppointments[i].lastName;
+                emails[j] = allAppointments[i].email;
+                numbers[j] = allAppointments[i].number;
+                adrs[j] = allAppointments[i].adr;
+                doctors[j] = getEmployeeUsernameAndSpecialization(allAppointments[i].doctor);
+                appointmentDate[j] = allAppointments[i].appointmentDate;
+                timeSlots[j] = allAppointments[i].timeSlot;
+                status[j] = allAppointments[i].status;
+                j++;
+            }
+        }
+
+        return (
+            owners,
+            firstNames,
+            lastNames,
+            emails,
+            numbers,
+            adrs,
+            doctors,
+            appointmentDate,
+            timeSlots,
+            status
+        );
     }
 
-    // Initialize the result arrays
-    owners = new address[](count);
-    firstNames = new string[](count);
-    lastNames = new string[](count);
-    emails = new string[](count);
-    numbers = new string[](count);
-    adrs = new string[](count);
-    doctors = new string[](count);
-    timeSlots = new string[](count);
-    status = new string[](count);
-
-    // Add the appointments to the result arrays
-    uint j = 0;
-    for (uint i = 0; i < allAppointments.length; i++) {
-        if (keccak256(abi.encodePacked(allAppointments[i].doctor)) == keccak256(abi.encodePacked(_doctor))) {
-            owners[j] = allAppointments[i].owner;
-            firstNames[j] = allAppointments[i].firstName;
-            lastNames[j] = allAppointments[i].lastName;
-            emails[j] = allAppointments[i].email;
-            numbers[j] = allAppointments[i].number;
-            adrs[j] = allAppointments[i].adr;
-            doctors[j] = getEmployeeUsernameAndSpecialization(allAppointments[i].doctor);
-            timeSlots[j] = allAppointments[i].timeSlot;
-            status[j] = allAppointments[i].status;
-            j++;
-        }
-    }
-
-    return (
-        owners,
-        firstNames,
-        lastNames,
-        emails,
-        numbers,
-        adrs,
-        doctors,
-        timeSlots,
-        status
-    );
-}
     function getAllAppointments()
         public
         view
@@ -296,7 +301,7 @@ contract Appointment {
         for (uint i = 0; i < allAppointments.length; i++) {
             if (
                 keccak256(abi.encodePacked(allAppointments[i].doctor)) == keccak256(abi.encodePacked(_doctorAdd)) &&
-                keccak256(abi.encodePacked(allAppointments[i].currentDate)) == keccak256(abi.encodePacked(_currentDate))
+                keccak256(abi.encodePacked(allAppointments[i].appointmentDate)) == keccak256(abi.encodePacked(_currentDate))
             ) {
                 bookedTimeSlots[count] = allAppointments[i].timeSlot;
                 count++;
@@ -320,7 +325,7 @@ contract Appointment {
         uint count = 0;
         for (uint i = 0; i < allAppointments.length; i++) {
             if (
-                keccak256(abi.encodePacked(allAppointments[i].currentDate)) == keccak256(abi.encodePacked(_currentDate))
+                keccak256(abi.encodePacked(allAppointments[i].appointmentDate)) == keccak256(abi.encodePacked(_currentDate))
             ) {
                 count++;
             }

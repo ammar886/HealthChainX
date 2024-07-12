@@ -3,11 +3,10 @@ import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import { AuthContext } from '../../context/AuthContext';
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
-import { mockTransactions } from "../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
-import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import BookOnlineIcon from '@mui/icons-material/BookOnline';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import Header from "../Header";
 import StatBox from "../StatBox";
@@ -137,7 +136,7 @@ const PatientDashboard = () => {
             title="Approved Appointments"
             value={approvedAppointments}
             icon={
-              <PendingActionsIcon
+              <CheckBoxOutlinedIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -154,7 +153,7 @@ const PatientDashboard = () => {
             title="Rejected Appointments"
             value={rejectedAppointments}
             icon={
-              <CheckBoxOutlinedIcon
+              <CancelOutlinedIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -171,7 +170,7 @@ const PatientDashboard = () => {
             title="Pending Appointments"
             value={pendingAppointments}
             icon={
-              <BookOnlineIcon
+              <PendingActionsIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }

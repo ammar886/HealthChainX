@@ -2,12 +2,10 @@ import { useEffect, useState, useContext } from "react";
 import { Box } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataContacts } from "../data/mockData";
 import { useTheme } from "@mui/material";
 import Header from "../Header";
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import { AuthContext } from '../../context/AuthContext';
-import { Link } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { useNavigate } from 'react-router-dom';
@@ -67,13 +65,13 @@ const ManageAppointments = () => {
           number: getAppointmentData.numbers[i],
           address: getAppointmentData.adrs[i],
           doctor: getAppointmentData.doctors[i],
+          appointmentDate: getAppointmentData.appointmentDate[i],
           timeSlot: getAppointmentData.timeSlots[i],
           status: getAppointmentData.status[i],
-          
         });
       }
   
-      setAppointmentsData(appointmentsData);
+      setAppointmentsData(appointmentsData.filter(appointment => appointment.status === "approved"));
       console.log("new appointments:", appointmentsData);
       
       localStorage.setItem('appointments', JSON.stringify(appointmentsData));
@@ -92,6 +90,7 @@ const ManageAppointments = () => {
     { field: "number", headerName: "Phone Number", flex: 1 },
     { field: "adr", headerName: "Address", flex: 1 },
     { field: "doctor", headerName: "Doctor", flex: 1 },
+    { field: "appointmentDate", headerName: "Appointment Date", flex: 1 },
     { field: "timeSlot", headerName: "Time Slot", flex: 1 },
     { field: "status", headerName: "Status", flex: 1 },
     {
@@ -100,9 +99,21 @@ const ManageAppointments = () => {
       flex: 1,
       renderCell: (params) => (
         <IconButton 
-          color="white" 
+          color="primary" // Changed from "white" to "primary" as "white" might not be a valid color
           aria-label="navigate to appointment"
-          onClick={() => navigate(`/doctor/PrescriptionForm?firstName=${params.row.firstName}&lastName=${params.row.lastName}&email=${params.row.email}&number=${params.row.number}&address=${params.row.adr}&slot=${params.row.timeSlot}&owner=${params.row.owner}`)}
+          onClick={() => {
+            const queryParams = new URLSearchParams({
+              owner: encodeURIComponent(params.row.owner),
+              firstName: encodeURIComponent(params.row.firstName),
+              lastName: encodeURIComponent(params.row.lastName),
+              email: encodeURIComponent(params.row.email),
+              number: encodeURIComponent(params.row.number),
+              address: encodeURIComponent(params.row.adr),
+              appointmentDate: encodeURIComponent(params.row.appointmentDate),
+              slot: encodeURIComponent(params.row.timeSlot),
+            }).toString();
+            navigate(`/doctor/PrescriptionForm?${queryParams}`);
+          }}
         >
           <NavigateNextIcon />
         </IconButton>
@@ -112,12 +123,14 @@ const ManageAppointments = () => {
 
   const rows = appointmentsData.map((appointment, i) => ({
     id: i,
+    owner: appointment.owner,
     firstName: appointment.firstName,
     lastName: appointment.lastName,
     email: appointment.email,
     number: appointment.number,
     adr: appointment.address,
     doctor: appointment.doctor,
+    appointmentDate: appointment.appointmentDate,
     timeSlot: appointment.timeSlot,
     status: appointment.status,
   }));

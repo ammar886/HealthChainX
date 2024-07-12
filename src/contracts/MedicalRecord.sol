@@ -15,55 +15,63 @@ contract MedicalRecord{
     uint public totalPrescriptions = 0; 
     prescription[] public allPrescriptions;
 
-    mapping(string => prescription[]) prescriptions;
-
+    // New mappings
+    mapping(address => prescription[]) prescriptionsByOwner; // Mapping from owner's address to prescriptions
+    mapping(string => prescription[]) prescriptionsByPatientAddress; // Mapping from patient's address to prescriptions
 
     struct prescription{
         address owner;
-        string clinicalNotes;
-        string prescription;
         string patientAddress;
+        string appointmentData;
+        string timeSlot;
+        string clinicalNotes;
+        string prescriptionDetails;
     }
 
     event prescriptionCreated(
         address owner,
+        string patientAddress,
+        string appointmentData,
+        string timeSlot,
         string clinicalNotes,
-        string prescription,
-        string patientAddress
+        string prescriptionDetails
     );
 
     function storePrescription(
-    string memory _patientAddress,
-    string memory _clinicalNotes,
-    string memory _prescriptionText
-) public {
-    // Ensure the caller of the function is authorized, e.g., a verified doctor.
-    // This step is crucial for security and data integrity but is not implemented here.
+        address _owner,
+        string memory _patientAddress,
+        string memory _appointmentData,
+        string memory _timeSlot,
+        string memory _clinicalNotes,
+        string memory _prescriptionDetails
+    ) public {
+        // Create a new prescription object
+        prescription memory newPrescription = prescription({
+            owner: _owner,
+            patientAddress: _patientAddress,
+            appointmentData: _appointmentData,
+            timeSlot: _timeSlot,
+            clinicalNotes: _clinicalNotes,
+            prescriptionDetails: _prescriptionDetails
+        });
 
-    // Create a new prescription object
-    prescription memory newPrescription = prescription({
-        owner: msg.sender, // The sender's address is considered the owner (doctor) of the prescription
-        clinicalNotes: _clinicalNotes,
-        prescription: _prescriptionText,
-        patientAddress: _patientAddress
-    });
+        // Store the new prescription in the mappings
+        prescriptionsByOwner[msg.sender].push(newPrescription); // Update mapping for owner
+        prescriptionsByPatientAddress[_patientAddress].push(newPrescription); // Update mapping for patient
 
-    // Store the new prescription in the array for the patient
-    prescriptions[_patientAddress].push(newPrescription);
+        // Also store it in the global array of all prescriptions
+        allPrescriptions.push(newPrescription);
 
-    // Also store it in the global array of all prescriptions
-    allPrescriptions.push(newPrescription);
+        // Increment the total number of prescriptions
+        totalPrescriptions += 1;
 
-    // Increment the total number of prescriptions
-    totalPrescriptions += 1;
-    emit prescriptionCreated(
-        msg.sender,
-        _clinicalNotes,
-        _prescriptionText,
-        _patientAddress
-    );
-    
-}
-
-    
+        emit prescriptionCreated(
+            _owner,
+            _patientAddress,
+            _appointmentData,
+            _timeSlot,
+            _clinicalNotes,
+            _prescriptionDetails
+        );
+    }    
 }

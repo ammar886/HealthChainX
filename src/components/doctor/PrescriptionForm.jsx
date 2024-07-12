@@ -6,31 +6,27 @@ import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../Header";
 import { useLocation } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
 import { useEffect, useState, useContext } from "react";
 
 const PrescriptionForm = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [accounts, setAccounts] = React.useState(null);
   const [auth, setAuth] = React.useState(null);
+  const [medicalRecord, setMedicalRecord] = useState(null);
+  const { blockchainAddress } = useContext(AuthContext); 
   const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const firstName = queryParams.get('firstName');
-  const lastName = queryParams.get('lastName');
-  const email = queryParams.get('email');
-  const number = queryParams.get('number');
-  const address = queryParams.get('address');
-  const timeSlot = queryParams.get('slot');
-  const patientBlock = queryParams.get('owner');
-  const currentDate = new Date();
-  const currentDay = currentDate.getDay(); // Returns a number (0-6) representing the day of the week
-  const currentDateString = currentDate.toLocaleDateString();
-  const days = ['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] // Returns a string representing the date in the format MM/DD/YYYY
-  const dateToDisplay = days[currentDay] + ", " + currentDateString;
-  console.log("location below:");
-  console.log(firstName, lastName, email, number, address, timeSlot, dateToDisplay);
 
-  const [medicalRecord, setMedicalRecord] = useState(null)
-  
+  const queryParams = new URLSearchParams(location.search);
+  const patientBlock = decodeURIComponent(queryParams.get('owner'));
+  const firstName = decodeURIComponent(queryParams.get('firstName'));
+  const lastName = decodeURIComponent(queryParams.get('lastName'));
+  const email = decodeURIComponent(queryParams.get('email'));
+  const number = decodeURIComponent(queryParams.get('number'));
+  const address = decodeURIComponent(queryParams.get('address'));
+  const appointmentDate = decodeURIComponent(queryParams.get('appointmentDate'));
+  const timeSlot = decodeURIComponent(queryParams.get('slot'));
+  console.log(patientBlock, firstName, lastName, email, number, address, appointmentDate, timeSlot);  
 
   const loadAccounts = async () => {
     let { auth, medicalRecord } = await loadBlockchainData();
@@ -48,27 +44,25 @@ const PrescriptionForm = () => {
   }, []);
 
   const handleFormSubmit = async (values) => {
-    console.log("Write Function");
     try{
      createPrescription(values);
     }catch(error){
       console.error("Error saving prescription:", error);
     }
-    
   };
 
   const createPrescription = async(values) => {
     try{
-      console.log(values);
-  
+      console.log("Doctor Block Address:"  + blockchainAddress)
+
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       const account = accounts[0]; // The first account is the user's primary account
-  
-    // Send the transaction to the blockchain
-    await medicalRecord.methods
-      .storePrescription(account, patientBlock, clinicalNotes, prescription)
-      .send({ from: account });
-  
+
+      // Send the transaction to the blockchain
+      await medicalRecord.methods
+        .storePrescription(blockchainAddress, patientBlock, appointmentDate, timeSlot, values.clinicalNotes, values.prescription)
+        .send({ from: account });
+    
       alert("Prescription Created Succesfully!");
     }catch(e){
       console.error(e.message);
@@ -82,11 +76,7 @@ const PrescriptionForm = () => {
 
       <Formik
         onSubmit={handleFormSubmit}
-        initialValues={{
-          ...initialValues,
-          clinicalNotes: "",
-          prescription: "",
-        }}
+        initialValues={{ ...initialValues }}
         validationSchema={checkoutSchema}
       >
         {({
@@ -97,7 +87,7 @@ const PrescriptionForm = () => {
           handleChange,
           handleSubmit,
         }) => (
-          <form onSubmit={handleFormSubmit}>
+          <form onSubmit={handleSubmit}>
             <Box
               display="grid"
               gap="30px"
@@ -116,10 +106,8 @@ const PrescriptionForm = () => {
                 onChange={handleChange}
                 value={firstName}
                 name="firstName"
-                // error={!!touched.firstName && !!errors.firstName}
-                helperText={touched.firstName && errors.firstName}
                 sx={{ gridColumn: "span 2" }}
-                inputProps={{ readOnly: true }}
+                disabled
               />
               <TextField
                 fullWidth
@@ -130,10 +118,8 @@ const PrescriptionForm = () => {
                 onChange={handleChange}
                 value={lastName}
                 name="lastName"
-                // error={!!touched.lastName && !!errors.lastName}
-                helperText={touched.lastName && errors.lastName}
                 sx={{ gridColumn: "span 2" }}
-                inputProps={{ readOnly: true }}
+                disabled
               />
               <TextField
                 fullWidth
@@ -144,10 +130,8 @@ const PrescriptionForm = () => {
                 onChange={handleChange}
                 value={email}
                 name="email"
-                // error={!!touched.email && !!errors.email}
-                helperText={touched.email && errors.email}
                 sx={{ gridColumn: "span 2" }}
-                inputProps={{ readOnly: true }}
+                disabled
               />
               <TextField
                 fullWidth
@@ -158,10 +142,8 @@ const PrescriptionForm = () => {
                 onChange={handleChange}
                 value={number}
                 name="contact"
-                // error={!!touched.contact && !!errors.contact}
-                helperText={touched.contact && errors.contact}
                 sx={{ gridColumn: "span 2" }}
-                inputProps={{ readOnly: true }}
+                disabled
               />
               <TextField
                 fullWidth
@@ -172,10 +154,20 @@ const PrescriptionForm = () => {
                 onChange={handleChange}
                 value={address}
                 name="address"
-                // error={!!touched.address && !!errors.address}
-                helperText={touched.address && errors.address}
                 sx={{ gridColumn: "span 4" }}
-                inputProps={{ readOnly: true }}
+                disabled
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Date"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={appointmentDate}
+                name="date"
+                sx={{ gridColumn: "span 2" }}
+                disabled
               />
               <TextField
                 fullWidth
@@ -186,29 +178,14 @@ const PrescriptionForm = () => {
                 onChange={handleChange}
                 value={timeSlot}
                 name="timeSlot"
-                // error={!!touched.address && !!errors.address}
-                helperText={touched.address && errors.address}
-                sx={{ gridColumn: "span 4" }}
-                inputProps={{ readOnly: true }}
+                sx={{ gridColumn: "span 2" }}
+                disabled
               />
+              
               <TextField
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Date"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={dateToDisplay}
-                name="date"
-                // error={!!touched.address && !!errors.address}
-                helperText={touched.address && errors.address}
-                sx={{ gridColumn: "span 4" }}
-                inputProps={{ readOnly: true }}
-              />
-              {/* New fields replacing the last four fields */}
-              <TextField
-                fullWidth
-                variant="filled"
                 multiline
                 rows={6}
                 label="Clinical Notes"
@@ -223,6 +200,7 @@ const PrescriptionForm = () => {
               <TextField
                 fullWidth
                 variant="filled"
+                type="text"
                 multiline
                 rows={6}
                 label="Prescription"
@@ -237,7 +215,7 @@ const PrescriptionForm = () => {
             </Box>
 
             <Box display="flex" justifyContent="end" mt="20px">
-              <Button type="submit" onClick={handleFormSubmit} color="secondary" variant="contained">
+              <Button type="submit" color="secondary" variant="contained">
                 SAVE PATIENT RECORD
               </Button>
             </Box>
@@ -248,28 +226,12 @@ const PrescriptionForm = () => {
   );
 };
 
-const phoneRegExp =
-  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
-
 const checkoutSchema = yup.object().shape({
-  firstName: yup.string().required("required"),
-  lastName: yup.string().required("required"),
-  email: yup.string().email("invalid email").required("required"),
-  contact: yup
-    .string()
-    .matches(phoneRegExp, "Phone number is not valid")
-    .required("required"),
-  address: yup.string().required("required"),
   clinicalNotes: yup.string().required("required"),
-  prescription: yup.string().required("Please select a user role"),
+  prescription: yup.string().required("required"),
 });
 
 const initialValues = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  contact: "",
-  address: "",
   clinicalNotes: "",
   prescription: "",
 };

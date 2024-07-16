@@ -56,7 +56,7 @@ const ManageAppointments = () => {
   
       // Convert the appointment data into an array of appointment objects
       const appointmentsData = [];
-      for (let i = 0; i < getAppointmentData[0].length; i++) {
+      for (let i = getAppointmentData[0].length - 1; i >= 0; i--) {
         appointmentsData.push({
           owner: getAppointmentData.owners[i],
           firstName: getAppointmentData.firstNames[i],
@@ -83,7 +83,6 @@ const ManageAppointments = () => {
   };
 
   const columns = [
-    { field: "id", headerName: "ID", flex: 0.5 },
     { field: "firstName", headerName: "First Name", flex: 1 },
     { field: "lastName", headerName: "Last Name", flex: 1 },
     { field: "email", headerName: "Email", flex: 1 },

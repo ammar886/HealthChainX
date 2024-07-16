@@ -12,8 +12,11 @@ contract Appointment {
     uint public totalAppointmets = 0; 
     appointment[] public allAppointments;
 
-    mapping(address => appointment[]) appointments;
+    mapping(address => appointment[]) appointmentsByOwner;
+    mapping(address => appointment[]) appointmentsByDoctor;
+
     mapping(uint => uint) public allAppointmentsToUserAppointments;
+    mapping(uint => uint) public allAppointmentsToDoctorAppointments;
 
     struct appointment {
         address owner;
@@ -22,7 +25,7 @@ contract Appointment {
         string email;
         string number;
         string adr;
-        string doctor;
+        address doctor;
         string appointmentDate;
         string timeSlot;
         string status;
@@ -35,7 +38,7 @@ contract Appointment {
         string email,
         string number,
         string adr,
-        string doctor,
+        address doctor,
         string appointmentDate,
         string timeSlot,
         string status
@@ -43,6 +46,7 @@ contract Appointment {
 
     event AppointmentStatusUpdated(
         address indexed userAddress,
+        address indexed doctorAddress,
         uint indexed appointmentIndex,
         string originalStatus,
         string newStatus
@@ -55,7 +59,7 @@ contract Appointment {
         string memory _email,
         string memory _number,
         string memory _adr,
-        string memory _doctor,
+        address _doctor,
         string memory _appointmentDate,
         string memory _timeSlot,
         string memory _status
@@ -73,7 +77,8 @@ contract Appointment {
             _timeSlot,
             _status
         );
-        appointments[_owner].push(newAppointment);
+        appointmentsByOwner[_owner].push(newAppointment);
+        appointmentsByDoctor[_doctor].push(newAppointment);
         allAppointments.push(newAppointment);
         emit appointmentCreated(
             _owner,
@@ -87,7 +92,8 @@ contract Appointment {
             _timeSlot,
             _status
         );
-        allAppointmentsToUserAppointments[allAppointments.length - 1] = appointments[_owner].length - 1;
+        allAppointmentsToUserAppointments[allAppointments.length - 1] = appointmentsByOwner[_owner].length - 1;
+        allAppointmentsToDoctorAppointments[allAppointments.length - 1] = appointmentsByDoctor[_doctor].length - 1;
     }
 
     function getAppointments()
@@ -100,11 +106,12 @@ contract Appointment {
             string[] memory numbers,
             string[] memory adrs,
             string[] memory doctors,
+            string[] memory appointmentDates,
             string[] memory timeSlots,
             string[] memory status
         )
     {
-        appointment[] memory userAppointments = appointments[msg.sender];
+        appointment[] memory userAppointments = appointmentsByOwner[msg.sender];
 
         firstNames = new string[](userAppointments.length);
         lastNames = new string[](userAppointments.length);
@@ -112,6 +119,7 @@ contract Appointment {
         numbers = new string[](userAppointments.length);
         adrs = new string[](userAppointments.length);
         doctors = new string[](userAppointments.length);
+        appointmentDates = new string[](userAppointments.length);
         timeSlots = new string[](userAppointments.length);
         status = new string[](userAppointments.length);
 
@@ -122,6 +130,7 @@ contract Appointment {
             numbers[i] = userAppointments[i].number;
             adrs[i] = userAppointments[i].adr;
             doctors[i] = getEmployeeUsernameAndSpecialization(userAppointments[i].doctor);
+            appointmentDates[i] = userAppointments[i].appointmentDate;
             timeSlots[i] = userAppointments[i].timeSlot;
             status[i] = userAppointments[i].status;
         }
@@ -133,12 +142,13 @@ contract Appointment {
             numbers,
             adrs,
             doctors,
+            appointmentDates,
             timeSlots,
             status
         );
     }
 
-    function getAppointmentsByDoctor(string memory _doctor)
+    function getAppointmentsByDoctor()
         public
         view
         returns (
@@ -149,47 +159,34 @@ contract Appointment {
             string[] memory numbers,
             string[] memory adrs,
             string[] memory doctors,
-            string[] memory appointmentDate,
+            string[] memory appointmentDates,
             string[] memory timeSlots,
             string[] memory status
         )
     {
-        // Count the number of appointments for the doctor
-        uint count = 0;
-        for (uint i = 0; i < allAppointments.length; i++) {
-            if (keccak256(abi.encodePacked(allAppointments[i].doctor)) == keccak256(abi.encodePacked(_doctor))) {
-                count++;
-            }
-        }
+        appointment[] memory userAppointments = appointmentsByDoctor[msg.sender];
 
-        // Initialize the result arrays
-        owners = new address[](count);
-        firstNames = new string[](count);
-        lastNames = new string[](count);
-        emails = new string[](count);
-        numbers = new string[](count);
-        adrs = new string[](count);
-        doctors = new string[](count);
-        appointmentDate = new string[](count);
-        timeSlots = new string[](count);
-        status = new string[](count);
+        owners = new address[](userAppointments.length);
+        firstNames = new string[](userAppointments.length);
+        lastNames = new string[](userAppointments.length);
+        emails = new string[](userAppointments.length);
+        numbers = new string[](userAppointments.length);
+        adrs = new string[](userAppointments.length);
+        doctors = new string[](userAppointments.length);
+        appointmentDates = new string[](userAppointments.length);
+        timeSlots = new string[](userAppointments.length);
+        status = new string[](userAppointments.length);
 
-        // Add the appointments to the result arrays
-        uint j = 0;
-        for (uint i = 0; i < allAppointments.length; i++) {
-            if (keccak256(abi.encodePacked(allAppointments[i].doctor)) == keccak256(abi.encodePacked(_doctor))) {
-                owners[j] = allAppointments[i].owner;
-                firstNames[j] = allAppointments[i].firstName;
-                lastNames[j] = allAppointments[i].lastName;
-                emails[j] = allAppointments[i].email;
-                numbers[j] = allAppointments[i].number;
-                adrs[j] = allAppointments[i].adr;
-                doctors[j] = getEmployeeUsernameAndSpecialization(allAppointments[i].doctor);
-                appointmentDate[j] = allAppointments[i].appointmentDate;
-                timeSlots[j] = allAppointments[i].timeSlot;
-                status[j] = allAppointments[i].status;
-                j++;
-            }
+        for (uint256 i = 0; i < userAppointments.length; i++) {
+            firstNames[i] = userAppointments[i].firstName;
+            lastNames[i] = userAppointments[i].lastName;
+            emails[i] = userAppointments[i].email;
+            numbers[i] = userAppointments[i].number;
+            adrs[i] = userAppointments[i].adr;
+            doctors[i] = getEmployeeUsernameAndSpecialization(userAppointments[i].doctor);
+            appointmentDates[i] = userAppointments[i].appointmentDate;
+            timeSlots[i] = userAppointments[i].timeSlot;
+            status[i] = userAppointments[i].status;
         }
 
         return (
@@ -200,7 +197,7 @@ contract Appointment {
             numbers,
             adrs,
             doctors,
-            appointmentDate,
+            appointmentDates,
             timeSlots,
             status
         );
@@ -216,7 +213,9 @@ contract Appointment {
             string[] memory emails,
             string[] memory numbers,
             string[] memory adrs,
+            address[] memory doctorsAdd,
             string[] memory doctors,
+            string[] memory appointmentDates,
             string[] memory timeSlots,
             string[] memory status
         )
@@ -229,7 +228,9 @@ contract Appointment {
         emails = new string[](appointmentList.length);
         numbers = new string[](appointmentList.length);
         adrs = new string[](appointmentList.length);
+        doctorsAdd = new address[](appointmentList.length);
         doctors = new string[](appointmentList.length);
+        appointmentDates = new string[](appointmentList.length);
         timeSlots = new string[](appointmentList.length);
         status = new string[](appointmentList.length);
 
@@ -240,7 +241,9 @@ contract Appointment {
             emails[i] = appointmentList[i].email;
             numbers[i] = appointmentList[i].number;
             adrs[i] = appointmentList[i].adr;
+            doctorsAdd[i] = appointmentList[i].doctor;
             doctors[i] = getEmployeeUsernameAndSpecialization(appointmentList[i].doctor);
+            appointmentDates[i] = appointmentList[i].appointmentDate;
             timeSlots[i] = appointmentList[i].timeSlot;
             status[i] = appointmentList[i].status;
         }
@@ -252,13 +255,15 @@ contract Appointment {
             emails,
             numbers,
             adrs,
+            doctorsAdd,
             doctors,
+            appointmentDates,
             timeSlots,
             status
         );
     }
 
-    function getEmployeeUsernameAndSpecialization(string memory blockChainAddress) public view returns (string memory) {
+    function getEmployeeUsernameAndSpecialization(address blockChainAddress) public view returns (string memory) {
         // Call the getEmployeeDetails function from the Auth contract
         Auth.employee memory emp = auth.getEmployeeDetails(blockChainAddress);
 
@@ -268,23 +273,27 @@ contract Appointment {
 
     function updateAppointmentStatus(
         address userAddress,
+        address doctorAddress,
         uint allAppointmentsIndex,
         string memory newStatus
     ) public {
         uint userAppointmentsIndex = allAppointmentsToUserAppointments[allAppointmentsIndex];
+        uint doctorAppointmentsIndex = allAppointmentsToDoctorAppointments[allAppointmentsIndex];
 
         require(
-            userAppointmentsIndex < appointments[userAddress].length,
+            userAppointmentsIndex < appointmentsByOwner[userAddress].length,
             "appointment does not exist"
         );
 
-        string memory originalStatus = appointments[userAddress][userAppointmentsIndex].status;
+        string memory originalStatus = appointmentsByOwner[userAddress][userAppointmentsIndex].status;
 
-        appointments[userAddress][userAppointmentsIndex].status = newStatus;
+        appointmentsByOwner[userAddress][userAppointmentsIndex].status = newStatus;
+        appointmentsByDoctor[doctorAddress][doctorAppointmentsIndex].status = newStatus;
         allAppointments[allAppointmentsIndex].status = newStatus;
 
         emit AppointmentStatusUpdated(
             userAddress,
+            doctorAddress,
             allAppointmentsIndex,
             originalStatus,
             newStatus

@@ -32,7 +32,6 @@ const styles = {
 const ManageAppointments = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const adminAddress = "0x741266e87931524809355fd80A887d1AFc1c38D7";
   
   const [auth, setAuth] = useState(null);
   const [accounts, setAccounts] = useState(null);
@@ -75,15 +74,18 @@ const ManageAppointments = () => {
   
       // Convert the appointment data into an array of appointment objects
       const appointmentsData = [];
-      for (let i = 0; i < getAppointmentData.owner.length; i++) {
+      for (let i = getAppointmentData.owner.length - 1; i >= 0; i--) {
         appointmentsData.push({
+          index: i,
           owner: getAppointmentData.owner[i],
           firstName: getAppointmentData.firstNames[i],
           lastName: getAppointmentData.lastNames[i],
           email: getAppointmentData.emails[i],
           number: getAppointmentData.numbers[i],
           address: getAppointmentData.adrs[i],
+          doctorAdd: getAppointmentData.doctorsAdd[i],
           doctor: getAppointmentData.doctors[i],
+          appointmentDate: getAppointmentData.appointmentDate[i],
           timeSlot: getAppointmentData.timeSlots[i],
           status: getAppointmentData.status[i],
         });
@@ -99,14 +101,14 @@ const ManageAppointments = () => {
     }
   };
 
-  const updateAppointmentStatus = async (userAddress, index, newStatus) => {
+  const updateAppointmentStatus = async (userAddress, doctorAddress, index, newStatus) => {
     console.log("User Address:", userAddress);
     console.log("Index:", index);
     console.log("New:", newStatus);
     if (!appointment) return;
     const accounts = await web3.eth.getAccounts();
     const account = accounts[0];
-    await appointment.methods.updateAppointmentStatus(userAddress, index, newStatus).send({ from: account })
+    await appointment.methods.updateAppointmentStatus(userAddress, doctorAddress, index, newStatus).send({ from: account })
     .on('receipt', (receipt) => {
       console.log(receipt);
       console.log("ammar");
@@ -116,13 +118,13 @@ const ManageAppointments = () => {
   };
 
   const columns = [
-    { field: "id", headerName: "ID", flex: 0.5 },
     { field: "firstName", headerName: "First Name", flex: 1 },
     { field: "lastName", headerName: "Last Name", flex: 1 },
     { field: "email", headerName: "Email", flex: 1 },
     { field: "number", headerName: "Phone Number", flex: 1 },
     { field: "adr", headerName: "Address", flex: 1 },
     { field: "doctor", headerName: "Doctor", flex: 1 },
+    { field: "appointmentDate", headerName: "Appointment Date", flex: 1 },
     { field: "timeSlot", headerName: "Time Slot", flex: 1 },
     { field: "status", headerName: "Status", flex: 1 },
     {
@@ -131,7 +133,7 @@ const ManageAppointments = () => {
       flex: 1,
       renderCell: (params) => (
         <select 
-          onChange={(e) => updateAppointmentStatus(params.row.owner, params.row.id, e.target.value)}
+          onChange={(e) => updateAppointmentStatus(params.row.owner, params.row.doctorAdd, params.row.id, e.target.value)}
         >
           <option value="">Select</option>
           <option value="approved">Approve</option>
@@ -141,15 +143,17 @@ const ManageAppointments = () => {
     },
   ];
 
-  const rows = appointmentsData.map((appointment, i) => ({
-    id: i,
-    owner: appointment.owner, // Add this line
+  const rows = appointmentsData.map((appointment) => ({
+    id: appointment.index,
+    owner: appointment.owner,
     firstName: appointment.firstName,
     lastName: appointment.lastName,
     email: appointment.email,
     number: appointment.number,
     adr: appointment.address,
+    doctorAdd: appointment.doctorAdd,
     doctor: appointment.doctor,
+    appointmentDate: appointment.appointmentDate,
     timeSlot: appointment.timeSlot,
     status: appointment.status,
   }));

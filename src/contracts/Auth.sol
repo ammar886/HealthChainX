@@ -12,13 +12,13 @@ contract Auth {
     mapping(string => employee[]) employees;
     
     mapping(string => bool) private usedEmails;
-    mapping(string => bool) private usedBlockchainAddresses;
+    mapping(address => bool) private usedBlockchainAddresses;
     
     employee[] public allEmployees;
     user[] public allUsers;  
 
     struct user {
-        string blockChainAdd;
+        address blockChainAdd;
         string username;
         string email;
         string number;
@@ -27,7 +27,7 @@ contract Auth {
     }
 
     struct employee {
-        string blockChainAdd;
+        address blockChainAdd;
         string username;
         string email;
         string number;
@@ -42,7 +42,7 @@ contract Auth {
     }
 
     struct authMemory {
-        string blockChainAdd;
+        address blockChainAdd;
         string username;
         string email;
         string userRole;
@@ -50,7 +50,7 @@ contract Auth {
     }
 
     event userCreated(
-        string blockChainAdd,
+        address blockChainAdd,
         string username,
         string email,
         string number,
@@ -59,7 +59,7 @@ contract Auth {
     );
 
     event employeeCreated(
-        string blockChainAdd,
+        address blockChainAdd,
         string username,
         string email,
         string number,
@@ -74,7 +74,7 @@ contract Auth {
     );
 
     event authCreated(
-        string blockChainAdd,
+        address blockChainAdd,
         string username,
         string email,
         string userRole,
@@ -86,13 +86,13 @@ contract Auth {
     }
 
     function isBlockchainAddressUsed(
-        string memory blockchainAddress
+        address blockchainAddress
     ) public view returns (bool) {
         return usedBlockchainAddresses[blockchainAddress];
     }
 
     function createUser(
-        string memory _blockChainAdd,
+        address _blockChainAdd,
         string memory _username,
         string memory _email,
         string memory _number,
@@ -134,7 +134,7 @@ contract Auth {
         createAuth(_blockChainAdd, _username, _email, _userRole, _password);
     }
 
-    function getUserDetails(string memory blockChainAddress) public view returns (user memory) {
+    function getUserDetails(address blockChainAddress) public view returns (user memory) {
         for (uint i = 0; i < allUsers.length; i++) {
             if (keccak256(abi.encodePacked((allUsers[i].blockChainAdd))) == keccak256(abi.encodePacked((blockChainAddress)))) {
                 return allUsers[i];
@@ -143,7 +143,7 @@ contract Auth {
         revert("User not found");
     }
 
-    function getEmployeeDetails(string memory blockChainAddress) public view returns (employee memory) {
+    function getEmployeeDetails(address blockChainAddress) public view returns (employee memory) {
         for (uint i = 0; i < allEmployees.length; i++) {
             if (keccak256(abi.encodePacked((allEmployees[i].blockChainAdd))) == keccak256(abi.encodePacked((blockChainAddress)))) {
                 return allEmployees[i];
@@ -153,7 +153,7 @@ contract Auth {
     }
 
     function createEmployee(
-        string memory _blockChainAdd,
+        address _blockChainAdd,
         string memory _username,
         string memory _email,
         string memory _number,
@@ -214,7 +214,7 @@ contract Auth {
     }
 
     function createAuth(
-        string memory _blockChainAdd,
+        address _blockChainAdd,
         string memory _username,
         string memory _email,
         string memory _userRole,
@@ -240,25 +240,25 @@ contract Auth {
     function authenticateLogin(
         string memory _email,
         string memory _password
-    ) public view returns (bool, string memory, string memory, string memory) {
+    ) public view returns (bool, address, string memory, string memory) {
         authMemory memory userInstance = authUsers[_email];
 
         if (bytes(userInstance.email).length == 0) {
-            return (false, "", "", "");
+            return (false, address(0), "", "");
         } else {
             if (keccak256(abi.encodePacked(userInstance.password)) == keccak256(abi.encodePacked(_password))) {
                 return (true, userInstance.blockChainAdd, userInstance.username, userInstance.userRole);
             } else {
-                return (false, "", "", "");
+                return (false, address(0), "", "");
             }
         }
     }
 
-    function getDoctors() public view returns (string[] memory, string[] memory, string[] memory, string[] memory, string[] memory, string[] memory) {
+    function getDoctors() public view returns (address[] memory, string[] memory, string[] memory, string[] memory, string[] memory, string[] memory) {
 
         uint256 doctorCount = getLengthEmployees("doctor");
 
-        string[] memory blockChainAdds = new string[](doctorCount);
+        address[] memory blockChainAdds = new address[](doctorCount);
         string[] memory userNames = new string[](doctorCount);
         string[] memory specializations = new string[](doctorCount);
         string[] memory startShiftTimes = new string[](doctorCount);
@@ -302,9 +302,9 @@ contract Auth {
         return accountCount;
     }
 
-    function getPatients() public view returns (string[] memory, string[] memory, string[] memory, string[] memory, string[] memory) {
+    function getPatients() public view returns (address[] memory, string[] memory, string[] memory, string[] memory, string[] memory) {
 
-        string[] memory blockChainAdds = new string[](userCount);
+        address[] memory blockChainAdds = new address[](userCount);
         string[] memory usernames = new string[](userCount);
         string[] memory emails = new string[](userCount);
         string[] memory numbers = new string[](userCount);

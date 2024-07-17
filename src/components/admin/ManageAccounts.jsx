@@ -47,7 +47,7 @@ const ManageAccounts = () => {
       console.log(result);
       
       const patients = [];
-      for (let i = 0; i < result[0].length; i++) {
+      for (let i = result[0].length - 1; i >= 0; i--) {
         patients.push({
           blockChainAdd: result[0][i],
           username: result[1][i],
@@ -72,7 +72,6 @@ const ManageAccounts = () => {
   };
 
   const columns = [
-    { field: "id", headerName: "ID" },
     { field: "userName", headerName: "Name", flex: 1, cellClassName: "name-column--cell", },
     { field: "email", headerName: "Email", flex: 1 },
     { field: "number", headerName: "Phone Number", flex: 1 },

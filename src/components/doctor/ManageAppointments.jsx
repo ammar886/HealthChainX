@@ -65,7 +65,7 @@ const ManageAppointments = () => {
           number: getAppointmentData.numbers[i],
           address: getAppointmentData.adrs[i],
           doctor: getAppointmentData.doctors[i],
-          appointmentDate: getAppointmentData.appointmentDate[i],
+          appointmentDate: getAppointmentData.appointmentDates[i],
           timeSlot: getAppointmentData.timeSlots[i],
           status: getAppointmentData.status[i],
         });

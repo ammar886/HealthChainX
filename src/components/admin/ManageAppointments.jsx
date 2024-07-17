@@ -74,18 +74,18 @@ const ManageAppointments = () => {
   
       // Convert the appointment data into an array of appointment objects
       const appointmentsData = [];
-      for (let i = getAppointmentData.owner.length - 1; i >= 0; i--) {
+      for (let i = getAppointmentData.owners.length - 1; i >= 0; i--) {
         appointmentsData.push({
           index: i,
-          owner: getAppointmentData.owner[i],
+          owner: getAppointmentData.owners[i],
           firstName: getAppointmentData.firstNames[i],
           lastName: getAppointmentData.lastNames[i],
           email: getAppointmentData.emails[i],
           number: getAppointmentData.numbers[i],
           address: getAppointmentData.adrs[i],
-          doctorAdd: getAppointmentData.doctorsAdd[i],
+          doctorAdd: getAppointmentData.doctorAdds[i],
           doctor: getAppointmentData.doctors[i],
-          appointmentDate: getAppointmentData.appointmentDate[i],
+          appointmentDate: getAppointmentData.appointmentDates[i],
           timeSlot: getAppointmentData.timeSlots[i],
           status: getAppointmentData.status[i],
         });
@@ -102,9 +102,6 @@ const ManageAppointments = () => {
   };
 
   const updateAppointmentStatus = async (userAddress, doctorAddress, index, newStatus) => {
-    console.log("User Address:", userAddress);
-    console.log("Index:", index);
-    console.log("New:", newStatus);
     if (!appointment) return;
     const accounts = await web3.eth.getAccounts();
     const account = accounts[0];

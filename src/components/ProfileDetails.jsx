@@ -38,13 +38,16 @@ const ProfileDetails = () => {
       const accounts = await web3.eth.getAccounts();
       const account = accounts[0];
 
+      console.log(userRole);
+
       switch(userRole) {
         case "patient":
           const patientDetails = await auth.methods.getUserDetails(blockchainAddress).call({ from: account });
           console.log(patientDetails);
           setProfileDetails(patientDetails);
           break;
-        case "doctor" || "receptionist":
+        case "doctor":
+        case "receptionist":
           const employeeDetails = await auth.methods.getEmployeeDetails(blockchainAddress).call({ from: account });
           console.log(employeeDetails);
           setProfileDetails(employeeDetails);

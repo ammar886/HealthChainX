@@ -5,7 +5,7 @@ import { ColorModeContext, useMode } from "../theme";
 import { AuthContext } from "../context/AuthContext";
 import Topbar from "../components/Topbar";
 import ProfileDetails from "../components/ProfileDetails";
-import Sidebar from "../components/patient/Sidebar";
+import Sidebar from "../components/receptionist/Sidebar";
 import ReceptionistDashboard from "../components/receptionist/ReceptionistDashboard";
 import ManagePatients from "../components/receptionist/ManagePatients";
 import PatientRegistration from "../components/receptionist/PatientRegistration";
@@ -36,10 +36,6 @@ function ReceptionistPage() {
             <Routes>
               <Route path="/" element={<ReceptionistDashboard />} />
               <Route path="managepatients" element={<ManagePatients />} />
-              <Route
-                path="manageappointments"
-                element={<ManageAppointments />}
-              />
               <Route
                 path="PatientRegistration"
                 element={<PatientRegistration />}

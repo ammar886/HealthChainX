@@ -48,8 +48,9 @@ const AppointmentHistory = () => {
   
       // Convert the appointment data into an array of appointment objects
       const appointmentsData = [];
-      for (let i = 0; i < getAppointmentData[0].length; i++) {
+      for (let i = getAppointmentData[0].length - 1; i >= 0 ; i--) {
         appointmentsData.push({
+          index: i,
           firstName: getAppointmentData.firstNames[i],
           lastName: getAppointmentData.lastNames[i],
           email: getAppointmentData.emails[i],
@@ -72,7 +73,6 @@ const AppointmentHistory = () => {
   };
 
   const columns = [
-    { field: "id", headerName: "ID", flex: 0.5 },
     { field: "firstName", headerName: "First Name", flex: 1 },
     { field: "lastName", headerName: "Last Name", flex: 1 },
     { field: "email", headerName: "Email", flex: 1 },
@@ -83,8 +83,8 @@ const AppointmentHistory = () => {
     { field: "status", headerName: "Status", flex: 1 },
   ];
 
-  const rows = appointmentsData.map((appointment, i) => ({
-    id: i,
+  const rows = appointmentsData.map((appointment) => ({
+    id: appointment.index,
     firstName: appointment.firstName,
     lastName: appointment.lastName,
     email: appointment.email,

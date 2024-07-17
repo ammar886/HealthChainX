@@ -57,7 +57,7 @@ const PatientDashboard = () => {
   
     // Convert the appointment data into an array of appointment objects
     const appointmentsData = [];
-    for (let i = 0; i < getAppointmentData[0].length; i++) {
+    for (let i = getAppointmentData[0].length - 1; i >= 0 ; i--) {
       appointmentsData.push({
         firstName: getAppointmentData.firstNames[i],
         lastName: getAppointmentData.lastNames[i],

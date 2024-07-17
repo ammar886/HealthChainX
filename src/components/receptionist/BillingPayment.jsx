@@ -1,140 +1,152 @@
-import {
-  Box,
-  Typography,
-  useTheme,
-  TextField,
-  MenuItem,
-  Autocomplete,
-} from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
-import { tokens } from "../../theme";
-import { mockDataInvoices } from "../data/mockData";
+import { useState } from "react";
+import { Box, Button, TextField, MenuItem } from "@mui/material";
+import { Formik } from "formik";
+import * as yup from "yup";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../Header";
-import React, { useState } from "react";
 
-const services = [
-  { label: "Tests", value: 100 },
-  { label: "Xray", value: 200 },
-  { label: "Medicine", value: 50 },
-  { label: "Doctor Fee", value: 150 },
-];
+const BillingForm = () => {
+  const isNonMobile = useMediaQuery("(min-width:600px)");
+  const [services] = useState([
+    { label: "Medicine", price: 50 },
+    { label: "Tests", price: 100 },
+    { label: "X-ray", price: 150 },
+    { label: "Other", price: 200 },
+  ]);
+  const [totalAmount, setTotalAmount] = useState(0);
 
-const Invoices = () => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  const [selectedServices, setSelectedServices] = useState({});
-  const [totalCost, setTotalCost] = useState(0);
-
-  const handleServiceChange = (id, service) => {
-    setSelectedServices((prev) => ({
-      ...prev,
-      [id]: service,
-    }));
-
-    const newTotalCost = Object.values({
-      ...selectedServices,
-      [id]: service,
-    }).reduce((acc, curr) => acc + curr.value, 0);
-
-    setTotalCost(newTotalCost);
+  const calculateTotalAmount = (selectedServices) => {
+    const total = selectedServices.reduce((acc, service) => {
+      const selectedService = services.find((s) => s.label === service);
+      return acc + (selectedService ? selectedService.price : 0);
+    }, 0);
+    setTotalAmount(total);
   };
 
-  const columns = [
-    { field: "id", headerName: "ID" },
-    {
-      field: "name",
-      headerName: "Name",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "phone",
-      headerName: "Phone Number",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-    },
-    {
-      field: "services",
-      headerName: "Services",
-      flex: 1,
-      renderCell: (params) => (
-        <Autocomplete
-          options={services}
-          getOptionLabel={(option) => option.label}
-          onChange={(event, newValue) =>
-            handleServiceChange(params.row.id, newValue)
-          }
-          renderInput={(params) => (
-            <TextField {...params} label="Select Service" />
-          )}
-        />
-      ),
-    },
-    {
-      field: "cost",
-      headerName: "Cost",
-      flex: 1,
-      renderCell: (params) => (
-        <Typography color={colors.greenAccent[500]}>
-          $
-          {selectedServices[params.row.id]
-            ? selectedServices[params.row.id].value
-            : 0}
-        </Typography>
-      ),
-    },
-    {
-      field: "date",
-      headerName: "Date",
-      flex: 1,
-    },
-  ];
+  const handleFormSubmit = (values) => {
+    console.log("Form Submitted", values);
+    console.log("Total Amount:", totalAmount);
+  };
 
   return (
     <Box m="20px">
-      <Header title="INVOICES" subtitle="List of Invoice Balances" />
-      <Box
-        m="40px 0 0 0"
-        height="75vh"
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .name-column--cell": {
-            color: colors.greenAccent[300],
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: colors.primary[400],
-          },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
-          },
-          "& .MuiCheckbox-root": {
-            color: `${colors.greenAccent[200]} !important`,
-          },
-        }}
+      <Header title="BILLING FORM" subtitle="" />
+
+      <Formik
+        initialValues={{ patientName: "", contact: "", services: [] }}
+        validationSchema={billingSchema}
+        onSubmit={handleFormSubmit}
       >
-        <DataGrid checkboxSelection rows={mockDataInvoices} columns={columns} />
-      </Box>
-      <Box mt="20px">
-        <Typography variant="h6" color={colors.greenAccent[500]}>
-          Total Cost: ${totalCost}
-        </Typography>
-      </Box>
+        {({
+          values,
+          errors,
+          touched,
+          handleBlur,
+          handleChange,
+          handleSubmit,
+          setFieldValue,
+        }) => (
+          <form onSubmit={handleSubmit}>
+            <Box
+              display="grid"
+              gap="30px"
+              gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+              sx={{
+                "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+              }}
+            >
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Patient Name"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.patientName}
+                name="patientName"
+                error={!!touched.patientName && !!errors.patientName}
+                helperText={touched.patientName && errors.patientName}
+                sx={{ gridColumn: "span 4" }}
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Contact Number"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.contact}
+                name="contact"
+                error={!!touched.contact && !!errors.contact}
+                helperText={touched.contact && errors.contact}
+                sx={{ gridColumn: "span 4" }}
+              />
+              <TextField
+                select
+                fullWidth
+                variant="filled"
+                label="Services"
+                onBlur={handleBlur}
+                onChange={(event) => {
+                  const {
+                    target: { value },
+                  } = event;
+                  const selectedServices = typeof value === "string" ? value.split(",") : value;
+                  setFieldValue("services", selectedServices);
+                  calculateTotalAmount(selectedServices);
+                }}
+                SelectProps={{
+                  multiple: true,
+                  value: values.services,
+                  renderValue: (selected) => selected.join(", "),
+                }}
+                name="services"
+                error={!!touched.services && !!errors.services}
+                helperText={touched.services && errors.services}
+                sx={{ gridColumn: "span 4" }}
+              >
+                {services.map((service, index) => (
+                  <MenuItem key={index} value={service.label}>
+                    {service.label} (${service.price})
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Total Amount"
+                value={totalAmount}
+                name="totalAmount"
+                InputProps={{
+                  readOnly: true,
+                }}
+                sx={{ gridColumn: "span 4" }}
+              />
+            </Box>
+
+            <Box display="flex" justifyContent="end" mt="20px">
+              <Button type="submit" color="secondary" variant="contained">
+                Submit
+              </Button>
+            </Box>
+          </form>
+        )}
+      </Formik>
     </Box>
   );
 };
 
-export default Invoices;
+const phoneRegExp =
+  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
+
+const billingSchema = yup.object().shape({
+  patientName: yup.string().required("required"),
+  contact: yup
+    .string()
+    .matches(phoneRegExp, "Phone number is not valid")
+    .required("required"),
+  services: yup.array().of(yup.string()).required("Please select at least one service"),
+});
+
+export default BillingForm;

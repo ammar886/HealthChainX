@@ -36,14 +36,8 @@ function ReceptionistPage() {
             <Routes>
               <Route path="/" element={<ReceptionistDashboard />} />
               <Route path="managepatients" element={<ManagePatients />} />
-              <Route
-                path="PatientRegistration"
-                element={<PatientRegistration />}
-              />
-              <Route
-                path="BookAppointmentForm"
-                element={<BookAppointmentForm />}
-              />
+              <Route path="PatientRegistration" element={<PatientRegistration />} />
+              <Route path="BookAppointmentForm" element={<BookAppointmentForm />} />
               <Route path="BillingPayment" element={<BillingPayment />} />
               <Route path="faq" element={<Faq />} />
               <Route path="profiledetails" element={<ProfileDetails />} />

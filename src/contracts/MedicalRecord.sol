@@ -50,7 +50,7 @@ contract MedicalRecord{
         prescription memory newPrescription = prescription({
             doctorAddress: _doctorAddress,
             patientAddress: _patientAddress,
-            appointmentData: _appointmentDate,
+            appointmentDate: _appointmentDate,
             timeSlot: _timeSlot,
             clinicalNotes: _clinicalNotes,
             prescriptionDetails: _prescriptionDetails
@@ -81,5 +81,40 @@ contract MedicalRecord{
             _clinicalNotes,
             _prescriptionDetails
         );
-    }    
+    }
+
+    // Function to retrieve prescription details by patient address
+    function getPrescriptionsByPatient(address _patientAddress) 
+        public 
+        view 
+        returns (
+            address[] memory doctorAddresses,
+            string[] memory doctorNames, 
+            string[] memory appointmentDates, 
+            string[] memory timeSlots, 
+            string[] memory clinicalNotes, 
+            string[] memory prescriptionDetails
+        ) 
+    {
+        uint256 prescriptionCount = prescriptionsByPatientAddress[_patientAddress].length;
+        
+        doctorAddresses = new address[](prescriptionCount);
+        doctorNames = new string[](prescriptionCount);
+        appointmentDates = new string[](prescriptionCount);
+        timeSlots = new string[](prescriptionCount);
+        clinicalNotes = new string[](prescriptionCount);
+        prescriptionDetails = new string[](prescriptionCount);
+
+        for (uint256 i = 0; i < prescriptionCount; i++) {
+            prescription memory currentPrescription = prescriptionsByPatientAddress[_patientAddress][i];
+            doctorAddresses[i] = currentPrescription.doctorAddress;
+            doctorNames[i] = appointment.getEmployeeUsernameAndSpecialization(currentPrescription.doctorAddress);
+            appointmentDates[i] = currentPrescription.appointmentDate;
+            timeSlots[i] = currentPrescription.timeSlot;
+            clinicalNotes[i] = currentPrescription.clinicalNotes;
+            prescriptionDetails[i] = currentPrescription.prescriptionDetails;
+        }
+
+        return (doctorAddresses, doctorNames, appointmentDates, timeSlots, clinicalNotes, prescriptionDetails);
+    }
 }

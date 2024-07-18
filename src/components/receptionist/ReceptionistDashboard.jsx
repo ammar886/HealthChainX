@@ -1,10 +1,12 @@
+import { useState, useEffect, useContext } from 'react';
+import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
+import { AuthContext } from '../../context/AuthContext';
 import { mockTransactions } from "../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import BadgeIcon from '@mui/icons-material/Badge';
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Person4Icon from '@mui/icons-material/Person4';
 import Header from "../Header";
 import StatBox from "../StatBox";
@@ -12,6 +14,83 @@ import StatBox from "../StatBox";
 const DoctorDashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const [accounts, setAccounts] = useState(null);
+  const [auth, setAuth] = useState(null);
+  const [appointment, setAppointment] = useState(null);
+  const [appointmentsData, setAppointmentsData] = useState([]);
+  const [todaysAppointments, setTodaysAppointments] = useState(0);
+  const [doctors, setDoctors] = useState(0);
+  const [patients, setPatients] = useState(0);
+  const { blockchainAddress } = useContext(AuthContext);
+
+  const loadAccounts = async () => {
+    let { auth, appointment, accounts } = await loadBlockchainData();
+  
+    setAccounts(accounts);
+    setAuth(auth);
+    setAppointment(appointment);
+
+    loadData(auth, appointment);
+  };
+  
+  useEffect(() => {
+    loadWeb3();
+  }, []);
+  
+  useEffect(() => {
+    loadAccounts();
+  }, []);
+
+  const loadData = async (auth, appointment) => {
+    if (!auth) {
+      console.log('Auth object is not initialized yet. Please try again.');
+      return;
+    }
+    if (!appointment) {
+      console.log('Appointment object is not initialized yet. Please try again.');
+      return;
+    }
+
+    const accounts = await web3.eth.getAccounts();
+    const account = accounts[0];
+  
+    const doctors = await auth.methods.getLengthEmployees("doctor").call({ from: account });
+    const patients = await auth.methods.getLengthEmployees("patient").call({ from: account });
+
+    const currentDate = new Date().toLocaleDateString();
+    const appointments = await appointment.methods.getCurrentDateAppointementCount(currentDate).call({ from: account });
+
+    setDoctors(doctors.toString());
+    setPatients(patients.toString());
+    setTodaysAppointments(appointments.toString());
+
+    const getAppointmentData = await appointment.methods.getAllAppointments().call({ from: account });
+      console.log("appointmentData:", getAppointmentData); // Add this line
+  
+      // Convert the appointment data into an array of appointment objects
+      const appointmentsData = [];
+      for (let i = getAppointmentData.owners.length - 1; i >= 0; i--) {
+        appointmentsData.push({
+          index: i,
+          owner: getAppointmentData.owners[i],
+          firstName: getAppointmentData.firstNames[i],
+          lastName: getAppointmentData.lastNames[i],
+          email: getAppointmentData.emails[i],
+          number: getAppointmentData.numbers[i],
+          address: getAppointmentData.adrs[i],
+          doctorAdd: getAppointmentData.doctorAdds[i],
+          doctor: getAppointmentData.doctors[i],
+          appointmentDate: getAppointmentData.appointmentDates[i],
+          timeSlot: getAppointmentData.timeSlots[i],
+          status: getAppointmentData.status[i],
+        });
+      }
+  
+      setAppointmentsData(appointmentsData);
+      console.log("new appointments:", appointmentsData);
+      localStorage.setItem('appointments', JSON.stringify(appointmentsData));
+  };
 
   return (
     <Box m="20px">
@@ -44,7 +123,7 @@ const DoctorDashboard = () => {
       >
         {/* ROW 1 */}
         <Box
-          gridColumn="span 3"
+          gridColumn="span 4"
           backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
@@ -52,7 +131,7 @@ const DoctorDashboard = () => {
         >
           <StatBox
             title="No. of Doctors"
-            value="10"
+            value={doctors}
             icon={
               <LocalHospitalIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -61,7 +140,7 @@ const DoctorDashboard = () => {
           />
         </Box>
         <Box
-          gridColumn="span 3"
+          gridColumn="span 4"
           backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
@@ -69,7 +148,7 @@ const DoctorDashboard = () => {
         >
           <StatBox
             title="Total Patients"
-            value="10"
+            value={patients}
             icon={
               <BadgeIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -78,32 +157,15 @@ const DoctorDashboard = () => {
           />
         </Box>
         <Box
-          gridColumn="span 3"
+          gridColumn="span 4"
           backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
           justifyContent="center"
         >
           <StatBox
-            title="Total Receptionists"
-            value="10"
-            icon={
-              <PersonAddIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="Total Appointments"
-            value="10"
+            title="Today's Appointments"
+            value={todaysAppointments}
             icon={
               < Person4Icon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -126,12 +188,12 @@ const DoctorDashboard = () => {
             p="15px"
           >
             <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-              Recent Appointments
+              Completed Appointments for Billing
             </Typography>
           </Box>
-          {mockTransactions.map((transaction, i) => (
+          {appointmentsData.map((appointment, i) => (
             <Box
-              key={`${transaction.txId}-${i}`}
+              key={`${i}`}
               display="flex"
               justifyContent="space-between"
               alignItems="center"
@@ -144,19 +206,20 @@ const DoctorDashboard = () => {
                   variant="h5"
                   fontWeight="600"
                 >
-                  {transaction.txId}
+                  {appointment.firstName} {appointment.lastName}
                 </Typography>
                 <Typography color={colors.grey[100]}>
-                  {transaction.user}
+                  {appointment.doctor}
                 </Typography>
               </Box>
-              <Box color={colors.grey[100]}>{transaction.date}</Box>
+              <Box color={colors.grey[100]}>{appointment.email}</Box>
+              <Box color={colors.grey[100]}>{appointment.appointmentDate}</Box>
               <Box
                 backgroundColor={colors.greenAccent[500]}
                 p="5px 10px"
                 borderRadius="4px"
               >
-                ${transaction.cost}
+                {appointment.timeSlot}
               </Box>
             </Box>
           ))}

@@ -1,25 +1,25 @@
 import { useEffect, useState, useContext } from "react";
+import { useNavigate } from 'react-router-dom';
+import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
+import { AuthContext } from '../../context/AuthContext';
 import { Box } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { useTheme } from "@mui/material";
-import Header from "../Header";
-import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
-import { AuthContext } from '../../context/AuthContext';
 import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { useNavigate } from 'react-router-dom';
-
+import Header from "../Header";
 
 const ManageAppointments = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const navigate = useNavigate();
   const [auth, setAuth] = useState(null);
   const [appointment, setAppointment] = useState(null);
   const [appointmentsData, setAppointmentsData] = useState([]);
   const { blockchainAddress } = useContext(AuthContext);  
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const navigate = useNavigate();
 
   const loadAccounts = async () => {
     let { auth, appointment } = await loadBlockchainData();

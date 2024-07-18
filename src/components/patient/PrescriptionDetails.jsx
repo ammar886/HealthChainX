@@ -1,33 +1,25 @@
 import { useState, useEffect, useContext } from 'react';
-import { useLocation } from 'react-router-dom';
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import { AuthContext } from '../../context/AuthContext';
 import { Box, Button, TextField, MenuItem } from "@mui/material";
 import { Formik } from "formik";
-import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../Header";
 
-
-const PrescriptionForm = () => {
+const PrescriptionDetails = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  
   const [auth, setAuth] = useState(null);
   const [appointment, setAppointment] = useState(null);
   const [medicalRecord, setMedicalRecord] = useState(null);
-  const { blockchainAddress } = useContext(AuthContext); 
-  const location = useLocation();
+  const [appointmentsData, setAppointmentsData] = useState([]);
+  const { blockchainAddress } = useContext(AuthContext);
+  const [loading, setLoading] = useState(true);
 
   const queryParams = new URLSearchParams(location.search);
-  const index = decodeURIComponent(queryParams.get('id'));
-  const patientBlock = decodeURIComponent(queryParams.get('owner'));
-  const firstName = decodeURIComponent(queryParams.get('firstName'));
-  const lastName = decodeURIComponent(queryParams.get('lastName'));
-  const email = decodeURIComponent(queryParams.get('email'));
-  const number = decodeURIComponent(queryParams.get('number'));
-  const address = decodeURIComponent(queryParams.get('address'));
-  const appointmentDate = decodeURIComponent(queryParams.get('appointmentDate'));
-  const timeSlot = decodeURIComponent(queryParams.get('slot'));
-  console.log(patientBlock, firstName, lastName, email, number, address, appointmentDate, timeSlot);  
+  const clinicalNote = decodeURIComponent(queryParams.get('clinicalNote'));
+  const prescriptionDetail = decodeURIComponent(queryParams.get('prescriptionDetail'));
+  console.log(blockchainAddress, clinicalNote, prescriptionDetail);
 
   const loadAccounts = async () => {
     let { auth, appointment, medicalRecord } = await loadBlockchainData();
@@ -35,6 +27,8 @@ const PrescriptionForm = () => {
     setAuth(auth);
     setAppointment(appointment); 
     setMedicalRecord(medicalRecord);
+
+    loadData(medicalRecord);
   };
   
   useEffect(() => {
@@ -45,51 +39,55 @@ const PrescriptionForm = () => {
     loadAccounts();
   }, []);
 
-  const handleFormSubmit = async (values) => {
-    try{
-     createPrescription(values);
-    }catch(error){
-      console.error("Error saving prescription:", error);
-    }
-  };
-
-  const createPrescription = async(values) => {
-    try{
-      console.log("Doctor Block Address:"  + patientBlock)
-
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const account = accounts[0]; // The first account is the user's primary account
-
-      // Send the transaction to the blockchain
-      await medicalRecord.methods
-        .storePrescription(blockchainAddress, patientBlock, index, appointmentDate, timeSlot, values.clinicalNotes, values.prescription)
-        .send({ from: account });
-    
-      alert("Prescription Created Succesfully!");
-    }catch(e){
+  const loadData = async (medicalRecord) => {
+    try {
+      const getAppointmentData = await appointment.methods.getAppointments().call({ from: blockchainAddress });
+      console.log("appointmentData:", getAppointmentData); // Add this line
+  
+      // Convert the appointment data into an array of appointment objects
+      const appointmentsData = [];
+      for (let i = getAppointmentData[0].length - 1; i >= 0 ; i--) {
+        appointmentsData.push({
+          index: i,
+          firstName: getAppointmentData.firstNames[i],
+          lastName: getAppointmentData.lastNames[i],
+          email: getAppointmentData.emails[i],
+          number: getAppointmentData.numbers[i],
+          address: getAppointmentData.adrs[i],
+          doctor: getAppointmentData.doctors[i],
+          timeSlot: getAppointmentData.timeSlots[i],
+          status: getAppointmentData.status[i],
+        });
+      }
+  
+      setAppointmentsData(appointmentsData);
+      console.log("new appointments:", appointmentsData);
+      localStorage.setItem('appointments', JSON.stringify(appointmentsData));
+    } catch (e) {
       console.error(e.message);
       alert("Something went wrong!");
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Box m="20px">
-      <Header title="Save Patient Record" subtitle="Create a Patient Record " />
+      <Header title="PROFILE DETAILS" subtitle="View Profile Details" />
 
       <Formik
-        onSubmit={handleFormSubmit}
-        initialValues={{ ...initialValues }}
-        validationSchema={checkoutSchema}
+        initialValues={appointmentsData}
       >
         {({
           values,
-          errors,
-          touched,
           handleBlur,
           handleChange,
-          handleSubmit,
         }) => (
-          <form onSubmit={handleSubmit}>
+          <form>
             <Box
               display="grid"
               gap="30px"
@@ -98,29 +96,28 @@ const PrescriptionForm = () => {
                 "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
               }}
             >
-              {/* Existing fields */}
               <TextField
                 fullWidth
                 variant="filled"
                 type="text"
-                label="First Name"
+                label="Blockchain Address"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={firstName}
-                name="firstName"
-                sx={{ gridColumn: "span 2" }}
+                value={blockchainAddress}
+                name="blockChainAdd"
+                sx={{ gridColumn: "span 4" }}
                 disabled
               />
               <TextField
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Last Name"
+                label="Name"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={lastName}
-                name="lastName"
-                sx={{ gridColumn: "span 2" }}
+                value={values.firstName + " " + values.lastName}
+                name="name"
+                sx={{ gridColumn: "span 4" }}
                 disabled
               />
               <TextField
@@ -130,9 +127,9 @@ const PrescriptionForm = () => {
                 label="Email"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={email}
+                value={values.email}
                 name="email"
-                sx={{ gridColumn: "span 2" }}
+                sx={{ gridColumn: "span 4" }}
                 disabled
               />
               <TextField
@@ -142,9 +139,9 @@ const PrescriptionForm = () => {
                 label="Contact Number"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={number}
-                name="contact"
-                sx={{ gridColumn: "span 2" }}
+                value={values.number}
+                name="number"
+                sx={{ gridColumn: "span 4" }}
                 disabled
               />
               <TextField
@@ -154,7 +151,7 @@ const PrescriptionForm = () => {
                 label="Address"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={address}
+                value={values.address}
                 name="address"
                 sx={{ gridColumn: "span 4" }}
                 disabled
@@ -163,12 +160,12 @@ const PrescriptionForm = () => {
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Date"
+                label="Doctor Name"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={appointmentDate}
-                name="date"
-                sx={{ gridColumn: "span 2" }}
+                value={values.doctor}
+                name="doctor name"
+                sx={{ gridColumn: "span 4" }}
                 disabled
               />
               <TextField
@@ -178,12 +175,23 @@ const PrescriptionForm = () => {
                 label="Time Slot"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={timeSlot}
+                value={values.timeSlot}
                 name="timeSlot"
                 sx={{ gridColumn: "span 2" }}
                 disabled
               />
-              
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Status"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.status}
+                name="status"
+                sx={{ gridColumn: "span 2" }}
+                disabled
+              />
               <TextField
                 fullWidth
                 variant="filled"
@@ -193,11 +201,10 @@ const PrescriptionForm = () => {
                 label="Clinical Notes"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.clinicalNotes}
+                value={clinicalNote}
                 name="clinicalNotes"
-                error={!!touched.clinicalNotes && !!errors.clinicalNotes}
-                helperText={touched.clinicalNotes && errors.clinicalNotes}
                 sx={{ gridColumn: "span 4" }}
+                disabled
               />
               <TextField
                 fullWidth
@@ -208,18 +215,11 @@ const PrescriptionForm = () => {
                 label="Prescription"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.prescription}
+                value={prescriptionDetail}
                 name="prescription"
-                error={!!touched.prescription && !!errors.prescription}
-                helperText={touched.prescription && errors.prescription}
                 sx={{ gridColumn: "span 4" }}
+                disabled
               />
-            </Box>
-
-            <Box display="flex" justifyContent="end" mt="20px">
-              <Button type="submit" color="secondary" variant="contained">
-                SAVE PATIENT RECORD
-              </Button>
             </Box>
           </form>
         )}
@@ -228,14 +228,4 @@ const PrescriptionForm = () => {
   );
 };
 
-const checkoutSchema = yup.object().shape({
-  clinicalNotes: yup.string().required("required"),
-  prescription: yup.string().required("required"),
-});
-
-const initialValues = {
-  clinicalNotes: "",
-  prescription: "",
-};
-
-export default PrescriptionForm;
+export default PrescriptionDetails

@@ -4,6 +4,8 @@ import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
+import IconButton from '@mui/material/IconButton';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import Header from "../Header";
 
 const ManagePatients = () => {
@@ -88,17 +90,13 @@ const ManagePatients = () => {
           aria-label="navigate to appointment"
           onClick={() => {
             const queryParams = new URLSearchParams({
-              id: encodeURIComponent(params.row.id),
-              owner: encodeURIComponent(params.row.owner),
-              firstName: encodeURIComponent(params.row.firstName),
-              lastName: encodeURIComponent(params.row.lastName),
+              blockChainAdd: encodeURIComponent(params.row.blockChainAdd),
+              username: encodeURIComponent(params.row.username),
               email: encodeURIComponent(params.row.email),
               number: encodeURIComponent(params.row.number),
-              address: encodeURIComponent(params.row.adr),
-              appointmentDate: encodeURIComponent(params.row.appointmentDate),
-              slot: encodeURIComponent(params.row.timeSlot),
+              userRole: encodeURIComponent(params.row.userRole),
             }).toString();
-            navigate(`/doctor/PrescriptionForm?${queryParams}`);
+            navigate(`/receptionist/bookappointmentform?${queryParams}`);
           }}
         >
           <NavigateNextIcon />

@@ -76,7 +76,7 @@ const MedicalRecords = () => {
   };
 
   const columns = [
-    { field: "doctorName", headerName: "Name", flex: 1, cellClassName: "name-column--cell", },
+    { field: "doctorName", headerName: "Doctor Name", flex: 1, cellClassName: "name-column--cell", },
     { field: "appointmentDate", headerName: "Date", flex: 1 },
     { field: "timeSlot", headerName: "Time Slot", flex: 1 },
     { field: "clinicalNote", headerName: "Clinical Notes", flex: 1 },

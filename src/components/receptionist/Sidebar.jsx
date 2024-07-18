@@ -136,13 +136,6 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
-              title="Book Appointments"
-              to="/receptionist/BookAppointmentForm"
-              icon={<ContactsOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
               title="Patient Registration"
               to="/receptionist/patientregistration"
               icon={<PersonOutlinedIcon />}

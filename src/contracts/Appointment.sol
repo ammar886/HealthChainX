@@ -167,13 +167,47 @@ contract Appointment {
         );
     }
 
-    function getAppointmentByDateAndTime(address patientAddress, string memory appointmentDate, string memory timeSlot) public view returns (appointment memory) {
+    function getAppointmentByDateAndTime(address patientAddress, string memory appDate, string memory tSlot) 
+        public 
+        view 
+        returns (
+            string memory firstName,
+            string memory lastName,
+            string memory email,
+            string memory number,
+            string memory adr,
+            string memory doctor,
+            string memory appointmentDate,
+            string memory timeSlot,
+            string memory status
+        ) 
+    {
         appointment[] memory appointments = appointmentsByPatient[patientAddress];
         
         for (uint i = 0; i < appointments.length; i++) {
-            if (keccak256(abi.encodePacked(appointments[i].appointmentDate)) == keccak256(abi.encodePacked(appointmentDate)) &&
-                keccak256(abi.encodePacked(appointments[i].timeSlot)) == keccak256(abi.encodePacked(timeSlot))) {
-                return appointments[i];
+            if (keccak256(abi.encodePacked(appointments[i].appointmentDate)) == keccak256(abi.encodePacked(appDate)) &&
+                keccak256(abi.encodePacked(appointments[i].timeSlot)) == keccak256(abi.encodePacked(tSlot))) {
+                    firstName = appointments[i].firstName;
+                    lastName = appointments[i].lastName;
+                    email = appointments[i].email;
+                    number = appointments[i].number;
+                    adr = appointments[i].adr;
+                    doctor = getEmployeeUsernameAndSpecialization(appointments[i].doctor);
+                    appointmentDate = appointments[i].appointmentDate;
+                    timeSlot = appointments[i].timeSlot;
+                    status = appointments[i].status;
+                
+                return (
+                    firstName,
+                    lastName,
+                    email,
+                    number,
+                    adr,
+                    doctor,
+                    appointmentDate,
+                    timeSlot,
+                    status
+                );
             }
         }
 

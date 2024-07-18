@@ -138,7 +138,7 @@ const PrescriptionDetails = () => {
                 label="Address"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.address}
+                value={values.adr}
                 name="address"
                 sx={{ gridColumn: "span 4" }}
                 disabled

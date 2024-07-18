@@ -9,14 +9,17 @@ contract Appointment {
         auth = Auth(_authAddress);
     }
 
-    uint public totalAppointmets = 0; 
+    uint public totalAppointments = 0; 
     appointment[] public allAppointments;
 
-    mapping(address => appointment[]) appointmentsByOwner;
+    mapping(address => appointment[]) appointmentsByPatient;
     mapping(address => appointment[]) appointmentsByDoctor;
 
     mapping(uint => uint) public allAppointmentsToUserAppointments;
     mapping(uint => uint) public allAppointmentsToDoctorAppointments;
+
+    mapping(uint => uint) public userAppointmentsToAllAppointments;
+    mapping(uint => uint) public doctorAppointmentsToAllAppointments;
 
     struct appointment {
         address owner;
@@ -64,7 +67,9 @@ contract Appointment {
         string memory _timeSlot,
         string memory _status
     ) public {
-        totalAppointmets++;
+        totalAppointments++;
+        
+        // Create a new appointment struct
         appointment memory newAppointment = appointment(
             _owner,
             _firstName,
@@ -77,9 +82,13 @@ contract Appointment {
             _timeSlot,
             _status
         );
-        appointmentsByOwner[_owner].push(newAppointment);
+
+        // Push the new appointment to arrays
+        appointmentsByPatient[_owner].push(newAppointment);
         appointmentsByDoctor[_doctor].push(newAppointment);
         allAppointments.push(newAppointment);
+
+        // Emit the appointmentCreated event
         emit appointmentCreated(
             _owner,
             _firstName,
@@ -92,9 +101,19 @@ contract Appointment {
             _timeSlot,
             _status
         );
-        allAppointmentsToUserAppointments[allAppointments.length - 1] = appointmentsByOwner[_owner].length - 1;
-        allAppointmentsToDoctorAppointments[allAppointments.length - 1] = appointmentsByDoctor[_doctor].length - 1;
+
+        // Get the lengths once and reuse them
+        uint256 allAppointmentsLength = allAppointments.length;
+        uint256 patientAppointmentsLength = appointmentsByPatient[_owner].length;
+        uint256 doctorAppointmentsLength = appointmentsByDoctor[_doctor].length;
+
+        // Directly assign the lengths to the mappings without using temporary variables
+        allAppointmentsToUserAppointments[allAppointmentsLength - 1] = patientAppointmentsLength - 1;
+        allAppointmentsToDoctorAppointments[allAppointmentsLength - 1] = doctorAppointmentsLength - 1;
+        userAppointmentsToAllAppointments[patientAppointmentsLength - 1] = allAppointmentsLength - 1;
+        doctorAppointmentsToAllAppointments[doctorAppointmentsLength - 1] = allAppointmentsLength - 1;
     }
+
 
     function getAppointments()
         public
@@ -111,7 +130,7 @@ contract Appointment {
             string[] memory status
         )
     {
-        appointment[] memory userAppointments = appointmentsByOwner[msg.sender];
+        appointment[] memory userAppointments = appointmentsByPatient[msg.sender];
 
         firstNames = new string[](userAppointments.length);
         lastNames = new string[](userAppointments.length);
@@ -164,29 +183,30 @@ contract Appointment {
             string[] memory status
         )
     {
-        appointment[] memory userAppointments = appointmentsByDoctor[msg.sender];
+        appointment[] memory doctorAppointments = appointmentsByDoctor[msg.sender];
 
-        owners = new address[](userAppointments.length);
-        firstNames = new string[](userAppointments.length);
-        lastNames = new string[](userAppointments.length);
-        emails = new string[](userAppointments.length);
-        numbers = new string[](userAppointments.length);
-        adrs = new string[](userAppointments.length);
-        doctors = new string[](userAppointments.length);
-        appointmentDates = new string[](userAppointments.length);
-        timeSlots = new string[](userAppointments.length);
-        status = new string[](userAppointments.length);
+        owners = new address[](doctorAppointments.length);
+        firstNames = new string[](doctorAppointments.length);
+        lastNames = new string[](doctorAppointments.length);
+        emails = new string[](doctorAppointments.length);
+        numbers = new string[](doctorAppointments.length);
+        adrs = new string[](doctorAppointments.length);
+        doctors = new string[](doctorAppointments.length);
+        appointmentDates = new string[](doctorAppointments.length);
+        timeSlots = new string[](doctorAppointments.length);
+        status = new string[](doctorAppointments.length);
 
-        for (uint256 i = 0; i < userAppointments.length; i++) {
-            firstNames[i] = userAppointments[i].firstName;
-            lastNames[i] = userAppointments[i].lastName;
-            emails[i] = userAppointments[i].email;
-            numbers[i] = userAppointments[i].number;
-            adrs[i] = userAppointments[i].adr;
-            doctors[i] = getEmployeeUsernameAndSpecialization(userAppointments[i].doctor);
-            appointmentDates[i] = userAppointments[i].appointmentDate;
-            timeSlots[i] = userAppointments[i].timeSlot;
-            status[i] = userAppointments[i].status;
+        for (uint256 i = 0; i < doctorAppointments.length; i++) {
+            owners[i] = doctorAppointments[i].owner;
+            firstNames[i] = doctorAppointments[i].firstName;
+            lastNames[i] = doctorAppointments[i].lastName;
+            emails[i] = doctorAppointments[i].email;
+            numbers[i] = doctorAppointments[i].number;
+            adrs[i] = doctorAppointments[i].adr;
+            doctors[i] = getEmployeeUsernameAndSpecialization(doctorAppointments[i].doctor);
+            appointmentDates[i] = doctorAppointments[i].appointmentDate;
+            timeSlots[i] = doctorAppointments[i].timeSlot;
+            status[i] = doctorAppointments[i].status;
         }
 
         return (
@@ -281,13 +301,42 @@ contract Appointment {
         uint doctorAppointmentsIndex = allAppointmentsToDoctorAppointments[allAppointmentsIndex];
 
         require(
-            userAppointmentsIndex < appointmentsByOwner[userAddress].length,
+            userAppointmentsIndex < appointmentsByPatient[userAddress].length,
             "appointment does not exist"
         );
 
-        string memory originalStatus = appointmentsByOwner[userAddress][userAppointmentsIndex].status;
+        string memory originalStatus = appointmentsByPatient[userAddress][userAppointmentsIndex].status;
 
-        appointmentsByOwner[userAddress][userAppointmentsIndex].status = newStatus;
+        appointmentsByPatient[userAddress][userAppointmentsIndex].status = newStatus;
+        appointmentsByDoctor[doctorAddress][doctorAppointmentsIndex].status = newStatus;
+        allAppointments[allAppointmentsIndex].status = newStatus;
+
+        emit AppointmentStatusUpdated(
+            userAddress,
+            doctorAddress,
+            allAppointmentsIndex,
+            originalStatus,
+            newStatus
+        );
+    }
+
+    function updateAppointmentStatusByDoctor(
+        address userAddress,
+        address doctorAddress,
+        uint doctorAppointmentsIndex
+    ) public {
+        uint allAppointmentsIndex = doctorAppointmentsToAllAppointments[doctorAppointmentsIndex];
+        uint userAppointmentsIndex = allAppointmentsToUserAppointments[allAppointmentsIndex];
+        
+        require(
+            doctorAppointmentsIndex < appointmentsByDoctor[doctorAddress].length,
+            "appointment does not exist"
+        );
+
+        string memory newStatus = "completed";
+        string memory originalStatus = appointmentsByDoctor[doctorAddress][doctorAppointmentsIndex].status;
+
+        appointmentsByPatient[userAddress][userAppointmentsIndex].status = newStatus;
         appointmentsByDoctor[doctorAddress][doctorAppointmentsIndex].status = newStatus;
         allAppointments[allAppointmentsIndex].status = newStatus;
 
@@ -305,28 +354,18 @@ contract Appointment {
     view
     returns (string[] memory)
     {
-        uint count = 0;
-        // First pass: count the number of booked time slots
-        for (uint i = 0; i < allAppointments.length; i++) {
-            if (
-                keccak256(abi.encodePacked(allAppointments[i].doctor)) == keccak256(abi.encodePacked(_doctorAdd)) &&
-                keccak256(abi.encodePacked(allAppointments[i].appointmentDate)) == keccak256(abi.encodePacked(_currentDate))
-            ) {
-                count++;
-            }
-        }
+        appointment[] memory doctorAppointments = appointmentsByDoctor[_doctorAdd];
 
         // Allocate memory array with the exact count
-        string[] memory exactBookedTimeSlots = new string[](count);
+        string[] memory exactBookedTimeSlots = new string[](doctorAppointments.length);
 
         // Second pass: populate the results
         uint index = 0;
-        for (uint i = 0; i < allAppointments.length && index < count; i++) {
+        for (uint256 i = 0; i < doctorAppointments.length && index < doctorAppointments.length; i++) {
             if (
-                keccak256(abi.encodePacked(allAppointments[i].doctor)) == keccak256(abi.encodePacked(_doctorAdd)) &&
-                keccak256(abi.encodePacked(allAppointments[i].appointmentDate)) == keccak256(abi.encodePacked(_currentDate))
+                keccak256(abi.encodePacked(doctorAppointments[i].appointmentDate)) == keccak256(abi.encodePacked(_currentDate))
             ) {
-                exactBookedTimeSlots[index] = allAppointments[i].timeSlot;
+                exactBookedTimeSlots[index] = doctorAppointments[i].timeSlot;
                 index++;
             }
         }

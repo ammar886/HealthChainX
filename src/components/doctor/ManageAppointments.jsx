@@ -51,13 +51,14 @@ const ManageAppointments = () => {
     setIsRefreshing(true);
   
     try {
-      const getAppointmentData = await appointment.methods.getAppointmentsByDoctor(blockchainAddress).call({ from: blockchainAddress });
+      const getAppointmentData = await appointment.methods.getAppointmentsByDoctor().call({ from: blockchainAddress });
       console.log("appointmentData:", getAppointmentData); // Add this line
   
       // Convert the appointment data into an array of appointment objects
       const appointmentsData = [];
       for (let i = getAppointmentData[0].length - 1; i >= 0; i--) {
         appointmentsData.push({
+          index: i,
           owner: getAppointmentData.owners[i],
           firstName: getAppointmentData.firstNames[i],
           lastName: getAppointmentData.lastNames[i],
@@ -102,6 +103,7 @@ const ManageAppointments = () => {
           aria-label="navigate to appointment"
           onClick={() => {
             const queryParams = new URLSearchParams({
+              id: encodeURIComponent(params.row.id),
               owner: encodeURIComponent(params.row.owner),
               firstName: encodeURIComponent(params.row.firstName),
               lastName: encodeURIComponent(params.row.lastName),
@@ -120,8 +122,8 @@ const ManageAppointments = () => {
     }
   ];
 
-  const rows = appointmentsData.map((appointment, i) => ({
-    id: i,
+  const rows = appointmentsData.map((appointment) => ({
+    id: appointment.index,
     owner: appointment.owner,
     firstName: appointment.firstName,
     lastName: appointment.lastName,

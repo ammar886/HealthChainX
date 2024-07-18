@@ -16,47 +16,48 @@ contract MedicalRecord{
     prescription[] public allPrescriptions;
 
     // New mappings
-    mapping(address => prescription[]) prescriptionsByOwner; // Mapping from owner's address to prescriptions
-    mapping(string => prescription[]) prescriptionsByPatientAddress; // Mapping from patient's address to prescriptions
+    mapping(address => prescription[]) prescriptionsByDoctorAddress;
+    mapping(address => prescription[]) prescriptionsByPatientAddress;
 
     struct prescription{
-        address owner;
-        string patientAddress;
-        string appointmentData;
+        address doctorAddress;
+        address patientAddress;
+        string appointmentDate;
         string timeSlot;
         string clinicalNotes;
         string prescriptionDetails;
     }
 
     event prescriptionCreated(
-        address owner,
-        string patientAddress,
-        string appointmentData,
+        address doctorAddress,
+        address patientAddress,
+        string appointmentDate,
         string timeSlot,
         string clinicalNotes,
         string prescriptionDetails
     );
 
     function storePrescription(
-        address _owner,
-        string memory _patientAddress,
-        string memory _appointmentData,
+        address _doctorAddress,
+        address _patientAddress,
+        uint _index,
+        string memory _appointmentDate,
         string memory _timeSlot,
         string memory _clinicalNotes,
         string memory _prescriptionDetails
     ) public {
         // Create a new prescription object
         prescription memory newPrescription = prescription({
-            owner: _owner,
+            doctorAddress: _doctorAddress,
             patientAddress: _patientAddress,
-            appointmentData: _appointmentData,
+            appointmentData: _appointmentDate,
             timeSlot: _timeSlot,
             clinicalNotes: _clinicalNotes,
             prescriptionDetails: _prescriptionDetails
         });
 
         // Store the new prescription in the mappings
-        prescriptionsByOwner[msg.sender].push(newPrescription); // Update mapping for owner
+        prescriptionsByDoctorAddress[_doctorAddress].push(newPrescription); // Update mapping for owner
         prescriptionsByPatientAddress[_patientAddress].push(newPrescription); // Update mapping for patient
 
         // Also store it in the global array of all prescriptions
@@ -65,10 +66,17 @@ contract MedicalRecord{
         // Increment the total number of prescriptions
         totalPrescriptions += 1;
 
-        emit prescriptionCreated(
-            _owner,
+        // Call the function on the Appointment contract
+        appointment.updateAppointmentStatusByDoctor(
             _patientAddress,
-            _appointmentData,
+            _doctorAddress,
+            _index
+        );
+
+        emit prescriptionCreated(
+            _doctorAddress,
+            _patientAddress,
+            _appointmentDate,
             _timeSlot,
             _clinicalNotes,
             _prescriptionDetails

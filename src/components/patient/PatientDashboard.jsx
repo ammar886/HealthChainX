@@ -65,6 +65,7 @@ const PatientDashboard = () => {
         number: getAppointmentData.numbers[i],
         address: getAppointmentData.adrs[i],
         doctor: getAppointmentData.doctors[i],
+        appointmentDate: getAppointmentData.appointmentDates[i],
         timeSlot: getAppointmentData.timeSlots[i],
         status: getAppointmentData.status[i],
       });
@@ -216,6 +217,7 @@ const PatientDashboard = () => {
                 </Typography>
               </Box>
               <Box color={colors.grey[100]}>{appointment.email}</Box>
+              <Box color={colors.grey[100]}>{appointment.appointmentDate}</Box>
               <Box
                 backgroundColor={colors.greenAccent[500]}
                 p="5px 10px"

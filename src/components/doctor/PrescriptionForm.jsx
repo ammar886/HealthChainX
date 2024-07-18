@@ -13,11 +13,13 @@ const PrescriptionForm = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [accounts, setAccounts] = React.useState(null);
   const [auth, setAuth] = React.useState(null);
+  const [appointment, setAppointment] = useState(null);
   const [medicalRecord, setMedicalRecord] = useState(null);
   const { blockchainAddress } = useContext(AuthContext); 
   const location = useLocation();
 
   const queryParams = new URLSearchParams(location.search);
+  const index = decodeURIComponent(queryParams.get('id'));
   const patientBlock = decodeURIComponent(queryParams.get('owner'));
   const firstName = decodeURIComponent(queryParams.get('firstName'));
   const lastName = decodeURIComponent(queryParams.get('lastName'));
@@ -29,9 +31,10 @@ const PrescriptionForm = () => {
   console.log(patientBlock, firstName, lastName, email, number, address, appointmentDate, timeSlot);  
 
   const loadAccounts = async () => {
-    let { auth, medicalRecord } = await loadBlockchainData();
+    let { auth, appointment, medicalRecord } = await loadBlockchainData();
 
     setAuth(auth);
+    setAppointment(appointment); 
     setMedicalRecord(medicalRecord);
   };
   
@@ -53,14 +56,14 @@ const PrescriptionForm = () => {
 
   const createPrescription = async(values) => {
     try{
-      console.log("Doctor Block Address:"  + blockchainAddress)
+      console.log("Doctor Block Address:"  + patientBlock)
 
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       const account = accounts[0]; // The first account is the user's primary account
 
       // Send the transaction to the blockchain
       await medicalRecord.methods
-        .storePrescription(blockchainAddress, patientBlock, appointmentDate, timeSlot, values.clinicalNotes, values.prescription)
+        .storePrescription(blockchainAddress, patientBlock, index, appointmentDate, timeSlot, values.clinicalNotes, values.prescription)
         .send({ from: account });
     
       alert("Prescription Created Succesfully!");

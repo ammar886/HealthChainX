@@ -5,6 +5,8 @@ import { AuthContext } from '../../context/AuthContext';
 import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
+import IconButton from '@mui/material/IconButton';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import Header from "../Header";
 
 const MedicalRecords = () => {
@@ -17,7 +19,7 @@ const MedicalRecords = () => {
   const [medicalRecord, setMedicalRecord] = useState(null);
   const [prescriptions, setPrescriptions] = useState([]);
   const { blockchainAddress } = useContext(AuthContext);
-  const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const loadAccounts = async () => {
     let { auth, appointment, medicalRecord } = await loadBlockchainData();
@@ -26,6 +28,10 @@ const MedicalRecords = () => {
     setAppointment(appointment); 
     setMedicalRecord(medicalRecord);
 
+    loadData(medicalRecord);
+  };
+
+  const handleRefresh = () => {
     loadData(medicalRecord);
   };
 
@@ -38,23 +44,26 @@ const MedicalRecords = () => {
   }, []);
 
   const loadData = async (medicalRecord) => {
+    if(!medicalRecord) return;
+    setIsRefreshing(true);
+
     try {
       const accounts = await web3.eth.getAccounts();
       const account = accounts[0];
 
       const prescription = await medicalRecord.methods.getPrescriptionsByPatient(blockchainAddress).call({ from: account });
-      console.log(prescription);
+      console.log("prescription:", prescription);
       
       const prescriptions = [];
-      for (let i = result[0].length - 1; i >= 0; i--) {
+      for (let i = prescription[0].length - 1; i >= 0; i--) {
         prescriptions.push({
           index: i,
-          doctorAddresse: result[0][i],
-          doctorName: result[1][i],
-          appointmentDate: result[2][i],
-          timeSlot: result[3][i],
-          clinicalNote: result[4][i],
-          prescriptionDetail: result[5][i],
+          doctorAddresse: prescription[0][i],
+          doctorName: prescription[1][i],
+          appointmentDate: prescription[2][i],
+          timeSlot: prescription[3][i],
+          clinicalNote: prescription[4][i],
+          prescriptionDetail: prescription[5][i],
         });
       }
       setPrescriptions(prescriptions);
@@ -62,13 +71,9 @@ const MedicalRecords = () => {
       console.error(e.message);
       alert("Something went wrong!");
     } finally {
-      setLoading(false);
+      setIsRefreshing(false);
     }
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   const columns = [
     { field: "doctorName", headerName: "Name", flex: 1, cellClassName: "name-column--cell", },
@@ -86,10 +91,12 @@ const MedicalRecords = () => {
           aria-label="navigate to appointment"
           onClick={() => {
             const queryParams = new URLSearchParams({
+              appointmentDate: encodeURIComponent(params.row.appointmentDate),
+              timeSlot: encodeURIComponent(params.row.timeSlot),
               clinicalNote: encodeURIComponent(params.row.clinicalNote),
               prescriptionDetail: encodeURIComponent(params.row.prescriptionDetail),
             }).toString();
-            navigate(`/doctor/PrescriptionForm?${queryParams}`);
+            navigate(`/patient/prescriptiondetails?${queryParams}`);
           }}
         >
           <NavigateNextIcon />

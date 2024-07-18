@@ -167,6 +167,21 @@ contract Appointment {
         );
     }
 
+    function getAppointmentByDateAndTime(address patientAddress, string memory appointmentDate, string memory timeSlot) public view returns (appointment memory) {
+        appointment[] memory appointments = appointmentsByPatient[patientAddress];
+        
+        for (uint i = 0; i < appointments.length; i++) {
+            if (keccak256(abi.encodePacked(appointments[i].appointmentDate)) == keccak256(abi.encodePacked(appointmentDate)) &&
+                keccak256(abi.encodePacked(appointments[i].timeSlot)) == keccak256(abi.encodePacked(timeSlot))) {
+                return appointments[i];
+            }
+        }
+
+        // Return an empty Appointment if not found; Solidity requires a return value even if not found
+        // Consider an alternative approach to indicate not found, as Solidity does not support returning null for non-pointer types
+        revert("Appointment not found.");
+    }
+
     function getAppointmentsByDoctor()
         public
         view

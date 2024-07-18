@@ -17,6 +17,8 @@ const PrescriptionDetails = () => {
   const [loading, setLoading] = useState(true);
 
   const queryParams = new URLSearchParams(location.search);
+  const appointmentDate = decodeURIComponent(queryParams.get('appointmentDate'));
+  const timeSlot = decodeURIComponent(queryParams.get('timeSlot'));
   const clinicalNote = decodeURIComponent(queryParams.get('clinicalNote'));
   const prescriptionDetail = decodeURIComponent(queryParams.get('prescriptionDetail'));
   console.log(blockchainAddress, clinicalNote, prescriptionDetail);
@@ -28,7 +30,7 @@ const PrescriptionDetails = () => {
     setAppointment(appointment); 
     setMedicalRecord(medicalRecord);
 
-    loadData(medicalRecord);
+    loadData(appointment);
   };
   
   useEffect(() => {
@@ -39,30 +41,15 @@ const PrescriptionDetails = () => {
     loadAccounts();
   }, []);
 
-  const loadData = async (medicalRecord) => {
+  const loadData = async (appointment) => {
     try {
-      const getAppointmentData = await appointment.methods.getAppointments().call({ from: blockchainAddress });
-      console.log("appointmentData:", getAppointmentData); // Add this line
-  
-      // Convert the appointment data into an array of appointment objects
-      const appointmentsData = [];
-      for (let i = getAppointmentData[0].length - 1; i >= 0 ; i--) {
-        appointmentsData.push({
-          index: i,
-          firstName: getAppointmentData.firstNames[i],
-          lastName: getAppointmentData.lastNames[i],
-          email: getAppointmentData.emails[i],
-          number: getAppointmentData.numbers[i],
-          address: getAppointmentData.adrs[i],
-          doctor: getAppointmentData.doctors[i],
-          timeSlot: getAppointmentData.timeSlots[i],
-          status: getAppointmentData.status[i],
-        });
-      }
-  
-      setAppointmentsData(appointmentsData);
-      console.log("new appointments:", appointmentsData);
-      localStorage.setItem('appointments', JSON.stringify(appointmentsData));
+      const accounts = await web3.eth.getAccounts();
+      const account = accounts[0];
+
+      const getAppointmentData = await appointment.methods.getAppointmentByDateAndTime(blockchainAddress, appointmentDate, timeSlot).call({ from: account });
+
+      setAppointmentsData(getAppointmentData);
+      console.log("new appointments:", getAppointmentData);
     } catch (e) {
       console.error(e.message);
       alert("Something went wrong!");

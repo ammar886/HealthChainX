@@ -37103,12 +37103,12 @@
     "1337": {
       "events": {},
       "links": {},
-      "address": "0xf1cE2e59f382690D31EC0CFbF3F8984d5aF65BA3",
-      "transactionHash": "0x3791d1e47622a6dc9ababf6af1717a55b0a9068c0c98b687fa3dc611f2c07f1a"
+      "address": "0x3Ff1e6Fb8a4DcB7e78D076f915E0d675d8a15B88",
+      "transactionHash": "0xb01fe59e4003952943f4629652a7eeff52b423fd862f9742fcb8db4afd98f93b"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-07-19T04:41:48.927Z",
+  "updatedAt": "2024-07-19T05:10:57.148Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

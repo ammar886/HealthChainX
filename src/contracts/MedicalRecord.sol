@@ -118,6 +118,37 @@ contract MedicalRecord {
         return (doctorAddresses, doctorNames, appointmentDates, timeSlots, clinicalNotes, prescriptionDetails);
     }
 
+    function getPrescriptionsByDoctor(address _DoctorAddress) 
+        public 
+        view 
+        returns (
+            address[] memory patientAddresses,
+            string[] memory appointmentDates, 
+            string[] memory timeSlots, 
+            string[] memory clinicalNotes, 
+            string[] memory prescriptionDetails
+        ) 
+    {
+        uint256 prescriptionCount = prescriptionsByDoctorAddress[_DoctorAddress].length;
+        
+        patientAddresses = new address[](prescriptionCount);
+        appointmentDates = new string[](prescriptionCount);
+        timeSlots = new string[](prescriptionCount);
+        clinicalNotes = new string[](prescriptionCount);
+        prescriptionDetails = new string[](prescriptionCount);
+
+        for (uint256 i = 0; i < prescriptionCount; i++) {
+            prescription memory currentPrescription = prescriptionsByDoctorAddress[_DoctorAddress][i];
+            patientAddresses[i] = currentPrescription.patientAddress;
+            appointmentDates[i] = currentPrescription.appointmentDate;
+            timeSlots[i] = currentPrescription.timeSlot;
+            clinicalNotes[i] = currentPrescription.clinicalNotes;
+            prescriptionDetails[i] = currentPrescription.prescriptionDetails;
+        }
+
+        return (patientAddresses, appointmentDates, timeSlots, clinicalNotes, prescriptionDetails);
+    }
+
     // Billing related code
     uint public totalBillings = 0;
     billing[] public allBillings;

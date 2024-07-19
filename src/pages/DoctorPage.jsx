@@ -7,7 +7,7 @@ import Topbar from "../components/Topbar";
 import ProfileDetails from "../components/ProfileDetails";
 import Sidebar from "../components/doctor/Sidebar";
 import DoctorDashboard from "../components/doctor/DoctorDashboard";
-import ManagePatients from "../components/doctor/ManagePatients";
+import ManagePrescriptions from "../components/doctor/ManagePrescriptions";
 import ManageAppointments from "../components/doctor/ManageAppointments";
 import PrescriptionForm from "../components/doctor/PrescriptionForm";
 import FAQ from "../components/Faq";
@@ -34,7 +34,7 @@ function DoctorPage() {
             <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
               <Route path="/" element={<DoctorDashboard />} />
-              <Route path="managepatients" element={<ManagePatients />} />
+              <Route path="manageprescriptions" element={<ManagePrescriptions />} />
               <Route path="manageappointments" element={<ManageAppointments />} />
               <Route path="prescriptionform" element={<PrescriptionForm />} />
               <Route path="faq" element={<FAQ />} />

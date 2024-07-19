@@ -1,63 +1,36 @@
 import { useState, useEffect, useContext } from 'react';
-import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
-import { AuthContext } from '../../context/AuthContext';
+import { Formik } from 'formik';
 import { Box, TextField } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../Header";
+import { AuthContext } from '../../context/AuthContext';
 
 const BillingDetails = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  
-  const [auth, setAuth] = useState(null);
-  const [medicalRecord, setMedicalRecord] = useState(null);
-  const [billingData, setBillingData] = useState(null);
   const { blockchainAddress } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
+  const userName = localStorage.getItem('username');
 
+  // Extract query parameters before useEffect
   const queryParams = new URLSearchParams(window.location.search);
-  const appointmentDate = decodeURIComponent(queryParams.get('appointmentDate'));
-  const services = decodeURIComponent(queryParams.get('services'));
-  const cost = decodeURIComponent(queryParams.get('cost'));
+  const appointmentDate = decodeURIComponent(queryParams.get('appointmentDate') || '');
+  const services = decodeURIComponent(queryParams.get('services') || '');
+  const cost = decodeURIComponent(queryParams.get('cost') || '');
 
-  const loadAccounts = async () => {
-    let { auth, medicalRecord } = await loadBlockchainData();
+  const [billingData, setBillingData] = useState({
+    userName: userName,
+    appointmentDate: appointmentDate, // Set initial state from query params
+    services: services,
+    cost: cost,
+  });
 
-    setAuth(auth);
-    setMedicalRecord(medicalRecord);
-
-    loadData();
-  };
-  
   useEffect(() => {
-    loadWeb3();
-  }, []);
-  
-  useEffect(() => {
-    loadAccounts();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      const accounts = await web3.eth.getAccounts();
-      const account = accounts[0];
-
-      // Add additional logic to fetch billing data from the contract if needed
-      // For now, we'll use query parameters directly for display
-
-      setBillingData({
-        appointmentDate,
-        services,
-        cost
-      });
-
-    } catch (e) {
-      console.error(e.message);
-      alert("Something went wrong!");
-    } finally {
+    // Simulate data loading
+    setTimeout(() => {
+      // Update state with potentially new data here if necessary
       setLoading(false);
-    }
-  };
+    }, 1000);
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -67,43 +40,65 @@ const BillingDetails = () => {
     <Box m="20px">
       <Header title="BILLING DETAILS" subtitle="View Billing Details" />
 
-      <Box
-        display="grid"
-        gap="30px"
-        gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-        sx={{
-          "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
-        }}
-      >
-   
-        <TextField
-          fullWidth
-          variant="filled"
-          type="text"
-          label="Appointment Date"
-          value={billingData?.appointmentDate}
-          sx={{ gridColumn: "span 4" }}
-          disabled
-        />
-        <TextField
-          fullWidth
-          variant="filled"
-          type="text"
-          label="Services"
-          value={billingData?.services}
-          sx={{ gridColumn: "span 4" }}
-          disabled
-        />
-        <TextField
-          fullWidth
-          variant="filled"
-          type="text"
-          label="Cost"
-          value={billingData?.cost}
-          sx={{ gridColumn: "span 4" }}
-          disabled
-        />
-      </Box>
+      <Formik initialValues={billingData}>
+        {({ values, handleBlur, handleChange }) => (
+          <form>
+            <Box
+              display="grid"
+              gap="30px"
+              gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+              sx={{
+                "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+              }}
+            >
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="User Name"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.userName}
+                sx={{ gridColumn: "span 4" }}
+                disabled
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Appointment Date"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.appointmentDate}
+                sx={{ gridColumn: "span 4" }}
+                disabled
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Services"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.services}
+                sx={{ gridColumn: "span 4" }}
+                disabled
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Cost"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.cost}
+                sx={{ gridColumn: "span 4" }}
+                disabled
+              />
+            </Box>
+          </form>
+        )}
+      </Formik>
     </Box>
   );
 };

@@ -12,6 +12,7 @@ import Header from "../Header";
 const Invoices = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
   const navigate = useNavigate();
   const [auth, setAuth] = useState(null);
   const [appointment, setAppointment] = useState(null);
@@ -19,6 +20,7 @@ const Invoices = () => {
   const [billings, setBillings] = useState([]);
   const { blockchainAddress } = useContext(AuthContext);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const userName = localStorage.getItem('username');
 
   const loadAccounts = async () => {
     let { auth, appointment, medicalRecord } = await loadBlockchainData();
@@ -57,10 +59,10 @@ const Invoices = () => {
       for (let i = billing[0].length - 1; i >= 0; i--) {
         billings.push({
           index: i,
-          receptionistAddress: billing[0][i],
-          appointmentDate: billing[1][i],
-          services: billing[2][i].join(", "), // Convert array to comma-separated string
-          cost: billing[3][i],
+          userName: userName,
+          appointmentDate: billing[0][i],
+          services: billing[1][i].join(", "), // Convert array to comma-separated string
+          cost: billing[2][i],
         });
       }
       setBillings(billings);
@@ -73,7 +75,7 @@ const Invoices = () => {
   };
 
   const columns = [
-    { field: "receptionistAddress", headerName: "Receptionist Address", flex: 1 },
+    { field: "userName", headerName: "User Name", flex: 1 },
     { field: "appointmentDate", headerName: "Date", flex: 1 },
     { field: "services", headerName: "Services", flex: 1 },
     { field: "cost", headerName: "Cost", flex: 1 },
@@ -102,7 +104,7 @@ const Invoices = () => {
   
   const rows = billings.map((billing, index) => ({
     id: index,
-    receptionistAddress: billing.receptionistAddress,
+    userName: billing.userName,
     appointmentDate: billing.appointmentDate,
     services: billing.services,
     cost: billing.cost,

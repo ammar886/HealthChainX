@@ -6,6 +6,7 @@ import { AuthContext } from "../context/AuthContext";
 import Topbar from "../components/Topbar";
 import ProfileDetails from "../components/ProfileDetails";
 import PrescriptionDetails from "../components/patient/PrescriptionDetails";
+import BillingDetails from "../components/patient/BillingDetails";
 import Sidebar from "../components/patient/Sidebar";
 import PatientDashboard from "../components/patient/PatientDashboard";
 import MedicalRecords from "../components/patient/MedicalRecords";
@@ -42,6 +43,7 @@ function PatientPage() {
               <Route path="invoices" element={<Invoices />} />
               <Route path="faq" element={<Faq />} />
               <Route path="profiledetails" element={<ProfileDetails />} />
+              <Route path="billingdetails" element={<BillingDetails />} />
               <Route path="prescriptiondetails" element={<PrescriptionDetails />} />
             </Routes>
           </main>

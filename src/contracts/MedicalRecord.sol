@@ -182,7 +182,6 @@ contract MedicalRecord {
         public
         view
         returns (
-            address[] memory receptionistAddresses,
             string[] memory appointmentDates,
             string[][] memory services,
             uint[] memory costs
@@ -190,19 +189,17 @@ contract MedicalRecord {
     {
         uint256 billingCount = billingsByPatientAddress[_patientAddress].length;
 
-        receptionistAddresses = new address[](billingCount);
         appointmentDates = new string[](billingCount);
         services = new string[][](billingCount);
         costs = new uint[](billingCount);
 
         for (uint256 i = 0; i < billingCount; i++) {
             billing memory currentBilling = billingsByPatientAddress[_patientAddress][i];
-            receptionistAddresses[i] = currentBilling.receptionistAddress;
             appointmentDates[i] = currentBilling.appointmentDate;
             services[i] = currentBilling.services;
             costs[i] = currentBilling.cost;
         }
 
-        return (receptionistAddresses, appointmentDates, services, costs);
+        return (appointmentDates, services, costs);
     }
 }

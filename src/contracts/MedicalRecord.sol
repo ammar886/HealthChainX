@@ -3,11 +3,11 @@ pragma solidity ^0.8.11;
 import "./Auth.sol";
 import "./Appointment.sol";
 
-contract MedicalRecord{
+contract MedicalRecord {
     Auth auth;
     Appointment appointment;
 
-    constructor(address _authAddress, address _appointmentAddress){
+    constructor(address _authAddress, address _appointmentAddress) {
         auth = Auth(_authAddress);
         appointment = Appointment(_appointmentAddress);
     }
@@ -19,7 +19,7 @@ contract MedicalRecord{
     mapping(address => prescription[]) prescriptionsByDoctorAddress;
     mapping(address => prescription[]) prescriptionsByPatientAddress;
 
-    struct prescription{
+    struct prescription {
         address doctorAddress;
         address patientAddress;
         string appointmentDate;
@@ -116,5 +116,93 @@ contract MedicalRecord{
         }
 
         return (doctorAddresses, doctorNames, appointmentDates, timeSlots, clinicalNotes, prescriptionDetails);
+    }
+
+    // Billing related code
+    uint public totalBillings = 0;
+    billing[] public allBillings;
+
+    // New mappings
+    mapping(address => billing[]) billingsByReceptionistAddress;
+    mapping(address => billing[]) billingsByPatientAddress;
+
+    struct billing {
+        address receptionistAddress;
+        address patientAddress;
+        string appointmentDate;
+        string[] services;
+        uint cost;
+    }
+
+    event billingCreated(
+        address receptionistAddress,
+        address patientAddress,
+        string appointmentDate,
+        string[] services,
+        uint cost
+    );
+
+    function storeBilling(
+        address _receptionistAddress,
+        address _patientAddress,
+        string memory _appointmentDate,
+        string[] memory _services,
+        uint _cost
+    ) public {
+        // Create a new billing object
+        billing memory newBilling = billing({
+            receptionistAddress: _receptionistAddress,
+            patientAddress: _patientAddress,
+            appointmentDate: _appointmentDate,
+            services: _services,
+            cost: _cost
+        });
+
+        // Store the new billing in the mappings
+        billingsByReceptionistAddress[_receptionistAddress].push(newBilling);
+        billingsByPatientAddress[_patientAddress].push(newBilling);
+
+        // Also store it in the global array of all billings
+        allBillings.push(newBilling);
+
+        // Increment the total number of billings
+        totalBillings += 1;
+
+        emit billingCreated(
+            _receptionistAddress,
+            _patientAddress,
+            _appointmentDate,
+            _services,
+            _cost
+        );
+    }
+
+    // Function to retrieve billing details by patient address
+    function getBillingsByPatient(address _patientAddress)
+        public
+        view
+        returns (
+            address[] memory receptionistAddresses,
+            string[] memory appointmentDates,
+            string[][] memory services,
+            uint[] memory costs
+        )
+    {
+        uint256 billingCount = billingsByPatientAddress[_patientAddress].length;
+
+        receptionistAddresses = new address[](billingCount);
+        appointmentDates = new string[](billingCount);
+        services = new string[][](billingCount);
+        costs = new uint[](billingCount);
+
+        for (uint256 i = 0; i < billingCount; i++) {
+            billing memory currentBilling = billingsByPatientAddress[_patientAddress][i];
+            receptionistAddresses[i] = currentBilling.receptionistAddress;
+            appointmentDates[i] = currentBilling.appointmentDate;
+            services[i] = currentBilling.services;
+            costs[i] = currentBilling.cost;
+        }
+
+        return (receptionistAddresses, appointmentDates, services, costs);
     }
 }

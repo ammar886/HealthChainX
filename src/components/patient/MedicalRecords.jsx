@@ -87,7 +87,7 @@ const MedicalRecords = () => {
       flex: 1,
       renderCell: (params) => (
         <IconButton 
-          color="primary" // Changed from "white" to "primary" as "white" might not be a valid color
+          color="white" // Changed from "white" to "primary" as "white" might not be a valid color
           aria-label="navigate to appointment"
           onClick={() => {
             const queryParams = new URLSearchParams({

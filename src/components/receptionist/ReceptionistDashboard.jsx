@@ -1,15 +1,16 @@
 import { useState, useEffect, useContext } from 'react';
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
-import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, Button, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { AuthContext } from '../../context/AuthContext';
-import { mockTransactions } from "../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import BadgeIcon from '@mui/icons-material/Badge';
 import Person4Icon from '@mui/icons-material/Person4';
 import Header from "../Header";
 import StatBox from "../StatBox";
+import { useNavigate } from 'react-router-dom';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 const DoctorDashboard = () => {
   const theme = useTheme();
@@ -22,22 +23,23 @@ const DoctorDashboard = () => {
   const [todaysAppointments, setTodaysAppointments] = useState(0);
   const [doctors, setDoctors] = useState(0);
   const [patients, setPatients] = useState(0);
+  const navigate = useNavigate();
   const { blockchainAddress } = useContext(AuthContext);
 
   const loadAccounts = async () => {
     let { auth, appointment, accounts } = await loadBlockchainData();
-  
+
     setAccounts(accounts);
     setAuth(auth);
     setAppointment(appointment);
 
     loadData(auth, appointment);
   };
-  
+
   useEffect(() => {
     loadWeb3();
   }, []);
-  
+
   useEffect(() => {
     loadAccounts();
   }, []);
@@ -54,7 +56,7 @@ const DoctorDashboard = () => {
 
     const accounts = await web3.eth.getAccounts();
     const account = accounts[0];
-  
+
     const doctors = await auth.methods.getLengthEmployees("doctor").call({ from: account });
     const patients = await auth.methods.getLengthEmployees("patient").call({ from: account });
 
@@ -66,37 +68,39 @@ const DoctorDashboard = () => {
     setTodaysAppointments(appointments.toString());
 
     const getAppointmentData = await appointment.methods.getAllAppointments().call({ from: account });
-      console.log("appointmentData:", getAppointmentData); // Add this line
-  
-      // Convert the appointment data into an array of appointment objects
-      const appointmentsData = [];
-      for (let i = getAppointmentData.owners.length - 1; i >= 0; i--) {
-        appointmentsData.push({
-          index: i,
-          owner: getAppointmentData.owners[i],
-          firstName: getAppointmentData.firstNames[i],
-          lastName: getAppointmentData.lastNames[i],
-          email: getAppointmentData.emails[i],
-          number: getAppointmentData.numbers[i],
-          address: getAppointmentData.adrs[i],
-          doctorAdd: getAppointmentData.doctorAdds[i],
-          doctor: getAppointmentData.doctors[i],
-          appointmentDate: getAppointmentData.appointmentDates[i],
-          timeSlot: getAppointmentData.timeSlots[i],
-          status: getAppointmentData.status[i],
-        });
-      }
-  
-      setAppointmentsData(appointmentsData);
-      console.log("new appointments:", appointmentsData);
-      localStorage.setItem('appointments', JSON.stringify(appointmentsData));
+    console.log("appointmentData:", getAppointmentData); // Add this line
+
+    // Convert the appointment data into an array of appointment objects
+    const appointmentsData = [];
+    for (let i = getAppointmentData.owners.length - 1; i >= 0; i--) {
+      appointmentsData.push({
+        index: i,
+        owner: getAppointmentData.owners[i],
+        firstName: getAppointmentData.firstNames[i],
+        lastName: getAppointmentData.lastNames[i],
+        email: getAppointmentData.emails[i],
+        number: getAppointmentData.numbers[i],
+        address: getAppointmentData.adrs[i],
+        doctorAdd: getAppointmentData.doctorAdds[i],
+        doctor: getAppointmentData.doctors[i],
+        appointmentDate: getAppointmentData.appointmentDates[i],
+        timeSlot: getAppointmentData.timeSlots[i],
+        status: getAppointmentData.status[i],
+      });
+    }
+
+    setAppointmentsData(appointmentsData);
+    console.log("new appointments:", appointmentsData);
+    localStorage.setItem('appointments', JSON.stringify(appointmentsData));
   };
+
+  const completedAppointments = appointmentsData.filter(appointment => appointment.status === "completed");
 
   return (
     <Box m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Header title="DASHBOARD" subtitle=" HOSPITAL STATS: "/>
+        <Header title="DASHBOARD" subtitle=" HOSPITAL STATS: " />
 
         <Box>
           <Button
@@ -191,7 +195,7 @@ const DoctorDashboard = () => {
               Completed Appointments for Billing
             </Typography>
           </Box>
-          {appointmentsData.map((appointment, i) => (
+          {completedAppointments.map((appointment, i) => (
             <Box
               key={`${i}`}
               display="flex"
@@ -221,6 +225,27 @@ const DoctorDashboard = () => {
               >
                 {appointment.timeSlot}
               </Box>
+              {/* Add navigate button here */}
+              <Button
+  variant="contained"
+  color="primary"
+  endIcon={<NavigateNextIcon />}
+  onClick={() => {
+    const queryParams = new URLSearchParams({
+      firstName: encodeURIComponent(appointment.firstName),
+      lastName: encodeURIComponent(appointment.lastName),
+      contact: encodeURIComponent(appointment.number),
+      email: encodeURIComponent(appointment.email),
+      owner: encodeURIComponent(appointment.owner),
+      date: encodeURIComponent(appointment.appointmentDate),
+      time: encodeURIComponent(appointment.timeSlot)
+    }).toString();
+
+    navigate(`/receptionist/BillingPayment?${queryParams}`);
+  }}
+>
+  Navigate
+</Button>
             </Box>
           ))}
         </Box>

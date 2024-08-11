@@ -18,19 +18,24 @@ const AdminDashboard = () => {
   const [accounts, setAccounts] = useState(null);
   const [auth, setAuth] = useState(null);
   const [appointment, setAppointment] = useState(null);
+  const [medicalRecord, setMedicalRecord] = useState(null);
   const [doctors, setDoctors] = useState(0);
   const [receptionists, setReceptionists] = useState(0);
   const [patients, setPatients] = useState(0);
   const [appointments, setAppointments] = useState(0);
+  const [billingsData, setBillingsData] = useState([]);
+
 
   const loadAccounts = async () => {
-    let { auth, appointment, accounts } = await loadBlockchainData();
+    let { auth, appointment, accounts, medicalRecord } = await loadBlockchainData();
   
     setAccounts(accounts);
     setAuth(auth);
     setAppointment(appointment);
+    setMedicalRecord(medicalRecord);
 
-    loadData(auth, appointment);
+
+    loadData(auth, appointment, medicalRecord);
   };
   
   useEffect(() => {
@@ -41,13 +46,17 @@ const AdminDashboard = () => {
     loadAccounts();
   }, []);
 
-  const loadData = async (auth, appointment) => {
+  const loadData = async (auth, appointment, medicalRecord) => {
     if (!auth) {
       console.log('Auth object is not initialized yet. Please try again.');
       return;
     }
     if (!appointment) {
       console.log('Appointment object is not initialized yet. Please try again.');
+      return;
+    }
+    if (!medicalRecord) {
+      console.log('Medical record object is not initialized yet. Please try again.');
       return;
     }
 
@@ -61,10 +70,31 @@ const AdminDashboard = () => {
     const currentDate = new Date().toLocaleDateString();
     const appointments = await appointment.methods.getCurrentDateAppointementCount(currentDate).call({ from: account });
 
+    const billing = await medicalRecord.methods.getAllBillings().call({ from: account });
+    console.log("billing:", billing);
+    
+    const billingsData = [];
+    for (let i = billing[0].length - 1; i >= 0; i--) {
+      billingsData.push({
+        index: i,
+        patientAddresses: billing[0][i],
+        patientNames: billing[1][i],
+        receptionistAddresses: billing[2][i],
+        receptionistNames: billing[3][i],
+        doctorAddresses: billing[4][i],
+        doctorNames: billing[5][i],
+        appointmentDates: billing[6][i],
+        timeSlots: billing[7][i],
+        services: billing[8][i].join(", "), // Convert array to comma-separated string
+        costs: billing[9][i],
+      });
+    }
+
     setDoctors(doctors.toString());
     setReceptionists(receptionists.toString());
     setPatients(patients.toString());
     setAppointments(appointments.toString());
+    setBillingsData(billingsData);
   };
 
   return (
@@ -183,9 +213,9 @@ const AdminDashboard = () => {
               Recent Transactions
             </Typography>
           </Box>
-          {mockTransactions.map((transaction, i) => (
+          {billingsData.map((billing, i) => (
             <Box
-              key={`${transaction.txId}-${i}`}
+              key={`${i}`}
               display="flex"
               justifyContent="space-between"
               alignItems="center"
@@ -198,19 +228,19 @@ const AdminDashboard = () => {
                   variant="h5"
                   fontWeight="600"
                 >
-                  {transaction.txId}
+                  {billing.patientNames}
                 </Typography>
                 <Typography color={colors.grey[100]}>
-                  {transaction.user}
+                  {billing.doctorNames}
                 </Typography>
               </Box>
-              <Box color={colors.grey[100]}>{transaction.date}</Box>
+              <Box color={colors.grey[100]}>{billing.appointmentDates} {billing.timeSlots}</Box>
               <Box
                 backgroundColor={colors.greenAccent[500]}
                 p="5px 10px"
                 borderRadius="4px"
               >
-                ${transaction.cost}
+                {billing.costs} $
               </Box>
             </Box>
           ))}

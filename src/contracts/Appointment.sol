@@ -124,6 +124,7 @@ contract Appointment {
             string[] memory emails,
             string[] memory numbers,
             string[] memory adrs,
+            address[] memory doctorAdds,
             string[] memory doctors,
             string[] memory appointmentDates,
             string[] memory timeSlots,
@@ -137,6 +138,7 @@ contract Appointment {
         emails = new string[](userAppointments.length);
         numbers = new string[](userAppointments.length);
         adrs = new string[](userAppointments.length);
+        doctorAdds = new address[](userAppointments.length);
         doctors = new string[](userAppointments.length);
         appointmentDates = new string[](userAppointments.length);
         timeSlots = new string[](userAppointments.length);
@@ -148,6 +150,7 @@ contract Appointment {
             emails[i] = userAppointments[i].email;
             numbers[i] = userAppointments[i].number;
             adrs[i] = userAppointments[i].adr;
+            doctorAdds[i] = userAppointments[i].doctor;
             doctors[i] = getEmployeeUsernameAndSpecialization(userAppointments[i].doctor);
             appointmentDates[i] = userAppointments[i].appointmentDate;
             timeSlots[i] = userAppointments[i].timeSlot;
@@ -160,6 +163,7 @@ contract Appointment {
             emails,
             numbers,
             adrs,
+            doctorAdds,
             doctors,
             appointmentDates,
             timeSlots,
@@ -340,6 +344,22 @@ contract Appointment {
         return string(abi.encodePacked(emp.username, "(", emp.specialization, ")"));
     }
 
+    function getEmployeeUsername(address blockChainAddress) public view returns (string memory) {
+        // Call the getEmployeeDetails function from the Auth contract
+        Auth.employee memory emp = auth.getEmployeeDetails(blockChainAddress);
+
+        // Return the username
+        return emp.username;
+    }
+
+    function getUserUsername(address blockChainAddress) public view returns (string memory) {
+        // Call the getEmployeeDetails function from the Auth contract
+        Auth.user memory us = auth.getUserDetails(blockChainAddress);
+
+        // Return the username
+        return us.username;
+    }
+
     function updateAppointmentStatus(
         address userAddress,
         address doctorAddress,
@@ -353,6 +373,35 @@ contract Appointment {
             userAppointmentsIndex < appointmentsByPatient[userAddress].length,
             "appointment does not exist"
         );
+
+        string memory originalStatus = appointmentsByPatient[userAddress][userAppointmentsIndex].status;
+
+        appointmentsByPatient[userAddress][userAppointmentsIndex].status = newStatus;
+        appointmentsByDoctor[doctorAddress][doctorAppointmentsIndex].status = newStatus;
+        allAppointments[allAppointmentsIndex].status = newStatus;
+
+        emit AppointmentStatusUpdated(
+            userAddress,
+            doctorAddress,
+            allAppointmentsIndex,
+            originalStatus,
+            newStatus
+        );
+    }
+
+    function updateAppointmentStatusByIndex(
+        address userAddress,
+        address doctorAddress,
+        uint userAppointmentsIndex,
+        string memory newStatus
+    ) public {
+        require(
+            userAppointmentsIndex < appointmentsByPatient[userAddress].length,
+            "appointment does not exist"
+        );
+
+        uint allAppointmentsIndex = userAppointmentsToAllAppointments[userAppointmentsIndex];
+        uint doctorAppointmentsIndex = allAppointmentsToDoctorAppointments[allAppointmentsIndex];
 
         string memory originalStatus = appointmentsByPatient[userAddress][userAppointmentsIndex].status;
 

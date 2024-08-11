@@ -1,9 +1,10 @@
 import { useEffect, useState, useContext } from "react";
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import { AuthContext } from '../../context/AuthContext';
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Typography, Button, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import Header from "../Header";
 
 const AppointmentHistory = () => {
@@ -56,6 +57,7 @@ const AppointmentHistory = () => {
           email: getAppointmentData.emails[i],
           number: getAppointmentData.numbers[i],
           address: getAppointmentData.adrs[i],
+          doctorAdd: getAppointmentData.doctorAdds[i],
           doctor: getAppointmentData.doctors[i],
           timeSlot: getAppointmentData.timeSlots[i],
           status: getAppointmentData.status[i],
@@ -72,6 +74,19 @@ const AppointmentHistory = () => {
     }
   };
 
+  const updateAppointmentStatus = async (doctorAddress, index, newStatus) => {
+    if (!appointment) return;
+    const accounts = await web3.eth.getAccounts();
+    const account = accounts[0];
+    await appointment.methods.updateAppointmentStatusByIndex(blockchainAddress, doctorAddress, index, newStatus).send({ from: account })
+    .on('receipt', (receipt) => {
+      console.log(receipt);
+      console.log("ammar");
+      handleRefresh();
+       // Delay of 3 seconds, you can adjust this as needed
+    });
+  };
+
   const columns = [
     { field: "firstName", headerName: "First Name", flex: 1 },
     { field: "lastName", headerName: "Last Name", flex: 1 },
@@ -81,6 +96,23 @@ const AppointmentHistory = () => {
     { field: "doctor", headerName: "Doctor", flex: 1 },
     { field: "timeSlot", headerName: "Time Slot", flex: 1 },
     { field: "status", headerName: "Status", flex: 1 },
+    {
+      field: "updateStatus",
+      headerName: "Update Status",
+      flex: 1,
+      renderCell: (params) => (
+        params.row.status === 'pending' && (
+          <Button 
+            variant="contained"
+            color="primary"
+            endIcon={<NavigateNextIcon />}
+            onClick={() => updateAppointmentStatus(params.row.doctorAdd, params.row.id, "cancelled")}
+          >
+            Cancel
+          </Button>
+        )
+      ),
+    }
   ];
 
   const rows = appointmentsData.map((appointment) => ({
@@ -90,6 +122,7 @@ const AppointmentHistory = () => {
     email: appointment.email,
     number: appointment.number,
     adr: appointment.address,
+    doctorAdd: appointment.doctorAdd,
     doctor: appointment.doctor,
     timeSlot: appointment.timeSlot,
     status: appointment.status,
@@ -148,9 +181,12 @@ const AppointmentHistory = () => {
           "& .MuiCheckbox-root": {
             color: `${colors.greenAccent[200]} !important`,
           },
+          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+            color: `${colors.grey[100]} !important`,
+          },
         }}
       >
-        <DataGrid checkboxSelection rows={rows} columns={columns} />
+        <DataGrid rows={rows} columns={columns} components={{ Toolbar: GridToolbar }} />
       </Box>
     </Box>
     </>

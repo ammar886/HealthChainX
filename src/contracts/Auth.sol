@@ -6,16 +6,18 @@ contract Auth {
     uint public employeeCount = 0;
     
     address public adminAddress; //fix this
+    
+    mapping(address => authMemory) authUsersByBlockchain;
+    mapping(string => authMemory) authUsersByEmail;
 
-    mapping(string => authMemory) authUsers;
-    mapping(string => user[]) users;
-    mapping(string => employee[]) employees;
-    
-    mapping(string => bool) private usedEmails;
-    mapping(address => bool) private usedBlockchainAddresses;
-    
+    mapping(address => user[]) users;
+    mapping(address => employee[]) employees;
+
+    user[] public allUsers;
     employee[] public allEmployees;
-    user[] public allUsers;  
+    
+    mapping(address => bool) private usedBlockchainAddresses;
+    mapping(string => bool) private usedEmails;
 
     struct user {
         address blockChainAdd;
@@ -117,7 +119,7 @@ contract Auth {
             _userRole,
             _password
         );
-        users[_email].push(newUser);
+        users[_blockChainAdd].push(newUser);
         allUsers.push(newUser);
         emit userCreated(
             _blockChainAdd,
@@ -190,7 +192,7 @@ contract Auth {
             _shiftDuration,
             _password
         );
-        employees[_email].push(newEmployee);
+        employees[_blockChainAdd].push(newEmployee);
         allEmployees.push(newEmployee);
         emit employeeCreated(
             _blockChainAdd,
@@ -221,7 +223,14 @@ contract Auth {
         string memory _password
     ) public {
 
-        authUsers[_email] = authMemory(
+        authUsersByBlockchain[_blockChainAdd] = authMemory(
+            _blockChainAdd,
+            _username,
+            _email,
+            _userRole,
+            _password
+        );
+        authUsersByEmail[_email] = authMemory(
             _blockChainAdd,
             _username,
             _email,
@@ -241,7 +250,7 @@ contract Auth {
         string memory _email,
         string memory _password
     ) public view returns (bool, address, string memory, string memory) {
-        authMemory memory userInstance = authUsers[_email];
+        authMemory memory userInstance = authUsersByEmail[_email];
 
         if (bytes(userInstance.email).length == 0) {
             return (false, address(0), "", "");

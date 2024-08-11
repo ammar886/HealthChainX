@@ -189,9 +189,12 @@ const ManageAppointments = () => {
           "& .MuiCheckbox-root": {
             color: `${colors.greenAccent[200]} !important`,
           },
+          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+            color: `${colors.grey[100]} !important`,
+          },
         }}
       >
-        <DataGrid checkboxSelection rows={rows} columns={columns} />
+        <DataGrid rows={rows} columns={columns} components={{ Toolbar: GridToolbar }}/>
       </Box>
     </Box>
     </>

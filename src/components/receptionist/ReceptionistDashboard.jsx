@@ -227,25 +227,28 @@ const DoctorDashboard = () => {
               </Box>
               {/* Add navigate button here */}
               <Button
-  variant="contained"
-  color="primary"
-  endIcon={<NavigateNextIcon />}
-  onClick={() => {
-    const queryParams = new URLSearchParams({
-      firstName: encodeURIComponent(appointment.firstName),
-      lastName: encodeURIComponent(appointment.lastName),
-      contact: encodeURIComponent(appointment.number),
-      email: encodeURIComponent(appointment.email),
-      owner: encodeURIComponent(appointment.owner),
-      date: encodeURIComponent(appointment.appointmentDate),
-      time: encodeURIComponent(appointment.timeSlot)
-    }).toString();
+                variant="contained"
+                color="primary"
+                endIcon={<NavigateNextIcon />}
+                onClick={() => {
+                  const queryParams = new URLSearchParams({
+                    owner: encodeURIComponent(appointment.owner),
+                    firstName: encodeURIComponent(appointment.firstName),
+                    lastName: encodeURIComponent(appointment.lastName),
+                    email: encodeURIComponent(appointment.email),
+                    number: encodeURIComponent(appointment.number),
+                    address: encodeURIComponent(appointment.address),
+                    doctorAdd: encodeURIComponent(appointment.doctorAdd),
+                    doctor: encodeURIComponent(appointment.doctor),
+                    date: encodeURIComponent(appointment.appointmentDate),
+                    time: encodeURIComponent(appointment.timeSlot)
+                  }).toString();
 
-    navigate(`/receptionist/BillingPayment?${queryParams}`);
-  }}
->
-  Navigate
-</Button>
+                  navigate(`/receptionist/BillingPayment?${queryParams}`);
+                }}
+              >
+                Navigate
+              </Button>
             </Box>
           ))}
         </Box>

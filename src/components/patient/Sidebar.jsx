@@ -131,7 +131,7 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
-              title="Appointment History"
+              title="View Appointments"
               to="/patient/appointmenthistory"
               icon={<ReceiptOutlinedIcon />}
               selected={selected}
@@ -145,7 +145,7 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
-              title="Billing & Payment History"
+              title="View Invoices"
               to="/patient/invoices"
               icon={<ContactsOutlinedIcon />}
               selected={selected}

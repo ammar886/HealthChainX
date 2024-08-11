@@ -59,10 +59,15 @@ const Invoices = () => {
       for (let i = billing[0].length - 1; i >= 0; i--) {
         billings.push({
           index: i,
-          userName: userName,
-          appointmentDate: billing[0][i],
-          services: billing[1][i].join(", "), // Convert array to comma-separated string
-          cost: billing[2][i],
+          userNames: userName,
+          receptionistAddresses: billing[0][i],
+          receptionistNames: billing[1][i],
+          doctorAddresses: billing[2][i],
+          doctorNames: billing[3][i],
+          appointmentDates: billing[4][i],
+          timeSlots: billing[5][i],
+          services: billing[6][i].join(", "), // Convert array to comma-separated string
+          costs: billing[7][i],
         });
       }
       setBillings(billings);
@@ -77,6 +82,7 @@ const Invoices = () => {
   const columns = [
     { field: "userName", headerName: "User Name", flex: 1 },
     { field: "appointmentDate", headerName: "Date", flex: 1 },
+    { field: "timeSlot", headerName: "Time Slot", flex: 1 },
     { field: "services", headerName: "Services", flex: 1 },
     { field: "cost", headerName: "Cost", flex: 1 },
     {
@@ -89,7 +95,13 @@ const Invoices = () => {
           aria-label="navigate to billing details"
           onClick={() => {
             const queryParams = new URLSearchParams({
+              userName: encodeURIComponent(params.row.userName),
+              receptionistAddress: encodeURIComponent(params.row.receptionistAddress),
+              receptionistName: encodeURIComponent(params.row.receptionistName),
+              doctorAddress: encodeURIComponent(params.row.doctorAddress),
+              doctorName: encodeURIComponent(params.row.doctorName),
               appointmentDate: encodeURIComponent(params.row.appointmentDate),
+              timeSlot: encodeURIComponent(params.row.timeSlot),
               services: encodeURIComponent(params.row.services),
               cost: encodeURIComponent(params.row.cost),
             }).toString();
@@ -104,15 +116,20 @@ const Invoices = () => {
   
   const rows = billings.map((billing, index) => ({
     id: index,
-    userName: billing.userName,
-    appointmentDate: billing.appointmentDate,
+    userName: billing.userNames,
+    receptionistAddress: billing.receptionistAddresses,
+    receptionistName: billing.receptionistNames,
+    doctorAddress: billing.doctorAddresses,
+    doctorName: billing.doctorNames,
+    appointmentDate: billing.appointmentDates,
+    timeSlot: billing.timeSlots,
     services: billing.services,
-    cost: billing.cost,
+    cost: billing.costs,
   }));
 
   return (
     <Box m="20px">
-      <Header title="BILL & PAYMENT" subtitle="Bill and Payment History" />
+      <Header title="INVOICES" subtitle="Invoices History" />
       {isRefreshing ? (
         <p>Loading...</p>
       ) : (
@@ -167,7 +184,7 @@ const Invoices = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={rows} columns={columns} components={{ Toolbar: GridToolbar }} />
+        <DataGrid rows={rows} columns={columns} components={{ Toolbar: GridToolbar }} />
       </Box>
     </Box>
   );

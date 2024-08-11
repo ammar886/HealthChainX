@@ -129,7 +129,7 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
-              title="Manage Prescription"
+              title="Manage Prescriptions"
               to="/doctor/manageprescriptions"
               icon={<PeopleOutlinedIcon />}
               selected={selected}
@@ -142,13 +142,6 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            {/* <Item
-              title="Prescription Form"
-              to="/doctor/prescriptionform"
-              icon={<PersonOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            /> */}
             <Item
               title="FAQ Page"
               to="/doctor/faq"

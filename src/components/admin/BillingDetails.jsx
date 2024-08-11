@@ -10,7 +10,7 @@ const BillingDetails = () => {
 
   // Extract query parameters before useEffect
   const queryParams = new URLSearchParams(window.location.search);
-  const userName = decodeURIComponent(queryParams.get('userName') || '');
+  const patientName = decodeURIComponent(queryParams.get('patientName') || '');
   const receptionistName = decodeURIComponent(queryParams.get('receptionistName') || '');
   const doctorName = decodeURIComponent(queryParams.get('doctorName') || '');
   const appointmentDate = decodeURIComponent(queryParams.get('appointmentDate') || '');
@@ -19,7 +19,7 @@ const BillingDetails = () => {
   const cost = decodeURIComponent(queryParams.get('cost') || '');
 
   const [billingData, setBillingData] = useState({
-    userName: userName,
+    patientName: patientName,
     receptionistName: receptionistName,
     doctorName: doctorName,
     appointmentDate: appointmentDate, // Set initial state from query params
@@ -59,10 +59,10 @@ const BillingDetails = () => {
                 fullWidth
                 variant="filled"
                 type="text"
-                label="User Name"
+                label="Patient Name"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.userName}
+                value={values.patientName}
                 sx={{ gridColumn: "span 4" }}
                 disabled
               />

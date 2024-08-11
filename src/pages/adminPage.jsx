@@ -8,6 +8,7 @@ import Sidebar from "../components/admin/Sidebar";
 import AdminDashboard from "../components/admin/AdminDashboard";
 import ManageAccounts from "../components/admin/ManageAccounts";
 import Invoices from "../components/admin/Invoices";
+import BillingDetails from "../components/admin/BillingDetails";
 import ManageAppointments from "../components/admin/ManageAppointments";
 import CreateEmployee from "../components/admin/CreateEmployee";
 import FAQ from "../components/Faq";
@@ -38,6 +39,7 @@ function AdminPage() {
               <Route path="manageappointments" element={<ManageAppointments />} />
               <Route path="createemployee" element={<CreateEmployee />} />
               <Route path="invoices" element={<Invoices />} />
+              <Route path="billingdetails" element={<BillingDetails />} />
               <Route path="faq" element={<FAQ />} />
             </Routes>
           </main>

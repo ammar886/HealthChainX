@@ -123,6 +123,7 @@ contract MedicalRecord {
         view 
         returns (
             address[] memory patientAddresses,
+            string[] memory patientNames,
             string[] memory appointmentDates, 
             string[] memory timeSlots, 
             string[] memory clinicalNotes, 
@@ -132,6 +133,7 @@ contract MedicalRecord {
         uint256 prescriptionCount = prescriptionsByDoctorAddress[_DoctorAddress].length;
         
         patientAddresses = new address[](prescriptionCount);
+        patientNames = new string[](prescriptionCount);
         appointmentDates = new string[](prescriptionCount);
         timeSlots = new string[](prescriptionCount);
         clinicalNotes = new string[](prescriptionCount);
@@ -140,13 +142,14 @@ contract MedicalRecord {
         for (uint256 i = 0; i < prescriptionCount; i++) {
             prescription memory currentPrescription = prescriptionsByDoctorAddress[_DoctorAddress][i];
             patientAddresses[i] = currentPrescription.patientAddress;
+            patientNames[i] = appointment.getUserUsername(currentPrescription.patientAddress);
             appointmentDates[i] = currentPrescription.appointmentDate;
             timeSlots[i] = currentPrescription.timeSlot;
             clinicalNotes[i] = currentPrescription.clinicalNotes;
             prescriptionDetails[i] = currentPrescription.prescriptionDetails;
         }
 
-        return (patientAddresses, appointmentDates, timeSlots, clinicalNotes, prescriptionDetails);
+        return (patientAddresses, patientNames, appointmentDates, timeSlots, clinicalNotes, prescriptionDetails);
     }
 
     // Billing related code
@@ -160,7 +163,9 @@ contract MedicalRecord {
     struct billing {
         address receptionistAddress;
         address patientAddress;
+        address doctorAddress;
         string appointmentDate;
+        string timeSlot;
         string[] services;
         uint cost;
     }
@@ -168,7 +173,9 @@ contract MedicalRecord {
     event billingCreated(
         address receptionistAddress,
         address patientAddress,
+        address doctorAddress,
         string appointmentDate,
+        string timeSlot,
         string[] services,
         uint cost
     );
@@ -176,7 +183,9 @@ contract MedicalRecord {
     function storeBilling(
         address _receptionistAddress,
         address _patientAddress,
+        address _doctorAddress,
         string memory _appointmentDate,
+        string memory _timeSlot,
         string[] memory _services,
         uint _cost
     ) public {
@@ -184,7 +193,9 @@ contract MedicalRecord {
         billing memory newBilling = billing({
             receptionistAddress: _receptionistAddress,
             patientAddress: _patientAddress,
+            doctorAddress: _doctorAddress,
             appointmentDate: _appointmentDate,
+            timeSlot: _timeSlot,
             services: _services,
             cost: _cost
         });
@@ -202,7 +213,9 @@ contract MedicalRecord {
         emit billingCreated(
             _receptionistAddress,
             _patientAddress,
+            _doctorAddress,
             _appointmentDate,
+            _timeSlot,
             _services,
             _cost
         );
@@ -213,24 +226,85 @@ contract MedicalRecord {
         public
         view
         returns (
+            address[] memory receptionistAddresses,
+            string[] memory receptionistNames,
+            address[] memory doctorAddresses,
+            string[] memory doctorNames,
             string[] memory appointmentDates,
+            string[] memory timeSlots,
             string[][] memory services,
             uint[] memory costs
         )
     {
         uint256 billingCount = billingsByPatientAddress[_patientAddress].length;
 
+        receptionistAddresses = new address[](billingCount);
+        receptionistNames = new string[](billingCount);
+        doctorAddresses = new address[](billingCount);
+        doctorNames = new string[](billingCount);
         appointmentDates = new string[](billingCount);
+        timeSlots = new string[](billingCount);
         services = new string[][](billingCount);
         costs = new uint[](billingCount);
 
         for (uint256 i = 0; i < billingCount; i++) {
             billing memory currentBilling = billingsByPatientAddress[_patientAddress][i];
+            receptionistAddresses[i] = currentBilling.receptionistAddress;
+            receptionistNames[i] = appointment.getEmployeeUsername(currentBilling.receptionistAddress);
+            doctorAddresses[i] = currentBilling.doctorAddress;
+            doctorNames[i] = appointment.getEmployeeUsernameAndSpecialization(currentBilling.doctorAddress);
             appointmentDates[i] = currentBilling.appointmentDate;
+            timeSlots[i] = currentBilling.timeSlot;
             services[i] = currentBilling.services;
             costs[i] = currentBilling.cost;
         }
 
-        return (appointmentDates, services, costs);
+        return (receptionistAddresses, receptionistNames, doctorAddresses, doctorNames, appointmentDates, timeSlots, services, costs);
+    }
+
+    function getAllBillings() 
+        public 
+        view 
+        returns (
+            address[] memory receptionistAddresses,
+            string[] memory receptionistNames,
+            address[] memory patientAddresses,
+            string[] memory patientNames,
+            address[] memory doctorAddresses,
+            string[] memory doctorNames,
+            string[] memory appointmentDates,
+            string[] memory timeSlots,
+            string[][] memory services,
+            uint[] memory costs
+        ) 
+    {
+        uint256 billingCount = allBillings.length;
+
+        receptionistAddresses = new address[](billingCount);
+        receptionistNames = new string[](billingCount);
+        patientAddresses = new address[](billingCount);
+        patientNames = new string[](billingCount);
+        doctorAddresses = new address[](billingCount);
+        doctorNames = new string[](billingCount);
+        appointmentDates = new string[](billingCount);
+        timeSlots = new string[](billingCount);
+        services = new string[][](billingCount);
+        costs = new uint[](billingCount);
+
+        for (uint256 i = 0; i < billingCount; i++) {
+            billing memory currentBilling = allBillings[i];
+            receptionistAddresses[i] = currentBilling.receptionistAddress;
+            receptionistNames[i] = appointment.getEmployeeUsername(currentBilling.receptionistAddress);
+            patientAddresses[i] = currentBilling.patientAddress;
+            patientNames[i] = appointment.getUserUsername(currentBilling.patientAddress);
+            doctorAddresses[i] = currentBilling.doctorAddress;
+            doctorNames[i] = appointment.getEmployeeUsernameAndSpecialization(currentBilling.doctorAddress);
+            appointmentDates[i] = currentBilling.appointmentDate;
+            timeSlots[i] = currentBilling.timeSlot;
+            services[i] = currentBilling.services;
+            costs[i] = currentBilling.cost;
+        }
+
+        return (patientAddresses, patientNames, receptionistAddresses, receptionistNames, doctorAddresses, doctorNames, appointmentDates, timeSlots, services, costs);
     }
 }

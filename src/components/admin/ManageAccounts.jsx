@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import { Box, Typography, useTheme } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Header from "../Header";
 
@@ -103,7 +103,7 @@ const ManageAccounts = () => {
 
   return (
     <Box m="20px">
-      <Header title="MANAGE PATIENT" subtitle="Managing the Patient's" />
+      <Header title="MANAGE ACCOUNT" subtitle="Managing the Account's" />
       {isRefreshing ? (
         <p>Loading...</p>
       ) : (
@@ -153,9 +153,12 @@ const ManageAccounts = () => {
           "& .MuiCheckbox-root": {
             color: `${colors.greenAccent[200]} !important`,
           },
+          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+            color: `${colors.grey[100]} !important`,
+          },
         }}
       >
-        <DataGrid checkboxSelection rows={rows} columns={columns} />
+        <DataGrid  rows={rows} columns={columns} components={{ Toolbar: GridToolbar }}/>
       </Box>
     </Box>
   );

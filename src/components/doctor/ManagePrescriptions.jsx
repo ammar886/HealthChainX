@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { loadBlockchainData, loadWeb3 } from "../../Web3helpers";
 import { AuthContext } from '../../context/AuthContext';
 import { Box, Typography, useTheme } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Header from "../Header";
 
@@ -56,10 +56,11 @@ const ManagePrescriptions = () => {
         prescriptions.push({
           index: i,
           patientAddress: prescription[0][i],
-          appointmentDate: prescription[1][i],
-          timeSlot: prescription[2][i],
-          clinicalNote: prescription[3][i],
-          prescriptionDetail: prescription[4][i],
+          patientName: prescription[1][i],
+          appointmentDate: prescription[2][i],
+          timeSlot: prescription[3][i],
+          clinicalNote: prescription[4][i],
+          prescriptionDetail: prescription[5][i],
         });
       }
       setPrescriptions(prescriptions);
@@ -72,8 +73,8 @@ const ManagePrescriptions = () => {
   };
 
   const columns = [
-    { field: "patientAddress", headerName: "Patient Address", flex: 1, cellClassName: "name-column--cell", },
-    { field: "appointmentDate", headerName: "Date", flex: 1 },
+    { field: "patientName", headerName: "Patient Name", flex: 1, cellClassName: "name-column--cell", },
+    { field: "appointmentDate", headerName: "Appointment Date", flex: 1 },
     { field: "timeSlot", headerName: "Time Slot", flex: 1 },
     { field: "clinicalNote", headerName: "Clinical Notes", flex: 1 },
     { field: "prescriptionDetail", headerName: "Prescription Detail", flex: 1 },
@@ -82,6 +83,7 @@ const ManagePrescriptions = () => {
   const rows = prescriptions.map((prescription, index) => ({
     id: index,
     patientAddress: prescription.patientAddress,
+    patientName: prescription.patientName,
     appointmentDate: prescription.appointmentDate,
     timeSlot: prescription.timeSlot,
     clinicalNote: prescription.clinicalNote,
@@ -140,9 +142,12 @@ const ManagePrescriptions = () => {
           "& .MuiCheckbox-root": {
             color: `${colors.greenAccent[200]} !important`,
           },
+          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+            color: `${colors.grey[100]} !important`,
+          },
         }}
       >
-        <DataGrid checkboxSelection rows={rows} columns={columns} />
+        <DataGrid rows={rows} columns={columns} components={{ Toolbar: GridToolbar }} />
       </Box>
     </Box>
   );

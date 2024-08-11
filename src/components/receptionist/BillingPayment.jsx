@@ -22,10 +22,14 @@ const BillingForm = () => {
   const { blockchainAddress } = useContext(AuthContext);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
+  const patientBlock = decodeURIComponent(queryParams.get('owner'));
   const firstName = decodeURIComponent(queryParams.get('firstName'));
   const lastName = decodeURIComponent(queryParams.get('lastName'));
   const email = decodeURIComponent(queryParams.get('email'));
-  const patientBlock = decodeURIComponent(queryParams.get('owner'));
+  const number = decodeURIComponent(queryParams.get('number'));
+  const address = decodeURIComponent(queryParams.get('address'));
+  const doctorAdd = decodeURIComponent(queryParams.get('doctorAdd'));
+  const doctor = decodeURIComponent(queryParams.get('doctor'));
   const date = decodeURIComponent(queryParams.get('date'));
   const time = decodeURIComponent(queryParams.get('time'));
 
@@ -64,7 +68,7 @@ const BillingForm = () => {
       const account = accounts[0]; // The first account is the user's primary account
 
       await medicalRecord.methods
-        .storeBilling(blockchainAddress, patientBlock, date, values.services, totalAmount)
+        .storeBilling(blockchainAddress, patientBlock, doctorAdd, date, time, values.services, totalAmount)
         .send({ from: account });
 
       alert("Billing Created Successfully!");
@@ -80,9 +84,13 @@ const BillingForm = () => {
 
       <Formik
         initialValues={{ 
+          patientBlock: patientBlock, 
           patientName: patientName, 
           email: email, 
-          patientBlock: patientBlock, 
+          number: number,
+          address: address,
+          doctorAdd: doctorAdd,
+          doctor: doctor,
           timeSlot: date + " " + time, 
           services: [], 
           totalAmount: 0 
@@ -112,13 +120,23 @@ const BillingForm = () => {
                 fullWidth
                 variant="filled"
                 type="text"
+                label="Owner/Patient Blockchain"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.patientBlock}
+                name="patientBlock"
+                sx={{ gridColumn: "span 4" }}
+                disabled
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
                 label="Patient Name"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.patientName}
                 name="patientName"
-                error={!!touched.patientName && !!errors.patientName}
-                helperText={touched.patientName && errors.patientName}
                 sx={{ gridColumn: "span 4" }}
                 disabled
               />
@@ -131,8 +149,6 @@ const BillingForm = () => {
                 onChange={handleChange}
                 value={values.email}
                 name="email"
-                error={!!touched.email && !!errors.email}
-                helperText={touched.email && errors.email}
                 sx={{ gridColumn: "span 4" }}
                 disabled
               />
@@ -140,13 +156,35 @@ const BillingForm = () => {
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Owner/Patient Blockchain"
+                label="Contact Number"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.patientBlock}
-                name="patientBlock"
-                error={!!touched.patientBlock && !!errors.patientBlock}
-                helperText={touched.patientBlock && errors.patientBlock}
+                value={values.number}
+                name="contact"
+                sx={{ gridColumn: "span 4" }}
+                disabled
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Address"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.address}
+                name="timeSlot"
+                sx={{ gridColumn: "span 4" }}
+                disabled
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Doctor Name"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.doctor}
+                name="timeSlot"
                 sx={{ gridColumn: "span 4" }}
                 disabled
               />
@@ -159,8 +197,6 @@ const BillingForm = () => {
                 onChange={handleChange}
                 value={values.timeSlot}
                 name="timeSlot"
-                error={!!touched.timeSlot && !!errors.timeSlot}
-                helperText={touched.timeSlot && errors.timeSlot}
                 sx={{ gridColumn: "span 4" }}
                 disabled
               />
@@ -218,14 +254,7 @@ const BillingForm = () => {
   );
 };
 
-const phoneRegExp =
-  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
-
 const billingSchema = yup.object().shape({
-  patientName: yup.string().required("required"),
-  email: yup.string().email("Invalid email").required("required"),
-  patientBlock: yup.string().required("required"),
-  timeSlot: yup.string().required("required"),
   services: yup.array().of(yup.string()).required("Please select at least one service"),
 });
 

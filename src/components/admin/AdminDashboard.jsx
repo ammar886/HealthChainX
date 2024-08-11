@@ -86,7 +86,7 @@ const AdminDashboard = () => {
         appointmentDates: billing[6][i],
         timeSlots: billing[7][i],
         services: billing[8][i].join(", "), // Convert array to comma-separated string
-        costs: billing[9][i],
+        costs: billing[9][i].toString(),
       });
     }
 
@@ -240,7 +240,7 @@ const AdminDashboard = () => {
                 p="5px 10px"
                 borderRadius="4px"
               >
-                {billing.costs} $
+               ${billing.costs}
               </Box>
             </Box>
           ))}

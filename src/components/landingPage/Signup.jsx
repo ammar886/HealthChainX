@@ -15,7 +15,8 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
   const [password, setPassword] = useState("");
   const [userRole, setUserRole] = useState("patient");
   const [confirmpassword, setConfirmPassword] = useState("");
-  
+  const [nameError, setNameError] = useState("");
+
   const handleLoginClick = () => {
     onLoginButton();
     navigate('/login');
@@ -40,10 +41,30 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
   useEffect(() => {
     loadAccounts();
   }, []);
-  
+
+  const validateName = (name) => {
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!name) {
+      return "Name is required.";
+    } else if (!nameRegex.test(name)) {
+      return "Name can only contain letters and spaces.";
+    }
+    return "";
+  };
+
   const handleSignup = async (e) => {
     try {
       e.preventDefault();
+
+      // Validate name
+      const nameValidationError = validateName(name);
+      if (nameValidationError) {
+        setNameError(nameValidationError);
+        return;
+      } else {
+        setNameError("");
+      }
+
       // Request account access with MetaMask
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       const account = accounts[0]; // The first account is the user's primary account
@@ -51,12 +72,12 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
       const blockChainAdd = accounts[0];
       const isEmailUsed = await auth.methods.isEmailUsed(email).call({ from: account });
       const isBlockchainAddUsed = await auth.methods.isBlockchainAddressUsed(blockChainAdd).call({ from: account });
-  
+
       if (isEmailUsed) {
         alert("Email is already used. Please, use another email.");
         return;
       }
-  
+
       if (isBlockchainAddUsed) {
         alert("Blockchain address is already used. Please, use another blockchain address.");
         return;
@@ -66,19 +87,19 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
         alert("Password and confirmpassword dosen't match.");
         return;
       }
-  
+
       // Send the transaction to the blockchain
       await auth.methods
         .createUser(blockChainAdd, name, email, number, userRole, password)
         .send({ from: account });
-      
+
       alert("Account Succesfully Created on Blockchain");
     } catch (e) {
       console.log(e.message);
       alert("Something went wrong!");
     }
   };
-  
+
   return (
     <div className="signup-form-main-container">
       <div className="signup-container">
@@ -96,6 +117,7 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
             />
             <span>Name</span>
             <i></i>
+            {nameError && <div className="error-message">{nameError}</div>}
           </div>
           <div className="signup-inputfield">
             <input

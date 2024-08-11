@@ -129,13 +129,15 @@ const ManageAppointments = () => {
       headerName: "Update Status",
       flex: 1,
       renderCell: (params) => (
-        <select 
-          onChange={(e) => updateAppointmentStatus(params.row.owner, params.row.doctorAdd, params.row.id, e.target.value)}
-        >
-          <option value="">Select</option>
-          <option value="approved">Approve</option>
-          <option value="rejected">Reject</option>
-        </select>
+        params.row.status === 'pending' && (
+          <select 
+            onChange={(e) => updateAppointmentStatus(params.row.owner, params.row.doctorAdd, params.row.id, e.target.value)}
+          >
+            <option value="">Select</option>
+            <option value="approved">Approve</option>
+            <option value="rejected">Reject</option>
+          </select>
+        )
       ),
     },
   ];

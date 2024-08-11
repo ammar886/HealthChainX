@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Formik } from 'formik';
-import { Box, TextField } from "@mui/material";
+import { Box, TextField, Button, IconButton, Typography, useTheme } from "@mui/material";
+import { tokens } from "../../theme";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../Header";
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const BillingDetails = () => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [loading, setLoading] = useState(true);
 
@@ -35,6 +40,41 @@ const BillingDetails = () => {
       setLoading(false);
     }, 1000);
   }, []);
+
+  const generatePDF = () => {
+    const doc = new jsPDF();
+
+    // Add hospital logo
+    // doc.addImage('path/to/logo.png', 'PNG', 10, 10, 50, 20); // Uncomment and add path to logo
+
+    // Add title
+    doc.setFontSize(18);
+    doc.text("HealthChainX Invoice", 105, 20, null, null, 'center');
+
+    // Add patient details
+    doc.setFontSize(12);
+    doc.text(`Patient Name: ${billingData.userName}`, 20, 40);
+    doc.text(`Receptionist Name: ${billingData.receptionistName}`, 20, 50);
+    doc.text(`Doctor Name: ${billingData.doctorName}`, 20, 60);
+    doc.text(`Appointment Date: ${billingData.appointmentDate}`, 20, 70);
+    doc.text(`Time Slot: ${billingData.timeSlot}`, 20, 80);
+
+    // Add table for services and cost
+    doc.autoTable({
+      startY: 90,
+      head: [['Service', 'Cost']],
+      body: [
+        [billingData.services, billingData.cost],
+      ],
+    });
+
+    // Add total cost
+    doc.setFontSize(14);
+    doc.text(`Total Cost: ${billingData.cost}`, 20, doc.autoTable.previous.finalY + 20);
+
+    // Save the PDF
+    doc.save('invoice.pdf');
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -133,6 +173,19 @@ const BillingDetails = () => {
                 sx={{ gridColumn: "span 4" }}
                 disabled
               />
+            </Box>
+            <Box mt="20px">
+              <Button variant="contained" color="primary" onClick={generatePDF}
+                sx={{
+                  backgroundColor: colors.blueAccent[700],
+                  color: colors.grey[100],
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  padding: "10px 20px",
+                }}
+              >
+                Download Invoice as PDF
+              </Button>
             </Box>
           </form>
         )}

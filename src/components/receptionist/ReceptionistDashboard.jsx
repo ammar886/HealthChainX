@@ -69,26 +69,28 @@ const DoctorDashboard = () => {
 
     const getAppointmentData = await appointment.methods.getAllAppointments().call({ from: account });
     console.log("appointmentData:", getAppointmentData); // Add this line
-
+    
     // Convert the appointment data into an array of appointment objects
     const appointmentsData = [];
     for (let i = getAppointmentData.owners.length - 1; i >= 0; i--) {
-      appointmentsData.push({
-        index: i,
-        owner: getAppointmentData.owners[i],
-        firstName: getAppointmentData.firstNames[i],
-        lastName: getAppointmentData.lastNames[i],
-        email: getAppointmentData.emails[i],
-        number: getAppointmentData.numbers[i],
-        address: getAppointmentData.adrs[i],
-        doctorAdd: getAppointmentData.doctorAdds[i],
-        doctor: getAppointmentData.doctors[i],
-        appointmentDate: getAppointmentData.appointmentDates[i],
-        timeSlot: getAppointmentData.timeSlots[i],
-        status: getAppointmentData.status[i],
-      });
+      if (getAppointmentData.status[i] === 'approved') {
+        appointmentsData.push({
+          index: i,
+          owner: getAppointmentData.owners[i],
+          firstName: getAppointmentData.firstNames[i],
+          lastName: getAppointmentData.lastNames[i],
+          email: getAppointmentData.emails[i],
+          number: getAppointmentData.numbers[i],
+          address: getAppointmentData.adrs[i],
+          doctorAdd: getAppointmentData.doctorAdds[i],
+          doctor: getAppointmentData.doctors[i],
+          appointmentDate: getAppointmentData.appointmentDates[i],
+          timeSlot: getAppointmentData.timeSlots[i],
+          status: getAppointmentData.status[i],
+        });
+      }
     }
-
+    
     setAppointmentsData(appointmentsData);
     console.log("new appointments:", appointmentsData);
     localStorage.setItem('appointments', JSON.stringify(appointmentsData));

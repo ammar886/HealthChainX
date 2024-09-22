@@ -16,6 +16,7 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
   const [userRole, setUserRole] = useState("patient");
   const [confirmpassword, setConfirmPassword] = useState("");
   const [nameError, setNameError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLoginClick = () => {
     onLoginButton();
@@ -88,6 +89,10 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
         return;
       }
 
+      // Inform the user about the MetaMask confirmation
+      setLoading(true);
+      // alert("Please confirm the transaction in MetaMask.");
+
       // Send the transaction to the blockchain
       await auth.methods
         .createUser(blockChainAdd, name, email, number, userRole, password)
@@ -97,6 +102,8 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
     } catch (e) {
       console.log(e.message);
       alert("Something went wrong!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -113,7 +120,12 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
             <input
               type="text"
               required
-              onChange={(e) => setName(e.target.value)}
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+                setNameError(""); // Clear the error message when the user starts typing
+              }}
+              onFocus={() => setNameError("")} // Clear the error message when the input field is focused
             />
             <span>Name</span>
             <i></i>
@@ -156,7 +168,9 @@ const Signup = ({ onCloseIcon, onLoginButton }) => {
             <i></i>
           </div>
 
-          <button type="submit">Sign Up</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Processing..." : "Sign Up"}
+          </button>
 
           <div className="signup-alt">
             <div className="signup-text">Already have an Account:</div>

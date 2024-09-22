@@ -160,3 +160,12 @@
     padding: 1px 3px;
     cursor: pointer;
   }
+
+  /* Signup.css */
+
+.error-message {
+  color: red;
+  font-size: 0.875em;
+  margin-top: 0.25em;
+  display: block;
+}

@@ -52,7 +52,7 @@ const BillingDetails = () => {
 
     // Add patient details
     doc.setFontSize(12);
-    doc.text(`Patient Name: ${billingData.userName}`, 20, 40);
+    doc.text(`Patient Name: ${billingData.patientName}`, 20, 40);
     doc.text(`Receptionist Name: ${billingData.receptionistName}`, 20, 50);
     doc.text(`Doctor Name: ${billingData.doctorName}`, 20, 60);
     doc.text(`Appointment Date: ${billingData.appointmentDate}`, 20, 70);
